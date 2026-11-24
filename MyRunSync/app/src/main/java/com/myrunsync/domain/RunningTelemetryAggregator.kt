@@ -54,9 +54,7 @@ object RunningTelemetryAggregator {
         val zone2Pct = zone2Ratio?.let { roundTo1(it * 100.0) }
 
         val avgCadenceSpm = resolveAverageCadence(
-            cadenceSamples = validCadence,
-            totalSteps = telemetry.totalSteps,
-            durationSeconds = durationSeconds
+            cadenceSamples = validCadence
         )
 
         val timeseries1Min = buildMinuteSeries(
@@ -149,15 +147,10 @@ object RunningTelemetryAggregator {
     }
 
     private fun resolveAverageCadence(
-        cadenceSamples: List<CadenceSample>,
-        totalSteps: Long?,
-        durationSeconds: Int
+        cadenceSamples: List<CadenceSample>
     ): Double? {
         if (cadenceSamples.isNotEmpty()) {
             return cadenceSamples.map { it.spm }.average()
-        }
-        if (totalSteps != null && totalSteps > 0L && durationSeconds > 0) {
-            return totalSteps.toDouble() / (durationSeconds.toDouble() / 60.0)
         }
         return null
     }

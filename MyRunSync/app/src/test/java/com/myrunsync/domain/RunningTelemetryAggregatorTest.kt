@@ -120,7 +120,7 @@ class RunningTelemetryAggregatorTest {
     }
 
     @Test
-    fun aggregate_fallsBackToTotalStepsForCadenceWhenCadenceSamplesMissing() {
+    fun aggregate_returnsNullCadenceWhenCadenceSamplesMissing() {
         val start = Instant.parse("2026-11-24T07:00:00Z")
         val end = start.plusSeconds(120)
 
@@ -145,7 +145,7 @@ class RunningTelemetryAggregatorTest {
         )
 
         assertEquals("트레드밀", dto.workoutType)
-        assertEquals(170, dto.avgCadence)
+        assertNull(dto.avgCadence)
         assertNull(dto.avgHr)
         assertNull(dto.zone2Ratio)
         assertNull(dto.zone2Pct)

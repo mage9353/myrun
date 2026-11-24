@@ -1,5 +1,6 @@
 package com.myrunsync.domain
 
+import com.myrunsync.health.HealthConnectRunningReader
 import com.myrunsync.model.CadenceSample
 import com.myrunsync.model.DistanceSegment
 import com.myrunsync.model.HeartRateZone2Config
@@ -193,5 +194,72 @@ class RunningTelemetryAggregatorTest {
         assertEquals("0.0", obj["distance_meters"]?.jsonPrimitive?.content)
         assertTrue(obj.containsKey("timeseries_1min"))
         assertEquals(0, obj["timeseries_1min"]?.jsonArray?.size)
+    }
+
+    @Test
+    fun aggregate_serializesHasGpsAndExerciseTypeForIndoorOutdoorTreadmillAndWalking() {
+        val start = Instant.parse("2026-11-24T09:00:00Z")
+        val end = start.plusSeconds(600)
+        val zone2 = HeartRateZone2Config(114, 133)
+
+        val indoorRaw = RawRunningTelemetry(
+            hcSessionId = "hc-indoor-run",
+            sourcePackage = "com.sec.android.app.shealth",
+            title = null,
+            workoutType = HealthConnectRunningReader.WORKOUT_TYPE_INDOOR,
+            startTime = start,
+            endTime = end,
+            aggregatedDistanceMeters = 1500.0,
+            totalSteps = 1500L,
+            heartRateSamples = emptyList(),
+            cadenceSamples = emptyList(),
+            distanceSegments = emptyList(),
+            hasGps = false,
+            exerciseType = HealthConnectRunningReader.EXERCISE_TYPE_RUNNING
+        )
+        val indoorObj = json.parseToJsonElement(
+            json.encodeToString(RunningTelemetryAggregator.aggregate(indoorRaw, zone2, end))
+        ).jsonObject
+        assertEquals("실내", indoorObj["workout_type"]?.jsonPrimitive?.content)
+        assertEquals("running", indoorObj["exercise_type"]?.jsonPrimitive?.content)
+        assertEquals("false", indoorObj["has_gps"]?.jsonPrimitive?.content)
+
+        val outdoorRaw = indoorRaw.copy(
+            hcSessionId = "hc-outdoor-run",
+            workoutType = HealthConnectRunningReader.WORKOUT_TYPE_OUTDOOR,
+            hasGps = true
+        )
+        val outdoorObj = json.parseToJsonElement(
+            json.encodeToString(RunningTelemetryAggregator.aggregate(outdoorRaw, zone2, end))
+        ).jsonObject
+        assertEquals("야외", outdoorObj["workout_type"]?.jsonPrimitive?.content)
+        assertEquals("running", outdoorObj["exercise_type"]?.jsonPrimitive?.content)
+        assertEquals("true", outdoorObj["has_gps"]?.jsonPrimitive?.content)
+
+        val walkingRaw = indoorRaw.copy(
+            hcSessionId = "hc-walk",
+            workoutType = HealthConnectRunningReader.WORKOUT_TYPE_WALKING,
+            hasGps = true,
+            exerciseType = HealthConnectRunningReader.EXERCISE_TYPE_WALKING
+        )
+        val walkingObj = json.parseToJsonElement(
+            json.encodeToString(RunningTelemetryAggregator.aggregate(walkingRaw, zone2, end))
+        ).jsonObject
+        assertEquals("걷기", walkingObj["workout_type"]?.jsonPrimitive?.content)
+        assertEquals("walking", walkingObj["exercise_type"]?.jsonPrimitive?.content)
+        assertEquals("true", walkingObj["has_gps"]?.jsonPrimitive?.content)
+
+        val treadmillRaw = indoorRaw.copy(
+            hcSessionId = "hc-treadmill",
+            workoutType = HealthConnectRunningReader.WORKOUT_TYPE_TREADMILL,
+            hasGps = false,
+            exerciseType = HealthConnectRunningReader.EXERCISE_TYPE_TREADMILL
+        )
+        val treadmillObj = json.parseToJsonElement(
+            json.encodeToString(RunningTelemetryAggregator.aggregate(treadmillRaw, zone2, end))
+        ).jsonObject
+        assertEquals("트레드밀", treadmillObj["workout_type"]?.jsonPrimitive?.content)
+        assertEquals("treadmill", treadmillObj["exercise_type"]?.jsonPrimitive?.content)
+        assertEquals("false", treadmillObj["has_gps"]?.jsonPrimitive?.content)
     }
 }

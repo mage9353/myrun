@@ -20,7 +20,8 @@ MyRun/
 
 ## 각 앱의 역할
 * **MyRunSync** (`MyRunSync/`): Android 기기에서 Health Connect의 러닝 세션(야외/트레드밀), 거리, 심박수, 케이던스를 읽어 요약 지표 및 1분 단위 다운샘플링 JSON(`timeseries_1min`)을 계산하고 Supabase `public.running_logs`에 `hc_session_id` 기준으로 `upsert`합니다.
-  * Release APK에는 Supabase 키를 내장하지 않으며, 앱 화면의 **Supabase Settings**(`SharedPreferences`)에 `Supabase URL`과 `Anon Key`를 직접 입력·저장해 사용합니다.
+  * Release APK에는 Supabase 키를 내장하지 않으며, 앱 화면의 **Supabase Settings**(`SharedPreferences`)에 `Supabase URL`과 `Anon Key`를 저장해 사용합니다(저장 후에는 입력창이 숨겨지고 `Edit` 버튼으로 수정 가능).
+  * **Auto Sync** 섹션에서 **앱 실행 시 자동 싱크** 및 **백그라운드 주기 자동 싱크**(WorkManager, 15분~24시간 주기 선택, `READ_HEALTH_DATA_IN_BACKGROUND` 권한 사용)를 켜고 끌 수 있습니다.
 * **MyRunCoach** (`MyRunCoach/`): Supabase `public.running_logs`를 조회해 주간 요약, 추세 차트, 1분 단위 상세 차트 모달, Gemini AI 맞춤 러닝 코칭을 제공하는 단일 파일(`index.html`) 웹 대시보드입니다. GitHub Actions를 통해 `https://mage9353.github.io/myrun/`으로 배포됩니다.
 
 ## 공통 DB 계약 (`public.running_logs`)

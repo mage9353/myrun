@@ -7,11 +7,26 @@
     <string name="hint_supabase_anon_key">eyJ... or sb_publishable_...</string>
     <string name="cb_show_anon_key">Show Anon Key</string>
     <string name="btn_save_settings">Save Supabase Settings</string>
+    <string name="btn_edit_settings">Edit</string>
+    <string name="btn_cancel_edit">Cancel</string>
+    <string name="supabase_connected_summary">Connected: %1$s</string>
+    <string name="supabase_saved_summary">Supabase credentials saved</string>
     <string name="status_missing_credentials">Enter Supabase URL and Anon Key below, then grant Health Connect permissions.</string>
     <string name="status_settings_saved">Supabase settings saved on this device.</string>
+    <string name="section_zone2_settings">Zone 2 Heart Rate (bpm)</string>
+    <string name="hint_zone2_min">Min (114)</string>
+    <string name="hint_zone2_max">Max (133)</string>
+    <string name="btn_save_zone2">Save</string>
+    <string name="status_zone2_saved">Zone 2 heart rate saved (%1$d~%2$d bpm).</string>
+    <string name="section_auto_sync">Auto Sync</string>
+    <string name="switch_auto_sync_on_open">Auto-sync when opening app</string>
+    <string name="switch_bg_auto_sync">Background periodic auto-sync</string>
+    <string name="label_bg_sync_interval">Background sync interval</string>
+    <string name="last_sync_none">Last sync: none</string>
     <string name="btn_grant_permissions">Grant Health Connect Permissions</string>
+    <string name="btn_open_hc_settings">Open Health Connect Settings</string>
     <string name="btn_sync_runs">Sync Recent Runs to Supabase</string>
     <string name="status_ready">Ready. Grant Health Connect permissions and sync recent runs.</string>
     <string name="rationale_title">Health Connect Permissions</string>
-    <string name="rationale_body">MyRunSync reads your running sessions, distance, heart rate, and cadence from Health Connect solely to compute summary metrics and 1-minute downsampled series and store them in your Supabase account.</string>
+    <string name="rationale_body">MyRunSync reads your running sessions, distance, heart rate, and cadence from Health Connect solely to compute summary metrics and 1-minute downsampled series and store them in your Supabase account. When background auto-sync is enabled, MyRunSync also reads these metrics periodically in the background.</string>
 </resources>

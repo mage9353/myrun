@@ -6,6 +6,8 @@ create table if not exists public.running_logs (
     hc_session_id text not null unique,
     run_date timestamptz not null,
     workout_type text not null default '야외',
+    exercise_type text,
+    has_gps boolean,
     source_package text,
     title text,
     ended_at timestamptz,
@@ -33,6 +35,8 @@ create table if not exists public.running_logs (
 );
 
 -- Idempotent extension columns for existing `public.running_logs`
+alter table public.running_logs add column if not exists exercise_type text;
+alter table public.running_logs add column if not exists has_gps boolean;
 alter table public.running_logs add column if not exists source_package text;
 alter table public.running_logs add column if not exists title text;
 alter table public.running_logs add column if not exists ended_at timestamptz;

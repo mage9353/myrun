@@ -49,4 +49,20 @@ class SupabaseConfigValidatorTest {
         assertNull(SupabaseConfigValidator.validate(" https://example.supabase.co/ ", " eyJ123 "))
         assertNull(SupabaseConfigValidator.validate("http://127.0.0.1:54321", "anon-key"))
     }
+
+    @Test
+    fun `validateZone2 rejects blank non-numeric out-of-range and inverted bounds`() {
+        assertNotNull(SupabaseConfigValidator.validateZone2("", "133"))
+        assertNotNull(SupabaseConfigValidator.validateZone2("abc", "133"))
+        assertNotNull(SupabaseConfigValidator.validateZone2("35", "133"))
+        assertNotNull(SupabaseConfigValidator.validateZone2("114", "250"))
+        assertNotNull(SupabaseConfigValidator.validateZone2("140", "130"))
+    }
+
+    @Test
+    fun `validateZone2 and parseZone2 accept valid bounds`() {
+        assertNull(SupabaseConfigValidator.validateZone2(" 114 ", " 133 "))
+        assertEquals(114 to 133, SupabaseConfigValidator.parseZone2(" 114 ", " 133 "))
+        assertEquals(120 to 120, SupabaseConfigValidator.parseZone2("120", "120"))
+    }
 }

@@ -362,6 +362,122 @@
       <button id="btnCloseNotice" type="button" class="text-xs opacity-70 hover:opacity-100 shrink-0">✕</button>
     </div>
 
+    <!-- Training Zone 2 & Walking Pace Classification Bar -->
+    <section id="trainingPrefsBar" aria-label="유산소 구간 및 걷기 기준 설정" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start lg:items-center">
+        <!-- Left: Zone 2 Heart Rate Config -->
+        <div class="lg:col-span-7 space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">💚 유산소 구간 (Zone 2 심박수)</span>
+            <span id="zone2ActiveBadge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/70">
+              DB 기록 기준
+            </span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="inline-flex items-center gap-1.5">
+              <input
+                id="inputZone2Min"
+                type="number"
+                min="40"
+                max="220"
+                aria-label="Zone 2 최소 심박수"
+                class="w-16 px-2.5 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
+              />
+              <span class="text-xs text-slate-400">~</span>
+              <input
+                id="inputZone2Max"
+                type="number"
+                min="40"
+                max="240"
+                aria-label="Zone 2 최대 심박수"
+                class="w-16 px-2.5 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
+              />
+              <span class="text-xs text-slate-500 dark:text-slate-400">bpm</span>
+            </div>
+            <button
+              id="btnApplyZone2"
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+            >
+              적용
+            </button>
+            <button
+              id="btnZone2UseDb"
+              type="button"
+              class="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title="동기화된 기록의 Zone 2 기준값 사용"
+            >
+              DB 기준
+            </button>
+            <div class="inline-flex items-center gap-1 pl-2 sm:border-l border-slate-200 dark:border-slate-700">
+              <span class="text-[11px] text-slate-500 dark:text-slate-400">최대심박</span>
+              <input
+                id="inputMhr"
+                type="number"
+                min="100"
+                max="230"
+                value="190"
+                aria-label="최대 심박수"
+                class="w-14 px-2 py-1 text-xs text-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
+              />
+              <button
+                id="btnMhr6070"
+                type="button"
+                class="px-2 py-1 text-[11px] font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                60~70%
+              </button>
+              <button
+                id="btnMhr6575"
+                type="button"
+                class="px-2 py-1 text-[11px] font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                65~75%
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Slow GPS Run -> Walking(Inferred) Threshold -->
+        <div class="lg:col-span-5 lg:border-l lg:border-slate-200/80 lg:dark:border-slate-800 lg:pl-5 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">🚶‍♂️ 걷기(추정) 자동 분류 기준</span>
+            <span id="walkSpeedHint" class="text-[11px] font-medium text-teal-600 dark:text-teal-400 tabular-nums">≈ 6.7 km/h 이하</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs text-slate-500 dark:text-slate-400">GPS 달리기 평균 페이스 ≥</span>
+            <div class="inline-flex items-center gap-1">
+              <input
+                id="inputWalkPaceMin"
+                type="number"
+                min="4"
+                max="30"
+                aria-label="걷기 추정 기준 분"
+                class="w-12 px-2 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 tabular-nums"
+              />
+              <span class="text-xs text-slate-500 dark:text-slate-400">분</span>
+              <input
+                id="inputWalkPaceSec"
+                type="number"
+                min="0"
+                max="59"
+                aria-label="걷기 추정 기준 초"
+                class="w-12 px-2 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 tabular-nums"
+              />
+              <span class="text-xs text-slate-500 dark:text-slate-400">초/km</span>
+            </div>
+            <button
+              id="btnApplyWalkPace"
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-teal-600 hover:bg-teal-500 text-white transition-colors"
+            >
+              적용
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 1. Top 4 Summary Cards -->
     <section aria-label="주간 요약 지표" class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
       <!-- Card 1: 7일 누적 거리 -->
@@ -409,35 +525,48 @@
     </section>
 
     <!-- 2. Trend Charts (Recent 15 Runs) -->
-    <section aria-label="최근 15회 러닝 추세 차트" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      <!-- Chart 1: Avg HR vs Avg Pace -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-2 mb-3">
-          <div>
-            <h2 class="text-sm sm:text-base font-bold">최근 15회 평균 심박수 대비 페이스 추이</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
-          </div>
+    <section aria-label="최근 15회 러닝 추세 차트" class="space-y-3.5">
+      <!-- Multi-select Chart Type Filter Bar -->
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-200 mr-1">📊 추이 그래프 표시 유형 (다중 선택)</span>
+          <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
+          <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
+          <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
         </div>
-        <div class="relative h-64 sm:h-72">
-          <canvas id="chartHrPace"></canvas>
-          <div id="chartHrPaceEmpty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">
-            표시할 러닝 추세 데이터가 없습니다.
-          </div>
-        </div>
+        <div id="chartTypeChips" class="flex flex-wrap items-center gap-1.5"></div>
       </div>
 
-      <!-- Chart 2: Zone 2 Ratio Trend -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-2 mb-3">
-          <div>
-            <h2 class="text-sm sm:text-base font-bold">최근 15회 Zone 2 비율 변화</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Chart 1: Avg HR vs Avg Pace -->
+        <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-sm sm:text-base font-bold">최근 15회 평균 심박수 대비 페이스 추이</h2>
+              <p id="chartHrPaceSub" class="text-xs text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
+            </div>
+          </div>
+          <div class="relative h-64 sm:h-72">
+            <canvas id="chartHrPace"></canvas>
+            <div id="chartHrPaceEmpty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500 text-center px-4">
+              선택한 운동 유형에 해당하는 추세 데이터가 없습니다.
+            </div>
           </div>
         </div>
-        <div class="relative h-64 sm:h-72">
-          <canvas id="chartZone2"></canvas>
-          <div id="chartZone2Empty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">
-            표시할 Zone 2 데이터가 없습니다.
+
+        <!-- Chart 2: Zone 2 Ratio Trend -->
+        <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-sm sm:text-base font-bold">최근 15회 Zone 2 비율 변화</h2>
+              <p id="chartZone2Sub" class="text-xs text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
+            </div>
+          </div>
+          <div class="relative h-64 sm:h-72">
+            <canvas id="chartZone2"></canvas>
+            <div id="chartZone2Empty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500 text-center px-4">
+              선택한 운동 유형에 해당하는 Zone 2 데이터가 없습니다.
+            </div>
           </div>
         </div>
       </div>
@@ -580,10 +709,13 @@
         </div>
 
         <!-- Filter tabs -->
-        <div class="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 self-start sm:self-auto" role="tablist" aria-label="러닝 구분 필터">
-          <button type="button" data-filter="all" class="filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition-all">전체</button>
-          <button type="button" data-filter="야외" class="filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">야외</button>
-          <button type="button" data-filter="트레드밀" class="filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">트레드밀</button>
+        <div class="inline-flex flex-wrap gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 self-start sm:self-auto" role="tablist" aria-label="러닝 구분 필터">
+          <button type="button" data-filter="all" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition-all">전체</button>
+          <button type="button" data-filter="야외" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏃 야외</button>
+          <button type="button" data-filter="실내" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏠 실내</button>
+          <button type="button" data-filter="트레드밀" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏃‍♂️ 트레드밀</button>
+          <button type="button" data-filter="걷기(추정)" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🚶‍♂️ 걷기(추정)</button>
+          <button type="button" data-filter="걷기" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🚶 걷기</button>
         </div>
       </div>
 
@@ -621,6 +753,7 @@
           <div class="flex items-center gap-2 flex-wrap">
             <h3 id="modalTitle" class="text-base sm:text-lg font-bold">러닝 상세 분석</h3>
             <span id="modalTypeBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full"></span>
+            <span id="modalGpsBadge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border"></span>
             <span id="modalSourceBadge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"></span>
             <span id="modalZone2Badge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border border-emerald-200 dark:border-emerald-800/70 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300"></span>
           </div>
@@ -670,13 +803,79 @@
       var THEME_STORAGE_KEY = 'myruncoach_theme';
       var DEFAULT_MODEL = 'gemini-4-hydrogen';
       var ALLOWED_MODELS = ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-4-neon'];
+      var DEFAULT_ZONE2_MIN_BPM = 120;
+      var DEFAULT_ZONE2_MAX_BPM = 140;
+      var DEFAULT_WALK_PACE_SEC = 540;
+
+      var ALL_ACTIVITY_TYPES = ['야외', '실내', '트레드밀', '걷기(추정)', '걷기'];
+      var RUNNING_ACTIVITY_TYPES = ['야외', '실내', '트레드밀'];
+      var WALKING_ACTIVITY_TYPES = ['걷기(추정)', '걷기'];
+
+      var ACTIVITY_META = {
+        '야외': {
+          icon: '🏃',
+          label: '야외',
+          badgeClass: 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/70',
+          chipActiveClass: 'bg-sky-600 text-white border-sky-600 shadow-sm',
+          color: '#0ea5e9',
+          description: '달리기 설정 + GPS 기록'
+        },
+        '실내': {
+          icon: '🏠',
+          label: '실내',
+          badgeClass: 'bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800/70',
+          chipActiveClass: 'bg-violet-600 text-white border-violet-600 shadow-sm',
+          color: '#8b5cf6',
+          description: '달리기 설정이지만 GPS 데이터 없음 (트레드밀과 구분)'
+        },
+        '트레드밀': {
+          icon: '🏃‍♂️',
+          label: '트레드밀',
+          badgeClass: 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/70',
+          chipActiveClass: 'bg-amber-500 text-white border-amber-500 shadow-sm',
+          color: '#f59e0b',
+          description: '워치에서 트레드밀 모드로 기록됨'
+        },
+        '걷기(추정)': {
+          icon: '🚶‍♂️',
+          label: '걷기(추정)',
+          badgeClass: 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-700 border-dashed',
+          chipActiveClass: 'bg-teal-600 text-white border-teal-600 shadow-sm',
+          color: '#14b8a6',
+          description: '달리기 설정 + GPS 기록이지만 속도가 낮아 걷기로 분류됨'
+        },
+        '걷기': {
+          icon: '🚶',
+          label: '걷기',
+          badgeClass: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/70',
+          chipActiveClass: 'bg-emerald-600 text-white border-emerald-600 shadow-sm',
+          color: '#10b981',
+          description: '워치에서 처음부터 걷기 운동으로 선택해 기록됨'
+        }
+      };
+
+      function getActivityMeta(type) {
+        return ACTIVITY_META[type] || {
+          icon: '🏃',
+          label: type || '기타',
+          badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+          chipActiveClass: 'bg-slate-700 text-white border-slate-700',
+          color: '#64748b',
+          description: ''
+        };
+      }
 
       var state = {
         config: {
           supabaseUrl: '',
           supabaseKey: '',
           geminiKey: '',
-          geminiModel: DEFAULT_MODEL
+          geminiModel: DEFAULT_MODEL,
+          zone2Mode: 'db',
+          zone2MinBpm: DEFAULT_ZONE2_MIN_BPM,
+          zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
+          walkPaceThresholdSec: DEFAULT_WALK_PACE_SEC,
+          chartTypes: ALL_ACTIVITY_TYPES.slice()
         },
         runs: [],
         isDemo: false,
@@ -827,8 +1026,17 @@
           return val ? '트레드밀' : '야외';
         }
         var s = String(val).trim().toLowerCase();
-        if (s.indexOf('treadmill') !== -1 || s.indexOf('indoor') !== -1 || s.indexOf('트레드밀') !== -1 || s.indexOf('실내') !== -1 || s === 'tm') {
+        if (s.indexOf('treadmill') !== -1 || s.indexOf('트레드밀') !== -1 || s === 'tm') {
           return '트레드밀';
+        }
+        if (s.indexOf('걷기(추정)') !== -1) {
+          return '걷기(추정)';
+        }
+        if (s.indexOf('walking') !== -1 || s.indexOf('walk') !== -1 || s.indexOf('걷기') !== -1) {
+          return '걷기';
+        }
+        if (s.indexOf('indoor') !== -1 || s.indexOf('실내') !== -1) {
+          return '실내';
         }
         if (s.indexOf('outdoor') !== -1 || s.indexOf('road') !== -1 || s.indexOf('trail') !== -1 || s.indexOf('track') !== -1 || s.indexOf('야외') !== -1 || s.indexOf('실외') !== -1 || s.indexOf('run') !== -1) {
           return '야외';
@@ -872,12 +1080,14 @@
             paceSec = parsePaceToSec(pt.pace);
           }
           var cadence = toFiniteNumber(pt.cadence !== undefined ? pt.cadence : (pt.avg_cadence_spm !== undefined ? pt.avg_cadence_spm : pt.spm));
+          var normalizedZ2 = zone2Ratio !== null ? Math.max(0, Math.min(1, zone2Ratio)) : null;
           return {
             minute: minute !== null ? minute : idx + 1,
             hr: hr !== null ? Math.round(hr) : null,
             maxHr: maxHr !== null ? Math.round(maxHr) : null,
             minHr: minHr !== null ? Math.round(minHr) : null,
-            zone2Ratio: zone2Ratio !== null ? Math.max(0, Math.min(1, zone2Ratio)) : null,
+            rawZone2Ratio: normalizedZ2,
+            zone2Ratio: normalizedZ2,
             paceSec: paceSec !== null && paceSec > 0 ? Math.round(paceSec) : null,
             cadence: cadence !== null ? Math.round(cadence) : null,
             distanceM: distanceM !== null && distanceM >= 0 ? distanceM : null
@@ -903,10 +1113,12 @@
         var runDate = r.run_date || r.date || r.started_at || r.created_at || '';
         var startedAt = r.started_at || (r.run_date && String(r.run_date).indexOf('T') !== -1 ? r.run_date : null);
         var endedAt = r.ended_at || null;
-        var runType = normalizeRunType(
+        var rawWorkoutType = normalizeRunType(
           r.workout_type !== undefined ? r.workout_type : (r.run_type !== undefined ? r.run_type : (r.location_type !== undefined ? r.location_type : (r.activity_type !== undefined ? r.activity_type : r.environment))),
           r
         );
+        var exerciseType = r.exercise_type ? String(r.exercise_type).trim().toLowerCase() : null;
+        var hasGps = typeof r.has_gps === 'boolean' ? r.has_gps : null;
 
         var distanceKm = null;
         if (r.distance_km !== undefined && r.distance_km !== null) {
@@ -985,7 +1197,10 @@
         var timeseries = parseTimeseries(r.timeseries_1min || r.minute_series);
         var sortTime = startedAt ? new Date(startedAt).getTime() : (parseDateObj(runDate) ? parseDateObj(runDate).getTime() : 0);
 
-        return {
+        var rawZ2Min = zone2MinBpm !== null ? Math.round(zone2MinBpm) : null;
+        var rawZ2Max = zone2MaxBpm !== null ? Math.round(zone2MaxBpm) : null;
+
+        var rowObj = {
           id: r.id !== undefined ? r.id : ('run-' + index),
           healthConnectRecordId: r.hc_session_id || r.health_connect_record_id || null,
           sourcePackage: r.source_package || null,
@@ -995,20 +1210,123 @@
           endedAt: endedAt,
           sortTime: Number.isFinite(sortTime) ? sortTime : 0,
           dateObj: parseDateObj(runDate),
-          runType: runType,
+          rawWorkoutType: rawWorkoutType,
+          exerciseType: exerciseType,
+          hasGps: hasGps,
+          runType: rawWorkoutType,
           distanceKm: distanceKm,
           durationSec: durationSec,
           avgPaceSec: avgPaceSec,
           avgHr: avgHr !== null ? Math.round(avgHr) : null,
           maxHr: maxHr !== null ? Math.round(maxHr) : null,
           minHr: minHr !== null ? Math.round(minHr) : null,
-          zone2MinBpm: zone2MinBpm !== null ? Math.round(zone2MinBpm) : null,
-          zone2MaxBpm: zone2MaxBpm !== null ? Math.round(zone2MaxBpm) : null,
+          rawZone2MinBpm: rawZ2Min,
+          rawZone2MaxBpm: rawZ2Max,
+          rawZone2Pct: zone2Pct,
+          zone2MinBpm: rawZ2Min,
+          zone2MaxBpm: rawZ2Max,
           zone2Pct: zone2Pct,
           avgCadence: avgCadence !== null ? Math.round(avgCadence) : null,
           notes: r.notes || r.memo || r.comment || '',
           timeseries: timeseries
         };
+        return rowObj;
+      }
+
+      function classifyRun(run, walkPaceThresholdSec) {
+        if (run.exerciseType === 'treadmill' || run.rawWorkoutType === '트레드밀') {
+          return '트레드밀';
+        }
+        if (run.exerciseType === 'walking' || run.rawWorkoutType === '걷기') {
+          return '걷기';
+        }
+        if (run.hasGps === false || run.rawWorkoutType === '실내') {
+          return '실내';
+        }
+        if (run.avgPaceSec !== null && run.avgPaceSec >= walkPaceThresholdSec) {
+          return '걷기(추정)';
+        }
+        return '야외';
+      }
+
+      function computeMinuteZone2Ratio(pt, minBpm, maxBpm) {
+        if (pt.minHr !== null && pt.maxHr !== null && pt.maxHr > pt.minHr) {
+          var overlap = Math.min(pt.maxHr, maxBpm) - Math.max(pt.minHr, minBpm);
+          return Math.max(0, Math.min(1, overlap / (pt.maxHr - pt.minHr)));
+        }
+        if (pt.hr !== null) {
+          return (pt.hr >= minBpm && pt.hr <= maxBpm) ? 1 : 0;
+        }
+        return null;
+      }
+
+      function getActiveZone2Range() {
+        if (state.config.zone2Mode === 'custom') {
+          return { minBpm: state.config.zone2MinBpm, maxBpm: state.config.zone2MaxBpm, isCustom: true };
+        }
+        for (var i = 0; i < state.runs.length; i++) {
+          if (state.runs[i].rawZone2MinBpm && state.runs[i].rawZone2MaxBpm) {
+            return { minBpm: state.runs[i].rawZone2MinBpm, maxBpm: state.runs[i].rawZone2MaxBpm, isCustom: false };
+          }
+        }
+        return null;
+      }
+
+      function recomputeDerivedRunMetrics() {
+        var walkThreshold = Number.isFinite(state.config.walkPaceThresholdSec)
+          ? state.config.walkPaceThresholdSec
+          : DEFAULT_WALK_PACE_SEC;
+        var useCustomZ2 = state.config.zone2Mode === 'custom' &&
+          Number.isFinite(state.config.zone2MinBpm) &&
+          Number.isFinite(state.config.zone2MaxBpm) &&
+          state.config.zone2MinBpm <= state.config.zone2MaxBpm;
+
+        state.runs.forEach(function (run) {
+          run.runType = classifyRun(run, walkThreshold);
+
+          if (!useCustomZ2) {
+            run.zone2MinBpm = run.rawZone2MinBpm;
+            run.zone2MaxBpm = run.rawZone2MaxBpm;
+            run.zone2Pct = run.rawZone2Pct;
+            if (Array.isArray(run.timeseries)) {
+              run.timeseries.forEach(function (pt) {
+                pt.zone2Ratio = pt.rawZone2Ratio;
+              });
+            }
+            return;
+          }
+
+          var minBpm = state.config.zone2MinBpm;
+          var maxBpm = state.config.zone2MaxBpm;
+          run.zone2MinBpm = minBpm;
+          run.zone2MaxBpm = maxBpm;
+
+          if (minBpm === run.rawZone2MinBpm && maxBpm === run.rawZone2MaxBpm && run.rawZone2Pct !== null) {
+            run.zone2Pct = run.rawZone2Pct;
+            if (Array.isArray(run.timeseries)) {
+              run.timeseries.forEach(function (pt) {
+                pt.zone2Ratio = pt.rawZone2Ratio;
+              });
+            }
+            return;
+          }
+
+          if (Array.isArray(run.timeseries) && run.timeseries.length > 0) {
+            var ratios = [];
+            run.timeseries.forEach(function (pt) {
+              var r = computeMinuteZone2Ratio(pt, minBpm, maxBpm);
+              pt.zone2Ratio = r;
+              if (r !== null) ratios.push(r);
+            });
+            if (ratios.length > 0) {
+              var avgRatio = ratios.reduce(function (a, b) { return a + b; }, 0) / ratios.length;
+              run.zone2Pct = Math.max(0, Math.min(100, avgRatio * 100));
+              return;
+            }
+          }
+
+          run.zone2Pct = run.rawZone2Pct;
+        });
       }
 
       // Compute first-half vs second-half drift and split stats from timeseries_1min
@@ -1044,40 +1362,34 @@
       function generateDemoRuns() {
         var now = new Date();
         var templates = [
-          { daysAgo: 0, type: '야외', dist: 10.2, pace: 324, hr: 151, z2: 74, cad: 176, drift: 9 },
-          { daysAgo: 2, type: '트레드밀', dist: 7.0, pace: 342, hr: 144, z2: 86, cad: 174, drift: 5 },
-          { daysAgo: 3, type: '야외', dist: 12.5, pace: 315, hr: 158, z2: 52, cad: 179, drift: 11 },
-          { daysAgo: 5, type: '야외', dist: 8.1, pace: 348, hr: 141, z2: 91, cad: 173, drift: 4 },
-          { daysAgo: 7, type: '트레드밀', dist: 6.5, pace: 336, hr: 147, z2: 80, cad: 175, drift: 6 },
-          { daysAgo: 9, type: '야외', dist: 15.0, pace: 338, hr: 149, z2: 77, cad: 175, drift: 10 },
-          { daysAgo: 11, type: '야외', dist: 8.4, pace: 306, hr: 164, z2: 34, cad: 182, drift: 12 },
-          { daysAgo: 13, type: '트레드밀', dist: 6.0, pace: 355, hr: 139, z2: 93, cad: 172, drift: 3 },
-          { daysAgo: 15, type: '야외', dist: 9.5, pace: 332, hr: 150, z2: 76, cad: 176, drift: 7 },
-          { daysAgo: 17, type: '야외', dist: 11.2, pace: 328, hr: 153, z2: 68, cad: 177, drift: 8 },
-          { daysAgo: 19, type: '트레드밀', dist: 5.5, pace: 350, hr: 142, z2: 88, cad: 173, drift: 4 },
-          { daysAgo: 21, type: '야외', dist: 14.0, pace: 340, hr: 151, z2: 73, cad: 174, drift: 9 },
-          { daysAgo: 23, type: '야외', dist: 7.8, pace: 312, hr: 162, z2: 41, cad: 181, drift: 10 },
-          { daysAgo: 25, type: '트레드밀', dist: 6.2, pace: 358, hr: 140, z2: 90, cad: 171, drift: 4 },
-          { daysAgo: 27, type: '야외', dist: 10.0, pace: 335, hr: 152, z2: 71, cad: 175, drift: 8 },
-          { daysAgo: 29, type: '야외', dist: 8.6, pace: 344, hr: 146, z2: 82, cad: 174, drift: 5 },
-          { daysAgo: 32, type: '트레드밀', dist: 5.0, pace: 360, hr: 138, z2: 92, cad: 171, drift: 3 },
-          { daysAgo: 35, type: '야외', dist: 11.0, pace: 339, hr: 154, z2: 66, cad: 175, drift: 9 }
+          { daysAgo: 0, type: '야외', exerciseType: 'running', hasGps: true, title: '야외 유산소 러닝', dist: 10.2, pace: 324, hr: 136, z2: 74, cad: 176, drift: 9 },
+          { daysAgo: 1, type: '야외', exerciseType: 'running', hasGps: true, title: '저녁 산책 (달리기 모드)', dist: 3.5, pace: 585, hr: 115, z2: 68, cad: 118, drift: 4 },
+          { daysAgo: 2, type: '실내', exerciseType: 'running', hasGps: false, title: '실내 트랙 조깅 (GPS 없음)', dist: 5.2, pace: 352, hr: 132, z2: 81, cad: 173, drift: 5 },
+          { daysAgo: 3, type: '트레드밀', exerciseType: 'treadmill', hasGps: false, title: '실내 트레드밀 러닝', dist: 7.0, pace: 342, hr: 134, z2: 84, cad: 174, drift: 5 },
+          { daysAgo: 4, type: '걷기', exerciseType: 'walking', hasGps: true, title: '아침 걷기 운동', dist: 4.1, pace: 660, hr: 108, z2: 38, cad: 114, drift: 3 },
+          { daysAgo: 5, type: '야외', exerciseType: 'running', hasGps: true, title: '야외 템포 러닝', dist: 12.5, pace: 315, hr: 148, z2: 46, cad: 179, drift: 11 },
+          { daysAgo: 6, type: '야외', exerciseType: 'running', hasGps: true, title: '저녁 가벼운 걷기 (달리기 모드)', dist: 2.8, pace: 615, hr: 112, z2: 52, cad: 116, drift: 3 },
+          { daysAgo: 7, type: '트레드밀', exerciseType: 'treadmill', hasGps: false, title: '실내 트레드밀 러닝', dist: 6.5, pace: 336, hr: 135, z2: 79, cad: 175, drift: 6 },
+          { daysAgo: 9, type: '야외', exerciseType: 'running', hasGps: true, title: '장거리 LSD 러닝', dist: 15.0, pace: 338, hr: 133, z2: 82, cad: 175, drift: 10 },
+          { daysAgo: 10, type: '실내', exerciseType: 'running', hasGps: false, title: '실내 체육관 러닝 (GPS 없음)', dist: 4.8, pace: 365, hr: 129, z2: 88, cad: 172, drift: 4 },
+          { daysAgo: 11, type: '야외', exerciseType: 'running', hasGps: true, title: '야외 인터벌', dist: 8.4, pace: 306, hr: 154, z2: 34, cad: 182, drift: 12 },
+          { daysAgo: 13, type: '걷기', exerciseType: 'walking', hasGps: true, title: '회복 걷기', dist: 3.6, pace: 680, hr: 106, z2: 31, cad: 112, drift: 2 },
+          { daysAgo: 15, type: '야외', exerciseType: 'running', hasGps: true, title: '야외 유산소 러닝', dist: 9.5, pace: 332, hr: 134, z2: 76, cad: 176, drift: 7 },
+          { daysAgo: 17, type: '야외', exerciseType: 'running', hasGps: true, title: '저녁 산책 (달리기 모드)', dist: 3.2, pace: 590, hr: 116, z2: 64, cad: 117, drift: 4 },
+          { daysAgo: 19, type: '트레드밀', exerciseType: 'treadmill', hasGps: false, title: '실내 트레드밀 러닝', dist: 5.5, pace: 350, hr: 131, z2: 86, cad: 173, drift: 4 },
+          { daysAgo: 21, type: '야외', exerciseType: 'running', hasGps: true, title: '주말 롱런', dist: 14.0, pace: 340, hr: 135, z2: 73, cad: 174, drift: 9 },
+          { daysAgo: 23, type: '실내', exerciseType: 'running', hasGps: false, title: '실내 조깅 (GPS 없음)', dist: 6.0, pace: 358, hr: 128, z2: 89, cad: 171, drift: 4 },
+          { daysAgo: 25, type: '걷기', exerciseType: 'walking', hasGps: false, title: '실내 걷기', dist: 3.0, pace: 700, hr: 104, z2: 25, cad: 110, drift: 2 }
         ];
 
         return templates.map(function (t, idx) {
-          var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - t.daysAgo, 7, 30, 0);
-          var y = d.getFullYear();
-          var m = String(d.getMonth() + 1).padStart(2, '0');
-          var day = String(d.getDate()).padStart(2, '0');
-          var dateStr = y + '-' + m + '-' + day;
-
+          var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - t.daysAgo, t.pace >= 540 ? 20 : 7, 30, 0);
           var totalSec = Math.round(t.dist * t.pace);
           var totalMins = Math.max(12, Math.round(totalSec / 60));
           var ts = [];
           for (var min = 1; min <= totalMins; min++) {
             var progress = (min - 1) / Math.max(1, totalMins - 1);
-            // Warmup ramp for first 3 mins, then progressive cardiac drift
-            var warmup = min <= 3 ? -12 + (min - 1) * 4 : 0;
+            var warmup = min <= 3 ? -10 + (min - 1) * 3 : 0;
             var wave = Math.round(Math.sin(min * 0.7 + idx) * 2);
             var hrVal = Math.round(t.hr - (t.drift * 0.45) + (t.drift * progress) + warmup + wave);
             var paceWave = Math.round(Math.cos(min * 0.55 + idx) * 5);
@@ -1090,7 +1402,7 @@
               hr: hrVal,
               max_hr: hrVal + 3,
               min_hr: hrVal - 3,
-              zone2_ratio: hrVal <= 148 ? 1.0 : 0.25,
+              zone2_ratio: (hrVal >= 120 && hrVal <= 140) ? 1.0 : 0.0,
               pace_sec: paceVal,
               cadence: t.cad + Math.round(Math.sin(min) * 2),
               distance_m: distPerMin
@@ -1101,19 +1413,20 @@
             id: 'demo-' + (idx + 1),
             hc_session_id: 'demo-hc-' + (idx + 1),
             source_package: 'com.sec.android.app.shealth',
-            title: t.type === '트레드밀' ? '실내 트레드밀 러닝' : '야외 유산소 러닝',
+            title: t.title,
             run_date: d.toISOString(),
             workout_type: t.type,
-            run_type: t.type,
+            exercise_type: t.exerciseType,
+            has_gps: t.hasGps,
             distance_km: t.dist,
             distance_meters: Math.round(t.dist * 1000),
             duration_sec: totalSec,
             avg_pace_sec: t.pace,
             avg_hr: t.hr,
-            max_hr: t.hr + 14,
-            min_hr: t.hr - 22,
-            zone2_min_bpm: 125,
-            zone2_max_bpm: 148,
+            max_hr: t.hr + 12,
+            min_hr: t.hr - 18,
+            zone2_min_bpm: 120,
+            zone2_max_bpm: 140,
             zone2_pct: t.z2,
             zone2_ratio: Number((t.z2 / 100).toFixed(4)),
             avg_cadence: t.cad,
@@ -1123,6 +1436,14 @@
       }
 
       // Config Persistence
+      function persistConfigState() {
+        try {
+          localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(state.config));
+        } catch (e) {
+          console.warn('설정 저장 실패:', e);
+        }
+      }
+
       function loadConfig() {
         try {
           var raw = localStorage.getItem(CONFIG_STORAGE_KEY);
@@ -1134,11 +1455,31 @@
             state.config.geminiModel = ALLOWED_MODELS.indexOf(parsed.geminiModel) !== -1
               ? parsed.geminiModel
               : DEFAULT_MODEL;
+            state.config.zone2Mode = parsed.zone2Mode === 'custom' ? 'custom' : 'db';
+
+            var zMin = parseInt(parsed.zone2MinBpm, 10);
+            var zMax = parseInt(parsed.zone2MaxBpm, 10);
+            if (Number.isFinite(zMin) && Number.isFinite(zMax) && zMin >= 40 && zMax <= 240 && zMin <= zMax) {
+              state.config.zone2MinBpm = zMin;
+              state.config.zone2MaxBpm = zMax;
+            }
+
+            var walkSec = parseInt(parsed.walkPaceThresholdSec, 10);
+            if (Number.isFinite(walkSec) && walkSec >= 240 && walkSec <= 1800) {
+              state.config.walkPaceThresholdSec = walkSec;
+            }
+
+            if (Array.isArray(parsed.chartTypes)) {
+              state.config.chartTypes = parsed.chartTypes.filter(function (t) {
+                return ALL_ACTIVITY_TYPES.indexOf(t) !== -1;
+              });
+            }
           }
         } catch (e) {
           console.warn('설정 로드 실패:', e);
         }
         syncSettingsInputs();
+        syncTrainingPrefInputs();
         updateStatusIndicators();
       }
 
@@ -1149,18 +1490,12 @@
         var model = $('selectGeminiModel').value;
         if (ALLOWED_MODELS.indexOf(model) === -1) model = DEFAULT_MODEL;
 
-        state.config = {
-          supabaseUrl: url,
-          supabaseKey: supaKey,
-          geminiKey: gemKey,
-          geminiModel: model
-        };
+        state.config.supabaseUrl = url;
+        state.config.supabaseKey = supaKey;
+        state.config.geminiKey = gemKey;
+        state.config.geminiModel = model;
 
-        try {
-          localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(state.config));
-        } catch (e) {
-          console.warn('설정 저장 실패:', e);
-        }
+        persistConfigState();
         syncSettingsInputs();
         updateStatusIndicators();
       }
@@ -1171,6 +1506,48 @@
         $('inputGeminiKey').value = state.config.geminiKey || '';
         $('selectGeminiModel').value = state.config.geminiModel || DEFAULT_MODEL;
         $('activeModelBadge').textContent = 'Model: ' + (state.config.geminiModel || DEFAULT_MODEL);
+      }
+
+      function updateWalkSpeedHint(paceSec) {
+        var hint = $('walkSpeedHint');
+        if (!hint) return;
+        if (!Number.isFinite(paceSec) || paceSec <= 0) {
+          hint.textContent = '-';
+          return;
+        }
+        var kmh = 3600 / paceSec;
+        hint.textContent = '≈ ' + kmh.toFixed(1) + ' km/h 이하';
+      }
+
+      function syncTrainingPrefInputs() {
+        var activeRange = getActiveZone2Range();
+        var displayMin = state.config.zone2Mode === 'custom'
+          ? state.config.zone2MinBpm
+          : (activeRange ? activeRange.minBpm : state.config.zone2MinBpm);
+        var displayMax = state.config.zone2Mode === 'custom'
+          ? state.config.zone2MaxBpm
+          : (activeRange ? activeRange.maxBpm : state.config.zone2MaxBpm);
+
+        $('inputZone2Min').value = displayMin;
+        $('inputZone2Max').value = displayMax;
+
+        var badge = $('zone2ActiveBadge');
+        if (state.config.zone2Mode === 'custom') {
+          badge.textContent = '사용자 지정 ' + state.config.zone2MinBpm + '~' + state.config.zone2MaxBpm + ' bpm';
+          badge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700';
+        } else {
+          badge.textContent = activeRange
+            ? 'DB 기록 기준 (' + activeRange.minBpm + '~' + activeRange.maxBpm + ' bpm)'
+            : 'DB 기록 기준';
+          badge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700';
+        }
+
+        var walkSec = Number.isFinite(state.config.walkPaceThresholdSec)
+          ? state.config.walkPaceThresholdSec
+          : DEFAULT_WALK_PACE_SEC;
+        $('inputWalkPaceMin').value = Math.floor(walkSec / 60);
+        $('inputWalkPaceSec').value = String(walkSec % 60).padStart(2, '0');
+        updateWalkSpeedHint(walkSec);
       }
 
       function updateStatusIndicators() {
@@ -1217,7 +1594,7 @@
         $('refreshIcon').classList.add('animate-spin');
         hideNotice();
 
-        var endpoint = state.config.supabaseUrl + '/rest/v1/running_logs?select=*&order=run_date.desc&limit=30';
+        var endpoint = state.config.supabaseUrl + '/rest/v1/running_logs?select=*&order=run_date.desc&limit=100';
 
         try {
           var res = await fetch(endpoint, {
@@ -1251,11 +1628,15 @@
           state.runs = data.map(normalizeRunRow).sort(function (a, b) {
             return b.sortTime - a.sortTime;
           });
+          recomputeDerivedRunMetrics();
+          syncTrainingPrefInputs();
           updateStatusIndicators();
           renderDashboard();
 
           if (state.runs.length === 0) {
             showNotice('연결에 성공했지만 <code>running_logs</code> 테이블에 조회된 러닝 기록이 없습니다.', 'info');
+          } else if (state.runs.some(function (r) { return r.hasGps === null; })) {
+            showNotice('일부 기존 기록에 GPS 유무(<code>has_gps</code>) 정보가 없어 기본 야외/걷기(추정)로 표시됩니다. 업데이트된 <strong>MyRunSync</strong> 앱으로 다시 동기화하면 <strong>실내</strong>와 <strong>야외</strong>가 자동 분리됩니다.', 'info');
           }
         } catch (err) {
           console.error('Supabase fetch error:', err);
@@ -1318,9 +1699,10 @@
           : scopeLabel;
 
         var avgZ2 = averageOf(scopeRuns, function (r) { return r.zone2Pct; });
+        var activeZ2 = getActiveZone2Range();
         $('statZone2').textContent = avgZ2 !== null ? avgZ2.toFixed(1) + '%' : '-';
         $('statZone2Bar').style.width = avgZ2 !== null ? Math.min(100, Math.max(0, avgZ2)).toFixed(1) + '%' : '0%';
-        $('statZone2Sub').textContent = scopeLabel + ' 유산소 비율';
+        $('statZone2Sub').textContent = scopeLabel + (activeZ2 ? ' · ' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm' : ' 유산소 비율');
 
         var avgCad = averageOf(scopeRuns, function (r) { return r.avgCadence; });
         $('statCadence').textContent = avgCad !== null ? Math.round(avgCad) + ' spm' : '-';
@@ -1346,9 +1728,61 @@
         }
       }
 
+      function renderChartTypeFilterUI() {
+        var counts = {};
+        ALL_ACTIVITY_TYPES.forEach(function (t) { counts[t] = 0; });
+        state.runs.forEach(function (r) {
+          counts[r.runType] = (counts[r.runType] || 0) + 1;
+        });
+
+        var selected = state.config.chartTypes || [];
+        var chipsHtml = ALL_ACTIVITY_TYPES.map(function (type) {
+          var meta = getActivityMeta(type);
+          var isSelected = selected.indexOf(type) !== -1;
+          var count = counts[type] || 0;
+          var cls = isSelected
+            ? meta.chipActiveClass
+            : 'bg-slate-50 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-slate-800 dark:hover:text-slate-200';
+          return '<button type="button" data-chart-type="' + escapeHtml(type) + '" aria-pressed="' + isSelected + '" title="' + escapeHtml(meta.description) + '" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border transition-all ' + cls + '">' +
+            '<span>' + meta.icon + '</span>' +
+            '<span>' + escapeHtml(meta.label) + '</span>' +
+            '<span class="opacity-75 text-[11px] tabular-nums">(' + count + ')</span>' +
+          '</button>';
+        }).join('');
+        $('chartTypeChips').innerHTML = chipsHtml;
+
+        function arraysMatch(a, b) {
+          return a.length === b.length && b.every(function (x) { return a.indexOf(x) !== -1; });
+        }
+        document.querySelectorAll('.chart-preset-btn').forEach(function (btn) {
+          var preset = btn.getAttribute('data-chart-preset');
+          var active = false;
+          if (preset === 'all') active = arraysMatch(selected, ALL_ACTIVITY_TYPES);
+          else if (preset === 'running') active = arraysMatch(selected, RUNNING_ACTIVITY_TYPES);
+          else if (preset === 'walking') active = arraysMatch(selected, WALKING_ACTIVITY_TYPES);
+
+          btn.classList.toggle('bg-indigo-600', active);
+          btn.classList.toggle('text-white', active);
+          btn.classList.toggle('border-indigo-600', active);
+          btn.classList.toggle('text-slate-600', !active);
+          btn.classList.toggle('dark:text-slate-300', !active);
+        });
+      }
+
       function renderTrendCharts() {
-        var recent15 = state.runs.slice(0, 15).slice().reverse();
+        var selectedTypes = state.config.chartTypes || [];
+        var filteredForChart = state.runs.filter(function (r) {
+          return selectedTypes.indexOf(r.runType) !== -1;
+        });
+        var recent15 = filteredForChart.slice(0, 15).slice().reverse();
         var colors = getChartColors();
+
+        var activeZ2 = getActiveZone2Range();
+        $('chartHrPaceSub').textContent = recent15.length
+          ? '선택 유형 최근 ' + recent15.length + '회 표시 · 페이스는 위쪽일수록 빠릅니다'
+          : '페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)';
+        $('chartZone2Sub').textContent = '저강도 유산소 영역 유지율 (%)' +
+          (activeZ2 ? ' · ' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm' : '');
 
         destroyChart('hrPace');
         destroyChart('zone2');
@@ -1365,6 +1799,7 @@
         var hrData = recent15.map(function (r) { return r.avgHr; });
         var paceData = recent15.map(function (r) { return r.avgPaceSec; });
         var z2Data = recent15.map(function (r) { return r.zone2Pct !== null ? Number(r.zone2Pct.toFixed(1)) : null; });
+        var pointColors = recent15.map(function (r) { return getActivityMeta(r.runType).color; });
 
         // Chart 1: Dual-axis Avg HR vs Avg Pace
         var ctx1 = $('chartHrPace').getContext('2d');
@@ -1379,9 +1814,11 @@
                 yAxisID: 'yHr',
                 borderColor: '#f43f5e',
                 backgroundColor: 'rgba(244, 63, 94, 0.12)',
+                pointBackgroundColor: pointColors,
+                pointBorderColor: '#f43f5e',
                 borderWidth: 2.5,
-                pointRadius: 3.5,
-                pointHoverRadius: 6,
+                pointRadius: 4,
+                pointHoverRadius: 6.5,
                 tension: 0.3,
                 spanGaps: true
               },
@@ -1391,9 +1828,11 @@
                 yAxisID: 'yPace',
                 borderColor: '#0ea5e9',
                 backgroundColor: 'rgba(14, 165, 233, 0.12)',
+                pointBackgroundColor: pointColors,
+                pointBorderColor: '#0ea5e9',
                 borderWidth: 2.5,
-                pointRadius: 3.5,
-                pointHoverRadius: 6,
+                pointRadius: 4,
+                pointHoverRadius: 6.5,
                 tension: 0.3,
                 spanGaps: true
               }
@@ -1403,6 +1842,12 @@
             responsive: true,
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
+            onClick: function (evt, elements) {
+              if (elements && elements.length > 0) {
+                var run = recent15[elements[0].index];
+                if (run) openRunModal(run);
+              }
+            },
             plugins: {
               legend: {
                 labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
@@ -1418,7 +1863,10 @@
                   title: function (items) {
                     var idx = items[0] ? items[0].dataIndex : 0;
                     var run = recent15[idx];
-                    return run ? formatDateKr(run.runDate) + ' · ' + run.runType + (run.distanceKm ? ' (' + run.distanceKm.toFixed(1) + 'km)' : '') : '';
+                    if (!run) return '';
+                    var meta = getActivityMeta(run.runType);
+                    var gpsTag = run.hasGps === true ? ' · GPS' : (run.hasGps === false ? ' · GPS없음' : '');
+                    return formatDateKr(run.runDate) + ' · ' + meta.icon + ' ' + meta.label + gpsTag + (run.distanceKm ? ' (' + run.distanceKm.toFixed(1) + 'km)' : '');
                   },
                   label: function (ctx) {
                     if (ctx.datasetIndex === 0) {
@@ -1475,9 +1923,10 @@
                 backgroundColor: gradient,
                 fill: true,
                 borderWidth: 2.5,
-                pointRadius: 3.5,
-                pointHoverRadius: 6,
-                pointBackgroundColor: '#10b981',
+                pointRadius: 4,
+                pointHoverRadius: 6.5,
+                pointBackgroundColor: pointColors,
+                pointBorderColor: '#10b981',
                 tension: 0.35,
                 spanGaps: true
               }
@@ -1487,6 +1936,12 @@
             responsive: true,
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
+            onClick: function (evt, elements) {
+              if (elements && elements.length > 0) {
+                var run = recent15[elements[0].index];
+                if (run) openRunModal(run);
+              }
+            },
             plugins: {
               legend: {
                 labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
@@ -1502,7 +1957,9 @@
                   title: function (items) {
                     var idx = items[0] ? items[0].dataIndex : 0;
                     var run = recent15[idx];
-                    return run ? formatDateKr(run.runDate) + ' · ' + run.runType : '';
+                    if (!run) return '';
+                    var meta = getActivityMeta(run.runType);
+                    return formatDateKr(run.runDate) + ' · ' + meta.icon + ' ' + meta.label;
                   },
                   label: function (ctx) {
                     return ' Zone 2 비율: ' + (ctx.parsed.y !== null ? ctx.parsed.y.toFixed(1) + '%' : '-');
@@ -1554,10 +2011,7 @@
         }
 
         tbody.innerHTML = filtered.map(function (run) {
-          var isTreadmill = run.runType === '트레드밀';
-          var badgeClass = isTreadmill
-            ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/70'
-            : 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/70';
+          var meta = getActivityMeta(run.runType);
 
           var z2Text = run.zone2Pct !== null ? run.zone2Pct.toFixed(0) + '%' : '-';
           var z2Width = run.zone2Pct !== null ? Math.min(100, Math.max(0, run.zone2Pct)).toFixed(0) : 0;
@@ -1580,8 +2034,9 @@
               (metaLine ? '<div class="text-[11px] font-normal text-slate-400 dark:text-slate-500 mt-0.5">' + escapeHtml(metaLine) + '</div>' : '') +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap">' +
-              '<span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full border ' + badgeClass + '">' +
-                escapeHtml(run.runType) +
+              '<span title="' + escapeHtml(meta.description) + '" class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full border ' + meta.badgeClass + '">' +
+                '<span>' + meta.icon + '</span>' +
+                '<span>' + escapeHtml(meta.label) + '</span>' +
               '</span>' +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap text-right font-semibold tabular-nums">' +
@@ -1614,12 +2069,24 @@
         state.selectedRun = run;
 
         $('modalTitle').textContent = formatDateKr(run.runDate) + (run.title ? ' · ' + run.title : ' 러닝 상세');
-        var isTreadmill = run.runType === '트레드밀';
+        var meta = getActivityMeta(run.runType);
         var badge = $('modalTypeBadge');
-        badge.textContent = run.runType;
-        badge.className = 'px-2 py-0.5 text-xs font-semibold rounded-full border ' + (isTreadmill
-          ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/70'
-          : 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/70');
+        badge.textContent = meta.icon + ' ' + meta.label;
+        badge.title = meta.description || '';
+        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full border ' + meta.badgeClass;
+
+        var gpsBadge = $('modalGpsBadge');
+        if (run.hasGps === true) {
+          gpsBadge.textContent = '🛰️ GPS 있음';
+          gpsBadge.className = 'px-2 py-0.5 text-xs font-medium rounded-full border border-sky-200 dark:border-sky-800/70 bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300';
+          gpsBadge.classList.remove('hidden');
+        } else if (run.hasGps === false) {
+          gpsBadge.textContent = '🏠 GPS 없음';
+          gpsBadge.className = 'px-2 py-0.5 text-xs font-medium rounded-full border border-violet-200 dark:border-violet-800/70 bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300';
+          gpsBadge.classList.remove('hidden');
+        } else {
+          gpsBadge.classList.add('hidden');
+        }
 
         var sourceBadge = $('modalSourceBadge');
         var sourceLabel = formatSourceLabel(run.sourcePackage);
@@ -1638,7 +2105,13 @@
           zone2Badge.classList.add('hidden');
         }
 
-        $('modalSubtitle').textContent = run.notes ? run.notes : '1분 단위 심박수 및 페이스 구간별 추이를 확인하세요.';
+        if (run.notes) {
+          $('modalSubtitle').textContent = run.notes;
+        } else if (run.runType === '걷기(추정)') {
+          $('modalSubtitle').textContent = '워치에서 달리기 설정으로 GPS와 함께 기록되었으나 평균 속도가 낮아 걷기(추정)로 분류되었습니다.';
+        } else {
+          $('modalSubtitle').textContent = '1분 단위 심박수 및 페이스 구간별 추이를 확인하세요.';
+        }
 
         var hrRangeText = (run.maxHr !== null || run.minHr !== null)
           ? '최고 ' + (run.maxHr !== null ? run.maxHr : '-') + ' / 최저 ' + (run.minHr !== null ? run.minHr : '-')
@@ -1675,12 +2148,16 @@
           driftBox.classList.add('hidden');
         }
 
-        renderTimeseriesModalChart(run.timeseries);
+        renderTimeseriesModalChart(run);
         $('runDetailModal').classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
       }
 
-      function renderTimeseriesModalChart(timeseries) {
+      function renderTimeseriesModalChart(run) {
+        var timeseries = run && Array.isArray(run.timeseries) ? run.timeseries : [];
+        var z2Min = run && run.zone2MinBpm ? run.zone2MinBpm : null;
+        var z2Max = run && run.zone2MaxBpm ? run.zone2MaxBpm : null;
+
         destroyChart('timeseries');
         var emptyEl = $('modalChartEmpty');
         var countEl = $('modalPointsCount');
@@ -1698,9 +2175,27 @@
         var hrs = timeseries.map(function (pt) { return pt.hr; });
         var paces = timeseries.map(function (pt) { return pt.paceSec; });
 
+        var zone2BandPlugin = {
+          id: 'zone2Band',
+          beforeDatasetsDraw: function (chart) {
+            if (!z2Min || !z2Max || !chart.scales || !chart.scales.yHr || !chart.chartArea) return;
+            var yScale = chart.scales.yHr;
+            var area = chart.chartArea;
+            var yTop = Math.max(area.top, yScale.getPixelForValue(z2Max));
+            var yBottom = Math.min(area.bottom, yScale.getPixelForValue(z2Min));
+            if (yBottom <= yTop) return;
+            var ctx2d = chart.ctx;
+            ctx2d.save();
+            ctx2d.fillStyle = isDarkMode() ? 'rgba(16, 185, 129, 0.14)' : 'rgba(16, 185, 129, 0.12)';
+            ctx2d.fillRect(area.left, yTop, area.right - area.left, yBottom - yTop);
+            ctx2d.restore();
+          }
+        };
+
         var ctx = $('chartTimeseries').getContext('2d');
         state.charts.timeseries = new Chart(ctx, {
           type: 'line',
+          plugins: [zone2BandPlugin],
           data: {
             labels: labels,
             datasets: [
@@ -1844,9 +2339,10 @@
 
       // Prompt Builders for Gemini AI Running Coach
       function formatRunLineForPrompt(run) {
+        var gpsLabel = run.hasGps === true ? 'GPS있음' : (run.hasGps === false ? 'GPS없음' : 'GPS미상');
         return [
           run.runDate || '날짜미상',
-          run.runType,
+          run.runType + '(' + gpsLabel + ')',
           (run.distanceKm !== null ? run.distanceKm.toFixed(2) + 'km' : '-'),
           formatDuration(run.durationSec),
           '페이스 ' + formatPace(run.avgPaceSec),
@@ -1912,13 +2408,18 @@
         var dist7 = recent7.reduce(function (s, r) { return s + (r.distanceKm || 0); }, 0);
         var distPrev7 = prev7.reduce(function (s, r) { return s + (r.distanceKm || 0); }, 0);
 
+        var activeZ2 = getActiveZone2Range();
+        var z2Note = activeZ2
+          ? '현재 적용된 유산소(Zone 2) 심박 구간: ' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm\n'
+          : '';
+
         return [
           '아래는 나의 최근 2주간 러닝 훈련 요약 데이터입니다.',
           '1) 유산소 베이스(Zone 2 비율 및 심박 대비 페이스 효율) 향상도,',
           '2) 주간 거리 변화(1주차 ' + distPrev7.toFixed(1) + 'km → 이번 주 ' + dist7.toFixed(1) + 'km)의 적정성과 과부하(10% 룰 등) 위험,',
           '3) 누적 피로도 진단 및 향후 1주 훈련 강도 조절 방향을 한국어로 분석해주세요.',
           '',
-          '### ' + scopeTitle,
+          z2Note + '### ' + scopeTitle,
           scopeRuns.map(function (r, i) { return (i + 1) + '. ' + formatRunLineForPrompt(r); }).join('\n')
         ].join('\n');
       }
@@ -1927,6 +2428,7 @@
         var memo = $('inputConditionMemo').value.trim();
         var recent14 = getRecentRunsByDays(14);
         var scopeRuns = recent14.length > 0 ? recent14 : state.runs.slice(0, 7);
+        var activeZ2 = getActiveZone2Range();
 
         var recentText = scopeRuns.length
           ? scopeRuns.map(function (r, i) { return (i + 1) + '. ' + formatRunLineForPrompt(r); }).join('\n')
@@ -1940,17 +2442,19 @@
           '3. **권장 심박수 구간:** 구체적인 bpm 범위 및 Zone 안내',
           '4. **주의사항 및 보강/회복 팁**',
           '',
+          activeZ2 ? '### 현재 설정된 Zone 2 유산소 심박 구간\n' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm\n' : '',
           '### 오늘의 컨디션 메모',
           memo ? memo : '(별도 컨디션 메모 미입력 — 최근 훈련 부하 기준으로 보수적/균형 있게 제안해주세요)',
           '',
           '### 최근 러닝 기록 (' + scopeRuns.length + '회)',
           recentText
-        ].join('\n');
+        ].filter(Boolean).join('\n');
       }
 
       function buildFreeQuestionPrompt(questionText) {
         var includeData = $('chkIncludeData').checked;
         var memo = $('inputConditionMemo').value.trim();
+        var activeZ2 = getActiveZone2Range();
         if (!includeData || !state.runs.length) {
           return memo
             ? questionText + '\n\n(참고 — 오늘 컨디션 메모: ' + memo + ')'
@@ -1960,6 +2464,7 @@
         return [
           questionText,
           '',
+          activeZ2 ? '### 현재 설정된 Zone 2 심박 구간\n' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm' : '',
           memo ? '### 오늘 컨디션 메모\n' + memo : '',
           '### 참고용 최근 러닝 기록 (' + recent10.length + '회)',
           recent10.map(function (r, i) { return (i + 1) + '. ' + formatRunLineForPrompt(r); }).join('\n')
@@ -2086,13 +2591,14 @@
         updateThemeIcon();
         renderTrendCharts();
         if (!$('runDetailModal').classList.contains('hidden') && state.selectedRun) {
-          renderTimeseriesModalChart(state.selectedRun.timeseries);
+          renderTimeseriesModalChart(state.selectedRun);
         }
       }
 
       // Full Dashboard Render
       function renderDashboard() {
         renderSummaryCards();
+        renderChartTypeFilterUI();
         renderTrendCharts();
         renderRunsTable();
       }
@@ -2131,6 +2637,8 @@
           saveConfigFromInputs();
           state.isDemo = true;
           state.runs = generateDemoRuns();
+          recomputeDerivedRunMetrics();
+          syncTrainingPrefInputs();
           $('demoBanner').classList.remove('hidden');
           hideNotice();
           openSettingsPanel(false);
@@ -2145,14 +2653,133 @@
         // Reset settings
         $('btnResetSettings').addEventListener('click', function () {
           try { localStorage.removeItem(CONFIG_STORAGE_KEY); } catch (e) {}
-          state.config = { supabaseUrl: '', supabaseKey: '', geminiKey: '', geminiModel: DEFAULT_MODEL };
+          state.config = {
+            supabaseUrl: '',
+            supabaseKey: '',
+            geminiKey: '',
+            geminiModel: DEFAULT_MODEL,
+            zone2Mode: 'db',
+            zone2MinBpm: DEFAULT_ZONE2_MIN_BPM,
+            zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
+            walkPaceThresholdSec: DEFAULT_WALK_PACE_SEC,
+            chartTypes: ALL_ACTIVITY_TYPES.slice()
+          };
           state.runs = [];
           state.isDemo = false;
           $('demoBanner').classList.add('hidden');
           syncSettingsInputs();
+          syncTrainingPrefInputs();
           updateStatusIndicators();
           renderDashboard();
           showNotice('저장된 API 설정을 초기화했습니다.', 'info');
+        });
+
+        // Training Preferences: Zone 2 BPM range
+        function applyCustomZone2(minBpm, maxBpm) {
+          if (!Number.isFinite(minBpm) || !Number.isFinite(maxBpm) || minBpm < 40 || maxBpm > 240 || minBpm > maxBpm) {
+            showNotice('⚠️ Zone 2 심박수는 40~240 bpm 범위이며 최소값이 최대값 이하여야 합니다.', 'error');
+            return;
+          }
+          hideNotice();
+          state.config.zone2Mode = 'custom';
+          state.config.zone2MinBpm = Math.round(minBpm);
+          state.config.zone2MaxBpm = Math.round(maxBpm);
+          persistConfigState();
+          recomputeDerivedRunMetrics();
+          syncTrainingPrefInputs();
+          renderDashboard();
+          if (!$('runDetailModal').classList.contains('hidden') && state.selectedRun) {
+            openRunModal(state.selectedRun);
+          }
+        }
+
+        $('btnApplyZone2').addEventListener('click', function () {
+          applyCustomZone2(parseInt($('inputZone2Min').value, 10), parseInt($('inputZone2Max').value, 10));
+        });
+
+        $('btnZone2UseDb').addEventListener('click', function () {
+          hideNotice();
+          state.config.zone2Mode = 'db';
+          persistConfigState();
+          recomputeDerivedRunMetrics();
+          syncTrainingPrefInputs();
+          renderDashboard();
+          if (!$('runDetailModal').classList.contains('hidden') && state.selectedRun) {
+            openRunModal(state.selectedRun);
+          }
+        });
+
+        $('btnMhr6070').addEventListener('click', function () {
+          var mhr = parseInt($('inputMhr').value, 10);
+          if (!Number.isFinite(mhr) || mhr < 100 || mhr > 230) return;
+          applyCustomZone2(Math.round(mhr * 0.60), Math.round(mhr * 0.70));
+        });
+
+        $('btnMhr6575').addEventListener('click', function () {
+          var mhr = parseInt($('inputMhr').value, 10);
+          if (!Number.isFinite(mhr) || mhr < 100 || mhr > 230) return;
+          applyCustomZone2(Math.round(mhr * 0.65), Math.round(mhr * 0.75));
+        });
+
+        // Training Preferences: Walking (Inferred) Pace Threshold
+        function updateLiveWalkHintFromInputs() {
+          var mins = parseInt($('inputWalkPaceMin').value, 10);
+          var secs = parseInt($('inputWalkPaceSec').value, 10);
+          if (Number.isFinite(mins) && Number.isFinite(secs) && mins >= 0 && secs >= 0 && secs < 60) {
+            updateWalkSpeedHint(mins * 60 + secs);
+          }
+        }
+        $('inputWalkPaceMin').addEventListener('input', updateLiveWalkHintFromInputs);
+        $('inputWalkPaceSec').addEventListener('input', updateLiveWalkHintFromInputs);
+
+        $('btnApplyWalkPace').addEventListener('click', function () {
+          var mins = parseInt($('inputWalkPaceMin').value, 10);
+          var secs = parseInt($('inputWalkPaceSec').value, 10);
+          if (!Number.isFinite(mins) || !Number.isFinite(secs) || mins < 4 || mins > 30 || secs < 0 || secs > 59) {
+            showNotice('⚠️ 걷기(추정) 기준 페이스는 4분 00초 ~ 30분 59초 범위로 입력해주세요.', 'error');
+            return;
+          }
+          hideNotice();
+          state.config.walkPaceThresholdSec = mins * 60 + secs;
+          persistConfigState();
+          recomputeDerivedRunMetrics();
+          syncTrainingPrefInputs();
+          renderDashboard();
+          if (!$('runDetailModal').classList.contains('hidden') && state.selectedRun) {
+            openRunModal(state.selectedRun);
+          }
+        });
+
+        // Trend Charts Multi-Select Filter Chips & Presets
+        $('chartTypeChips').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-chart-type]');
+          if (!btn) return;
+          var type = btn.getAttribute('data-chart-type');
+          var current = (state.config.chartTypes || []).slice();
+          var idx = current.indexOf(type);
+          if (idx === -1) {
+            current.push(type);
+          } else {
+            current.splice(idx, 1);
+          }
+          state.config.chartTypes = ALL_ACTIVITY_TYPES.filter(function (t) {
+            return current.indexOf(t) !== -1;
+          });
+          persistConfigState();
+          renderChartTypeFilterUI();
+          renderTrendCharts();
+        });
+
+        document.querySelectorAll('.chart-preset-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var preset = btn.getAttribute('data-chart-preset');
+            if (preset === 'all') state.config.chartTypes = ALL_ACTIVITY_TYPES.slice();
+            else if (preset === 'running') state.config.chartTypes = RUNNING_ACTIVITY_TYPES.slice();
+            else if (preset === 'walking') state.config.chartTypes = WALKING_ACTIVITY_TYPES.slice();
+            persistConfigState();
+            renderChartTypeFilterUI();
+            renderTrendCharts();
+          });
         });
 
         // Table filter tabs

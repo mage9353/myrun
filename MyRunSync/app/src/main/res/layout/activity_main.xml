@@ -14,9 +14,18 @@
             android:id="@+id/tvStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="6dp"
             android:text="@string/status_ready"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvLastSync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/last_sync_none"
+            android:textSize="13sp"
+            android:alpha="0.75" />
 
         <TextView
             android:layout_width="match_parent"
@@ -26,56 +35,201 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
+        <LinearLayout
+            android:id="@+id/layoutSupabaseSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvSupabaseSummary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="12dp"
+                android:text="@string/supabase_saved_summary"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnEditSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_edit_settings" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutSupabaseEditor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_supabase_url"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etSupabaseUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="@string/hint_supabase_url"
+                android:inputType="textUri"
+                android:singleLine="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_supabase_anon_key"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etSupabaseAnonKey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:hint="@string/hint_supabase_anon_key"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+
+            <CheckBox
+                android:id="@+id/cbShowAnonKey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="@string/cb_show_anon_key" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnSaveSettings"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/btn_save_settings" />
+
+                <Button
+                    android:id="@+id/btnCancelEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/btn_cancel_edit"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_supabase_url"
-            android:textSize="13sp" />
+            android:layout_marginBottom="8dp"
+            android:text="@string/section_zone2_settings"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/etSupabaseUrl"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="@string/hint_supabase_url"
-            android:inputType="textUri"
-            android:singleLine="true" />
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etZone2MinBpm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_zone2_min"
+                android:inputType="number"
+                android:singleLine="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:text="~"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/etZone2MaxBpm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_zone2_max"
+                android:inputType="number"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/btnSaveZone2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/btn_save_zone2" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_supabase_anon_key"
-            android:textSize="13sp" />
+            android:layout_marginBottom="8dp"
+            android:text="@string/section_auto_sync"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/etSupabaseAnonKey"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchAutoSyncOnOpen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:hint="@string/hint_supabase_anon_key"
-            android:inputType="textPassword"
-            android:singleLine="true" />
+            android:layout_marginBottom="8dp"
+            android:text="@string/switch_auto_sync_on_open" />
 
-        <CheckBox
-            android:id="@+id/cbShowAnonKey"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:text="@string/cb_show_anon_key" />
-
-        <Button
-            android:id="@+id/btnSaveSettings"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchBgAutoSync"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:text="@string/btn_save_settings" />
+            android:layout_marginBottom="8dp"
+            android:text="@string/switch_bg_auto_sync" />
+
+        <LinearLayout
+            android:id="@+id/layoutBgIntervalRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_bg_sync_interval"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/spinnerSyncInterval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnPermissions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/btn_grant_permissions" />
+
+        <Button
+            android:id="@+id/btnOpenHcSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/btn_open_hc_settings" />
 
         <Button
             android:id="@+id/btnSync"

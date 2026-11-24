@@ -70,7 +70,9 @@ data class RawRunningTelemetry(
     val totalSteps: Long?,
     val heartRateSamples: List<HrSample>,
     val cadenceSamples: List<CadenceSample>,
-    val distanceSegments: List<DistanceSegment>
+    val distanceSegments: List<DistanceSegment>,
+    val hasGps: Boolean? = null,
+    val exerciseType: String? = null
 )
 
 /**
@@ -102,6 +104,8 @@ data class RunningLogDto(
     @SerialName("run_date") val runDate: String,
     @SerialName("ended_at") val endedAt: String,
     @SerialName("workout_type") val workoutType: String,
+    @SerialName("exercise_type") val exerciseType: String? = null,
+    @SerialName("has_gps") val hasGps: Boolean? = null,
     @SerialName("source_package") val sourcePackage: String? = null,
     @SerialName("title") val title: String? = null,
     @EncodeDefault(EncodeDefault.Mode.ALWAYS)

@@ -73,6 +73,8 @@ object RunningTelemetryAggregator {
             runDate = telemetry.startTime.toString(),
             endedAt = telemetry.endTime.toString(),
             workoutType = telemetry.workoutType,
+            exerciseType = telemetry.exerciseType,
+            hasGps = telemetry.hasGps,
             sourcePackage = telemetry.sourcePackage,
             title = telemetry.title,
             distanceKm = roundTo3(distanceMeters / 1000.0),

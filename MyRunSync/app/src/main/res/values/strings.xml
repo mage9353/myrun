@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MyRunSync</string>
+    <string name="btn_grant_permissions">Grant Health Connect Permissions</string>
+    <string name="btn_sync_runs">Sync Recent Runs to Supabase</string>
+    <string name="status_ready">Ready. Grant Health Connect permissions and sync recent runs.</string>
+    <string name="rationale_title">Health Connect Permissions</string>
+    <string name="rationale_body">MyRunSync reads your running sessions, distance, heart rate, and cadence from Health Connect solely to compute summary metrics and 1-minute downsampled series and store them in your Supabase account.</string>
+</resources>

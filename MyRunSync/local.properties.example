@@ -1,0 +1,4 @@
+# Copy to local.properties and fill in your local SDK path and Supabase credentials.
+sdk.dir=C\:\\Users\\<USER>\\AppData\\Local\\Android\\Sdk
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key

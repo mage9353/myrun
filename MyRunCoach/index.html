@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyRunCoach — 개인 맞춤형 러닝 &amp; AI 코칭 대시보드</title>
+
+  <!-- Theme initialization before paint to prevent flash -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('myruncoach_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Noto Sans KR', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Chart.js v4 UMD CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <!-- Marked & DOMPurify CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.45);
+      border-radius: 9999px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.55);
+    }
+
+    /* Markdown rendering typography */
+    .markdown-body {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: #1e293b;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .dark .markdown-body {
+      color: #e2e8f0;
+    }
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      font-weight: 700;
+      margin-top: 1.15em;
+      margin-bottom: 0.45em;
+      line-height: 1.35;
+      color: #0f172a;
+    }
+    .dark .markdown-body h1,
+    .dark .markdown-body h2,
+    .dark .markdown-body h3,
+    .dark .markdown-body h4 {
+      color: #f8fafc;
+    }
+    .markdown-body h1 { font-size: 1.25rem; }
+    .markdown-body h2 { font-size: 1.125rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.25rem; }
+    .dark .markdown-body h2 { border-bottom-color: #334155; }
+    .markdown-body h3 { font-size: 1rem; }
+    .markdown-body > *:first-child { margin-top: 0; }
+    .markdown-body p { margin-bottom: 0.75em; }
+    .markdown-body ul,
+    .markdown-body ol {
+      margin-bottom: 0.85em;
+      padding-left: 1.35rem;
+    }
+    .markdown-body ul { list-style-type: disc; }
+    .markdown-body ol { list-style-type: decimal; }
+    .markdown-body li { margin-bottom: 0.3em; }
+    .markdown-body strong {
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .dark .markdown-body strong {
+      color: #ffffff;
+    }
+    .markdown-body blockquote {
+      border-left: 3px solid #6366f1;
+      background: rgba(99, 102, 241, 0.06);
+      padding: 0.6rem 0.9rem;
+      margin: 0.75rem 0;
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+    .dark .markdown-body blockquote {
+      background: rgba(99, 102, 241, 0.14);
+    }
+    .markdown-body code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.84em;
+      background: #f1f5f9;
+      padding: 0.12rem 0.35rem;
+      border-radius: 0.25rem;
+    }
+    .dark .markdown-body code {
+      background: #1e293b;
+      color: #93c5fd;
+    }
+    .markdown-body pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 0.85rem 1rem;
+      border-radius: 0.65rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+    .markdown-body pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.85rem 0;
+      font-size: 0.875rem;
+    }
+    .markdown-body th,
+    .markdown-body td {
+      border: 1px solid #cbd5e1;
+      padding: 0.45rem 0.65rem;
+      text-align: left;
+    }
+    .dark .markdown-body th,
+    .dark .markdown-body td {
+      border-color: #334155;
+    }
+    .markdown-body th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+    .dark .markdown-body th {
+      background: #1e293b;
+    }
+    .markdown-body hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 1rem 0;
+    }
+    .dark .markdown-body hr {
+      border-top-color: #334155;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-30 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200/80 dark:border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white shadow-sm shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-base sm:text-lg font-bold tracking-tight truncate">MyRunCoach</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Supabase &amp; Gemini AI 러닝 대시보드</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          id="btnRefresh"
+          type="button"
+          class="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-colors"
+          title="Supabase에서 데이터 새로고침"
+        >
+          <svg id="refreshIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span class="hidden sm:inline">새로고침</span>
+        </button>
+
+        <button
+          id="btnThemeToggle"
+          type="button"
+          class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-colors text-base"
+          title="다크/라이트 모드 전환"
+          aria-label="테마 전환"
+        >
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        <button
+          id="btnToggleSettings"
+          type="button"
+          class="inline-flex items-center gap-2 px-3 sm:px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-slate-900 text-white dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-500 transition-colors shadow-sm"
+          aria-expanded="false"
+          aria-controls="settingsPanel"
+        >
+          <span id="statusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+          <span>⚙️ API 설정</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6">
+
+    <!-- Collapsible [⚙️ API 설정] Panel -->
+    <section id="settingsPanel" class="hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-4 sm:p-6 transition-all">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h2 class="text-base font-bold flex items-center gap-2">⚙️ API 및 AI 모델 설정</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            입력한 키는 외부로 전송되지 않으며, 현재 브라우저의 <code class="px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800">localStorage</code>에만 안전하게 저장됩니다.
+          </p>
+        </div>
+        <button id="btnCloseSettings" type="button" class="self-start sm:self-auto text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 px-2 py-1 rounded-lg">
+          닫기 ✕
+        </button>
+      </div>
+
+      <form id="settingsForm" class="mt-4 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Supabase URL -->
+          <div>
+            <label for="inputSupabaseUrl" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Supabase URL
+            </label>
+            <input
+              id="inputSupabaseUrl"
+              type="url"
+              autocomplete="off"
+              placeholder="https://your-project.supabase.co"
+              class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+
+          <!-- Supabase Anon Key -->
+          <div>
+            <label for="inputSupabaseKey" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Supabase Anon Key
+            </label>
+            <div class="relative">
+              <input
+                id="inputSupabaseKey"
+                type="password"
+                autocomplete="off"
+                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                class="w-full pr-16 px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="button"
+                data-toggle-visibility="inputSupabaseKey"
+                class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+              >
+                보기
+              </button>
+            </div>
+          </div>
+
+          <!-- Gemini API Key -->
+          <div>
+            <label for="inputGeminiKey" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Gemini API Key
+            </label>
+            <div class="relative">
+              <input
+                id="inputGeminiKey"
+                type="password"
+                autocomplete="off"
+                placeholder="AIzaSy..."
+                class="w-full pr-16 px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="button"
+                data-toggle-visibility="inputGeminiKey"
+                class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+              >
+                보기
+              </button>
+            </div>
+          </div>
+
+          <!-- AI Model Selector -->
+          <div>
+            <label for="selectGeminiModel" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Gemini AI 코칭 모델
+            </label>
+            <select
+              id="selectGeminiModel"
+              class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="gemini-4-hydrogen">gemini-4-hydrogen (기본값 · 무료 티어 지원 최신 Gemini 4 주력 모델)</option>
+              <option value="gemini-3.8-flash">gemini-3.8-flash (무료 티어 지원 고속 모델)</option>
+              <option value="gemini-4-neon">gemini-4-neon (유료 티어 전용 심층 추론 플래그십 모델)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              type="submit"
+              class="px-4 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors"
+            >
+              저장 및 데이터 불러오기
+            </button>
+            <button
+              id="btnLoadDemo"
+              type="button"
+              class="px-4 py-2.5 text-sm font-medium rounded-xl border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
+            >
+              데모 데이터 체험
+            </button>
+          </div>
+          <button
+            id="btnResetSettings"
+            type="button"
+            class="px-3.5 py-2 text-xs font-medium rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+          >
+            설정 초기화
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Status / Demo / Error Banners -->
+    <div id="demoBanner" class="hidden rounded-2xl border border-amber-200 dark:border-amber-800/70 bg-amber-50/90 dark:bg-amber-950/30 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div class="flex items-center gap-2 text-xs sm:text-sm text-amber-800 dark:text-amber-200">
+        <span>🧪</span>
+        <span><strong>데모 데이터 보기 중</strong> — 실제 내 기록을 보려면 상단 <strong>[⚙️ API 설정]</strong>에서 Supabase 키를 입력하세요.</span>
+      </div>
+      <button id="btnDismissDemo" type="button" class="self-end sm:self-auto text-xs font-semibold text-amber-700 dark:text-amber-300 hover:underline">
+        배너 숨기기
+      </button>
+    </div>
+
+    <div id="dataNoticeBanner" class="hidden rounded-2xl border px-4 py-3 text-sm flex items-start justify-between gap-3">
+      <div id="dataNoticeText" class="leading-relaxed"></div>
+      <button id="btnCloseNotice" type="button" class="text-xs opacity-70 hover:opacity-100 shrink-0">✕</button>
+    </div>
+
+    <!-- 1. Top 4 Summary Cards -->
+    <section aria-label="주간 요약 지표" class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+      <!-- Card 1: 7일 누적 거리 -->
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">최근 7일 누적 거리</span>
+          <span class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm">🏃</span>
+        </div>
+        <div id="statDistance7d" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
+        <p id="statDistanceSub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">데이터 대기 중</p>
+      </div>
+
+      <!-- Card 2: 평균 페이스 -->
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">평균 페이스</span>
+          <span class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center text-sm">⏱️</span>
+        </div>
+        <div id="statAvgPace" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
+        <p id="statAvgPaceSub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">분'초"/km</p>
+      </div>
+
+      <!-- Card 3: 평균 Zone 2 비율 -->
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">평균 Zone 2 비율</span>
+          <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm">💚</span>
+        </div>
+        <div id="statZone2" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
+        <div class="mt-2 w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+          <div id="statZone2Bar" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <p id="statZone2Sub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">유산소 베이스 지표</p>
+      </div>
+
+      <!-- Card 4: 평균 케이던스 -->
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">평균 케이던스</span>
+          <span class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm">👟</span>
+        </div>
+        <div id="statCadence" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
+        <p id="statCadenceSub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">분당 보폭 (spm)</p>
+      </div>
+    </section>
+
+    <!-- 2. Trend Charts (Recent 15 Runs) -->
+    <section aria-label="최근 15회 러닝 추세 차트" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <!-- Chart 1: Avg HR vs Avg Pace -->
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold">최근 15회 평균 심박수 대비 페이스 추이</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
+          </div>
+        </div>
+        <div class="relative h-64 sm:h-72">
+          <canvas id="chartHrPace"></canvas>
+          <div id="chartHrPaceEmpty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">
+            표시할 러닝 추세 데이터가 없습니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart 2: Zone 2 Ratio Trend -->
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold">최근 15회 Zone 2 비율 변화</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
+          </div>
+        </div>
+        <div class="relative h-64 sm:h-72">
+          <canvas id="chartZone2"></canvas>
+          <div id="chartZone2Empty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">
+            표시할 Zone 2 데이터가 없습니다.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Gemini AI Running Coach Panel -->
+    <section id="coachSection" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center text-sm shadow-sm shrink-0">✨</div>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold">Gemini AI 러닝 코치</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">내 러닝 데이터와 1분 단위 심박·페이스 변화를 바탕으로 개인 맞춤 피드백을 제공합니다.</p>
+          </div>
+        </div>
+        <span id="activeModelBadge" class="self-start sm:self-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70">
+          Model: gemini-4-hydrogen
+        </span>
+      </div>
+
+      <!-- Today's Condition Memo -->
+      <div>
+        <label for="inputConditionMemo" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+          오늘 컨디션 메모 (훈련 추천 및 자유 질문 시 함께 전달됩니다)
+        </label>
+        <input
+          id="inputConditionMemo"
+          type="text"
+          placeholder="예: 수면 6시간, 종아리 약간 뻐근함, 스트레스 보통 / 컨디션 최상"
+          class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <!-- 3 Quick Prompt Buttons -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+        <button
+          id="btnQuickLatest"
+          type="button"
+          class="group text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all"
+        >
+          <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+            🔍 방금 뛴 최근 러닝 정밀 분석
+          </div>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            최근 1회 + 1분 단위 심박/페이스로 후반 심박 드리프트와 페이스 배분 피드백
+          </p>
+        </button>
+
+        <button
+          id="btnQuickTwoWeeks"
+          type="button"
+          class="group text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all"
+        >
+          <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+            📈 최근 2주 훈련 추세 및 피로도 진단
+          </div>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            최근 14일 기록으로 유산소 베이스 향상도와 주간 거리 적정성 평가
+          </p>
+        </button>
+
+        <button
+          id="btnQuickCondition"
+          type="button"
+          class="group text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all"
+        >
+          <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+            🩺 오늘 컨디션 기반 훈련 추천
+          </div>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            컨디션 메모 + 최근 기록을 조합해 오늘 뛸지 쉴지와 권장 심박 구간 제안
+          </p>
+        </button>
+      </div>
+
+      <!-- Free-form Question Input -->
+      <form id="coachForm" class="space-y-2">
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input
+            id="inputCoachQuestion"
+            type="text"
+            placeholder="AI 코치에게 궁금한 점을 자유롭게 물어보세요 (예: 10km 50분 돌파를 위한 이번 주 훈련법)"
+            class="flex-1 px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <button
+            id="btnAskCoach"
+            type="submit"
+            class="px-5 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white shadow-sm transition-colors shrink-0"
+          >
+            코칭 받기
+          </button>
+        </div>
+        <label class="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 cursor-pointer select-none">
+          <input id="chkIncludeData" type="checkbox" checked class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
+          <span>질문에 최근 러닝 기록 요약 데이터 자동 포함</span>
+        </label>
+      </form>
+
+      <!-- AI Output Area -->
+      <div id="coachResultWrapper" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 p-4 sm:p-5">
+        <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200/70 dark:border-slate-800">
+          <span id="coachStatusLabel" class="text-xs font-semibold text-slate-600 dark:text-slate-300">코치 응답 대기 중</span>
+          <div class="flex items-center gap-2">
+            <button id="btnCopyCoach" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              복사
+            </button>
+            <button id="btnClearCoach" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              지우기
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="coachLoading" class="hidden py-6 flex flex-col items-center justify-center gap-2.5 text-slate-500 dark:text-slate-400">
+          <div class="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <p id="coachLoadingText" class="text-xs sm:text-sm">Gemini AI 코치가 러닝 데이터를 분석하고 있습니다...</p>
+        </div>
+
+        <!-- Error banner -->
+        <div id="coachError" class="hidden rounded-xl border border-rose-200 dark:border-rose-800/70 bg-rose-50 dark:bg-rose-950/40 p-3.5 text-xs sm:text-sm text-rose-700 dark:text-rose-300"></div>
+
+        <!-- Markdown response -->
+        <div id="coachOutput" class="markdown-body">
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            위의 빠른 질문 버튼을 누르거나 질문을 입력하면 데이터 기반 맞춤 코칭 결과가 여기에 표시됩니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Running Logs Table (Recent 30 Runs) -->
+    <section aria-label="최근 30회 러닝 기록 리스트" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-bold">최근 러닝 기록</h2>
+            <span id="tableCountBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0건</span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">행을 클릭하면 1분 단위 심박수 &amp; 페이스 상세 차트를 볼 수 있습니다.</p>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 self-start sm:self-auto" role="tablist" aria-label="러닝 구분 필터">
+          <button type="button" data-filter="all" class="filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition-all">전체</button>
+          <button type="button" data-filter="야외" class="filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">야외</button>
+          <button type="button" data-filter="트레드밀" class="filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">트레드밀</button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <th class="py-3 px-4 whitespace-nowrap">날짜</th>
+              <th class="py-3 px-4 whitespace-nowrap">구분</th>
+              <th class="py-3 px-4 whitespace-nowrap text-right">거리</th>
+              <th class="py-3 px-4 whitespace-nowrap text-right">시간</th>
+              <th class="py-3 px-4 whitespace-nowrap text-right">평균 페이스</th>
+              <th class="py-3 px-4 whitespace-nowrap text-right">평균 심박수</th>
+              <th class="py-3 px-4 whitespace-nowrap text-right">Zone 2 비율</th>
+            </tr>
+          </thead>
+          <tbody id="runsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/80 text-sm">
+            <tr>
+              <td colspan="7" class="py-10 px-4 text-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">
+                상단 <strong>[⚙️ API 설정]</strong>에서 Supabase 정보를 입력하거나 <strong>데모 데이터 체험</strong>을 눌러주세요.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 1-Minute Timeseries Detail Modal -->
+  <div id="runDetailModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="modalContent" class="w-full sm:max-w-3xl max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-4 sm:p-6 space-y-4">
+      <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h3 id="modalTitle" class="text-base sm:text-lg font-bold">러닝 상세 분석</h3>
+            <span id="modalTypeBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full"></span>
+            <span id="modalSourceBadge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"></span>
+            <span id="modalZone2Badge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border border-emerald-200 dark:border-emerald-800/70 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300"></span>
+          </div>
+          <p id="modalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+        </div>
+        <button id="btnCloseModal" type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="모달 닫기">
+          ✕
+        </button>
+      </div>
+
+      <!-- Summary Pills -->
+      <div id="modalSummaryPills" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5"></div>
+
+      <!-- Split & Drift Insight Bar -->
+      <div id="modalDriftBox" class="hidden rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 px-3.5 py-2.5 text-xs text-slate-600 dark:text-slate-300 flex flex-wrap items-center justify-between gap-2"></div>
+
+      <!-- 1-Minute Dual-Axis Chart -->
+      <div class="rounded-xl border border-slate-200/80 dark:border-slate-800 p-3 sm:p-4 bg-slate-50/40 dark:bg-slate-950/40">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <h4 class="text-xs sm:text-sm font-semibold">1분 단위 심박수 &amp; 페이스 변화</h4>
+          <span id="modalPointsCount" class="text-xs text-slate-400"></span>
+        </div>
+        <div class="relative h-64 sm:h-72">
+          <canvas id="chartTimeseries"></canvas>
+          <div id="modalChartEmpty" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center px-4 text-xs sm:text-sm text-slate-400 dark:text-slate-500">
+            <span>이 기록에는 <code class="px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800">timeseries_1min</code> 1분 단위 데이터가 없습니다.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2.5 pt-1">
+        <button id="btnModalCloseBottom" type="button" class="px-4 py-2.5 text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          닫기
+        </button>
+        <button id="btnAnalyzeSelectedRun" type="button" class="px-4 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors">
+          ✨ 이 러닝 AI 정밀 분석
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var CONFIG_STORAGE_KEY = 'myruncoach_config';
+      var THEME_STORAGE_KEY = 'myruncoach_theme';
+      var DEFAULT_MODEL = 'gemini-4-hydrogen';
+      var ALLOWED_MODELS = ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-4-neon'];
+
+      var state = {
+        config: {
+          supabaseUrl: '',
+          supabaseKey: '',
+          geminiKey: '',
+          geminiModel: DEFAULT_MODEL
+        },
+        runs: [],
+        isDemo: false,
+        filter: 'all',
+        selectedRun: null,
+        isLoadingData: false,
+        isAskingCoach: false,
+        lastCoachMarkdown: '',
+        charts: {
+          hrPace: null,
+          zone2: null,
+          timeseries: null
+        }
+      };
+
+      // DOM Helpers
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function isDarkMode() {
+        return document.documentElement.classList.contains('dark');
+      }
+
+      // Formatting & Parsing Helpers
+      function toFiniteNumber(val) {
+        if (val === null || val === undefined || val === '') return null;
+        var n = Number(val);
+        return Number.isFinite(n) ? n : null;
+      }
+
+      function parsePaceToSec(val) {
+        if (val === null || val === undefined || val === '') return null;
+        if (typeof val === 'number' && Number.isFinite(val)) {
+          if (val <= 0) return null;
+          // If value looks like decimal minutes (e.g. 5.5 = 5m30s), convert to sec
+          return val < 25 ? Math.round(val * 60) : Math.round(val);
+        }
+        var str = String(val).trim();
+        // Match formats like 5'30", 5:30, 5'30"/km
+        var match = str.match(/(\d+)\s*[:']\s*(\d{1,2})/);
+        if (match) {
+          var mins = parseInt(match[1], 10);
+          var secs = parseInt(match[2], 10);
+          if (Number.isFinite(mins) && Number.isFinite(secs)) {
+            return mins * 60 + secs;
+          }
+        }
+        var num = Number(str.replace(/[^\d.]/g, ''));
+        if (Number.isFinite(num) && num > 0) {
+          return num < 25 ? Math.round(num * 60) : Math.round(num);
+        }
+        return null;
+      }
+
+      function parseDurationToSec(val) {
+        if (val === null || val === undefined || val === '') return null;
+        if (typeof val === 'number' && Number.isFinite(val)) {
+          return val > 0 ? Math.round(val) : null;
+        }
+        var str = String(val).trim();
+        var parts = str.split(':').map(function (p) { return parseInt(p, 10); });
+        if (parts.length === 3 && parts.every(Number.isFinite)) {
+          return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        }
+        if (parts.length === 2 && parts.every(Number.isFinite)) {
+          return parts[0] * 60 + parts[1];
+        }
+        var num = Number(str);
+        return Number.isFinite(num) && num > 0 ? Math.round(num) : null;
+      }
+
+      function formatPace(sec) {
+        if (!Number.isFinite(sec) || sec <= 0 || sec > 3600) return '-';
+        var rounded = Math.round(sec);
+        var m = Math.floor(rounded / 60);
+        var s = rounded % 60;
+        return m + "'" + String(s).padStart(2, '0') + '"/km';
+      }
+
+      function formatPaceShort(sec) {
+        if (!Number.isFinite(sec) || sec <= 0 || sec > 3600) return '-';
+        var rounded = Math.round(sec);
+        var m = Math.floor(rounded / 60);
+        var s = rounded % 60;
+        return m + "'" + String(s).padStart(2, '0') + '"';
+      }
+
+      function formatDuration(sec) {
+        if (!Number.isFinite(sec) || sec <= 0) return '-';
+        var total = Math.round(sec);
+        var h = Math.floor(total / 3600);
+        var m = Math.floor((total % 3600) / 60);
+        var s = total % 60;
+        if (h > 0) {
+          return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }
+
+      function parseDateObj(dateStr) {
+        if (!dateStr) return null;
+        var s = String(dateStr).trim();
+        // Handle YYYY-MM-DD cleanly in local time to avoid UTC off-by-one shifts
+        var dateOnly = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (dateOnly) {
+          return new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]), 12, 0, 0);
+        }
+        var d = new Date(s);
+        return isNaN(d.getTime()) ? null : d;
+      }
+
+      function formatDateKr(dateStr) {
+        var d = parseDateObj(dateStr);
+        if (!d) return dateStr ? String(dateStr) : '-';
+        var weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+        var y = d.getFullYear();
+        var m = String(d.getMonth() + 1).padStart(2, '0');
+        var day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day + ' (' + weekdays[d.getDay()] + ')';
+      }
+
+      function formatDateShort(dateStr) {
+        var d = parseDateObj(dateStr);
+        if (!d) return '-';
+        return (d.getMonth() + 1) + '/' + d.getDate();
+      }
+
+      function normalizeRunType(rawType, rawRow) {
+        var val = rawType;
+        if (val === undefined || val === null || val === '') {
+          if (typeof rawRow.is_treadmill === 'boolean') {
+            return rawRow.is_treadmill ? '트레드밀' : '야외';
+          }
+          return '야외';
+        }
+        if (typeof val === 'boolean') {
+          return val ? '트레드밀' : '야외';
+        }
+        var s = String(val).trim().toLowerCase();
+        if (s.indexOf('treadmill') !== -1 || s.indexOf('indoor') !== -1 || s.indexOf('트레드밀') !== -1 || s.indexOf('실내') !== -1 || s === 'tm') {
+          return '트레드밀';
+        }
+        if (s.indexOf('outdoor') !== -1 || s.indexOf('road') !== -1 || s.indexOf('trail') !== -1 || s.indexOf('track') !== -1 || s.indexOf('야외') !== -1 || s.indexOf('실외') !== -1 || s.indexOf('run') !== -1) {
+          return '야외';
+        }
+        return String(val).trim();
+      }
+
+      function parseTimeseries(raw) {
+        if (!raw) return [];
+        var arr = raw;
+        if (typeof arr === 'string') {
+          try {
+            arr = JSON.parse(arr);
+          } catch (e) {
+            return [];
+          }
+        }
+        if (arr && !Array.isArray(arr) && typeof arr === 'object') {
+          if (Array.isArray(arr.data)) arr = arr.data;
+          else if (Array.isArray(arr.points)) arr = arr.points;
+          else if (Array.isArray(arr.minutes)) arr = arr.minutes;
+          else return [];
+        }
+        if (!Array.isArray(arr)) return [];
+
+        return arr.map(function (pt, idx) {
+          if (!pt || typeof pt !== 'object') return null;
+          var minute = toFiniteNumber(pt.minute !== undefined ? pt.minute : (pt.min !== undefined ? pt.min : (pt.t !== undefined ? pt.t : idx + 1)));
+          var hr = toFiniteNumber(pt.hr !== undefined ? pt.hr : (pt.heart_rate !== undefined ? pt.heart_rate : (pt.bpm !== undefined ? pt.bpm : (pt.avg_hr_bpm !== undefined ? pt.avg_hr_bpm : pt.avg_hr))));
+          var maxHr = toFiniteNumber(pt.max_hr !== undefined ? pt.max_hr : pt.max_hr_bpm);
+          var minHr = toFiniteNumber(pt.min_hr !== undefined ? pt.min_hr : pt.min_hr_bpm);
+          var zone2Ratio = toFiniteNumber(pt.zone2_ratio);
+          var distanceM = toFiniteNumber(pt.distance_m);
+          var paceSec = null;
+          if (pt.pace_sec !== undefined) paceSec = toFiniteNumber(pt.pace_sec);
+          else if (pt.pace_sec_per_km !== undefined) paceSec = toFiniteNumber(pt.pace_sec_per_km);
+          else if (pt.pace_min !== undefined) {
+            var pm = toFiniteNumber(pt.pace_min);
+            paceSec = pm !== null ? Math.round(pm * 60) : null;
+          } else if (pt.pace !== undefined) {
+            paceSec = parsePaceToSec(pt.pace);
+          }
+          var cadence = toFiniteNumber(pt.cadence !== undefined ? pt.cadence : (pt.avg_cadence_spm !== undefined ? pt.avg_cadence_spm : pt.spm));
+          return {
+            minute: minute !== null ? minute : idx + 1,
+            hr: hr !== null ? Math.round(hr) : null,
+            maxHr: maxHr !== null ? Math.round(maxHr) : null,
+            minHr: minHr !== null ? Math.round(minHr) : null,
+            zone2Ratio: zone2Ratio !== null ? Math.max(0, Math.min(1, zone2Ratio)) : null,
+            paceSec: paceSec !== null && paceSec > 0 ? Math.round(paceSec) : null,
+            cadence: cadence !== null ? Math.round(cadence) : null,
+            distanceM: distanceM !== null && distanceM >= 0 ? distanceM : null
+          };
+        }).filter(function (pt) {
+          return pt !== null && (pt.hr !== null || pt.paceSec !== null);
+        });
+      }
+
+      function formatSourceLabel(pkg) {
+        if (!pkg) return '';
+        var s = String(pkg).toLowerCase();
+        if (s.indexOf('shealth') !== -1 || s.indexOf('samsung') !== -1) return '삼성 헬스';
+        if (s.indexOf('garmin') !== -1) return '가민';
+        if (s.indexOf('strava') !== -1) return 'Strava';
+        if (s.indexOf('nike') !== -1) return 'Nike Run Club';
+        if (s.indexOf('fit') !== -1) return 'Google Fit';
+        return 'Health Connect';
+      }
+
+      function normalizeRunRow(row, index) {
+        var r = row || {};
+        var runDate = r.run_date || r.date || r.started_at || r.created_at || '';
+        var startedAt = r.started_at || (r.run_date && String(r.run_date).indexOf('T') !== -1 ? r.run_date : null);
+        var endedAt = r.ended_at || null;
+        var runType = normalizeRunType(
+          r.workout_type !== undefined ? r.workout_type : (r.run_type !== undefined ? r.run_type : (r.location_type !== undefined ? r.location_type : (r.activity_type !== undefined ? r.activity_type : r.environment))),
+          r
+        );
+
+        var distanceKm = null;
+        if (r.distance_km !== undefined && r.distance_km !== null) {
+          distanceKm = toFiniteNumber(r.distance_km);
+        } else if (r.distance_meters !== undefined && r.distance_meters !== null) {
+          var dMeters = toFiniteNumber(r.distance_meters);
+          distanceKm = dMeters !== null ? dMeters / 1000 : null;
+        } else if (r.distance_m !== undefined && r.distance_m !== null) {
+          var dm = toFiniteNumber(r.distance_m);
+          distanceKm = dm !== null ? dm / 1000 : null;
+        } else if (r.distance !== undefined && r.distance !== null) {
+          var d = toFiniteNumber(r.distance);
+          if (d !== null) distanceKm = d > 100 ? d / 1000 : d;
+        }
+
+        var durationSec = null;
+        if (r.duration_sec !== undefined && r.duration_sec !== null) {
+          durationSec = toFiniteNumber(r.duration_sec);
+        } else if (r.duration_seconds !== undefined && r.duration_seconds !== null) {
+          durationSec = toFiniteNumber(r.duration_seconds);
+        } else if (r.duration_min !== undefined && r.duration_min !== null) {
+          var dmin = toFiniteNumber(r.duration_min);
+          durationSec = dmin !== null ? Math.round(dmin * 60) : null;
+        } else if (r.duration !== undefined && r.duration !== null) {
+          durationSec = parseDurationToSec(r.duration);
+        }
+
+        var avgPaceSec = null;
+        if (r.avg_pace_sec !== undefined && r.avg_pace_sec !== null) {
+          avgPaceSec = toFiniteNumber(r.avg_pace_sec);
+        } else if (r.avg_pace_sec_per_km !== undefined && r.avg_pace_sec_per_km !== null) {
+          avgPaceSec = toFiniteNumber(r.avg_pace_sec_per_km);
+        } else if (r.pace_sec !== undefined && r.pace_sec !== null) {
+          avgPaceSec = toFiniteNumber(r.pace_sec);
+        } else if (r.avg_pace_min !== undefined && r.avg_pace_min !== null) {
+          var apm = toFiniteNumber(r.avg_pace_min);
+          avgPaceSec = apm !== null ? Math.round(apm * 60) : null;
+        } else if (r.avg_pace !== undefined && r.avg_pace !== null) {
+          avgPaceSec = parsePaceToSec(r.avg_pace);
+        } else if (durationSec && distanceKm && distanceKm > 0) {
+          avgPaceSec = Math.round(durationSec / distanceKm);
+        }
+
+        var avgHr = toFiniteNumber(
+          r.avg_hr !== undefined ? r.avg_hr :
+          (r.avg_heart_rate !== undefined ? r.avg_heart_rate :
+          (r.avg_heart_rate_bpm !== undefined ? r.avg_heart_rate_bpm :
+          (r.heart_rate_avg !== undefined ? r.heart_rate_avg : r.hr_avg)))
+        );
+        var maxHr = toFiniteNumber(r.max_hr !== undefined ? r.max_hr : r.max_heart_rate_bpm);
+        var minHr = toFiniteNumber(r.min_hr !== undefined ? r.min_hr : r.min_heart_rate_bpm);
+        var zone2MinBpm = toFiniteNumber(r.zone2_min_bpm);
+        var zone2MaxBpm = toFiniteNumber(r.zone2_max_bpm);
+
+        var zone2Pct = null;
+        var zone2SourceKey = '';
+        if (r.zone2_pct !== undefined && r.zone2_pct !== null) { zone2Pct = toFiniteNumber(r.zone2_pct); zone2SourceKey = 'pct'; }
+        else if (r.zone_2_pct !== undefined && r.zone_2_pct !== null) { zone2Pct = toFiniteNumber(r.zone_2_pct); zone2SourceKey = 'pct'; }
+        else if (r.zone2_ratio !== undefined && r.zone2_ratio !== null) { zone2Pct = toFiniteNumber(r.zone2_ratio); zone2SourceKey = 'ratio'; }
+        else if (r.z2_ratio !== undefined && r.z2_ratio !== null) { zone2Pct = toFiniteNumber(r.z2_ratio); zone2SourceKey = 'ratio'; }
+        else if (r.zone_2_ratio !== undefined && r.zone_2_ratio !== null) { zone2Pct = toFiniteNumber(r.zone_2_ratio); zone2SourceKey = 'ratio'; }
+
+        if (zone2Pct !== null) {
+          if ((zone2Pct > 0 && zone2Pct < 1) || (zone2Pct === 1 && zone2SourceKey === 'ratio')) {
+            zone2Pct = zone2Pct * 100;
+          }
+          zone2Pct = Math.max(0, Math.min(100, zone2Pct));
+        }
+
+        var avgCadence = toFiniteNumber(
+          r.avg_cadence !== undefined ? r.avg_cadence :
+          (r.cadence !== undefined ? r.cadence :
+          (r.avg_cadence_spm !== undefined ? r.avg_cadence_spm : r.cadence_spm))
+        );
+
+        var timeseries = parseTimeseries(r.timeseries_1min || r.minute_series);
+        var sortTime = startedAt ? new Date(startedAt).getTime() : (parseDateObj(runDate) ? parseDateObj(runDate).getTime() : 0);
+
+        return {
+          id: r.id !== undefined ? r.id : ('run-' + index),
+          healthConnectRecordId: r.hc_session_id || r.health_connect_record_id || null,
+          sourcePackage: r.source_package || null,
+          title: r.title || '',
+          runDate: runDate,
+          startedAt: startedAt,
+          endedAt: endedAt,
+          sortTime: Number.isFinite(sortTime) ? sortTime : 0,
+          dateObj: parseDateObj(runDate),
+          runType: runType,
+          distanceKm: distanceKm,
+          durationSec: durationSec,
+          avgPaceSec: avgPaceSec,
+          avgHr: avgHr !== null ? Math.round(avgHr) : null,
+          maxHr: maxHr !== null ? Math.round(maxHr) : null,
+          minHr: minHr !== null ? Math.round(minHr) : null,
+          zone2MinBpm: zone2MinBpm !== null ? Math.round(zone2MinBpm) : null,
+          zone2MaxBpm: zone2MaxBpm !== null ? Math.round(zone2MaxBpm) : null,
+          zone2Pct: zone2Pct,
+          avgCadence: avgCadence !== null ? Math.round(avgCadence) : null,
+          notes: r.notes || r.memo || r.comment || '',
+          timeseries: timeseries
+        };
+      }
+
+      // Compute first-half vs second-half drift and split stats from timeseries_1min
+      function computeTimeseriesInsights(timeseries) {
+        if (!Array.isArray(timeseries) || timeseries.length < 4) return null;
+        var mid = Math.floor(timeseries.length / 2);
+        var firstHalf = timeseries.slice(0, mid);
+        var secondHalf = timeseries.slice(mid);
+
+        function avgField(arr, field) {
+          var valid = arr.map(function (x) { return x[field]; }).filter(function (v) { return Number.isFinite(v); });
+          if (!valid.length) return null;
+          return valid.reduce(function (a, b) { return a + b; }, 0) / valid.length;
+        }
+
+        var hr1 = avgField(firstHalf, 'hr');
+        var hr2 = avgField(secondHalf, 'hr');
+        var pace1 = avgField(firstHalf, 'paceSec');
+        var pace2 = avgField(secondHalf, 'paceSec');
+
+        return {
+          hr1: hr1 !== null ? Math.round(hr1) : null,
+          hr2: hr2 !== null ? Math.round(hr2) : null,
+          hrDrift: (hr1 !== null && hr2 !== null) ? Math.round(hr2 - hr1) : null,
+          hrDriftPct: (hr1 !== null && hr2 !== null && hr1 > 0) ? ((hr2 - hr1) / hr1) * 100 : null,
+          pace1: pace1 !== null ? Math.round(pace1) : null,
+          pace2: pace2 !== null ? Math.round(pace2) : null,
+          paceDiffSec: (pace1 !== null && pace2 !== null) ? Math.round(pace2 - pace1) : null
+        };
+      }
+
+      // Demo Data Generator (relative to today so 7-day & 14-day stats always work)
+      function generateDemoRuns() {
+        var now = new Date();
+        var templates = [
+          { daysAgo: 0, type: '야외', dist: 10.2, pace: 324, hr: 151, z2: 74, cad: 176, drift: 9 },
+          { daysAgo: 2, type: '트레드밀', dist: 7.0, pace: 342, hr: 144, z2: 86, cad: 174, drift: 5 },
+          { daysAgo: 3, type: '야외', dist: 12.5, pace: 315, hr: 158, z2: 52, cad: 179, drift: 11 },
+          { daysAgo: 5, type: '야외', dist: 8.1, pace: 348, hr: 141, z2: 91, cad: 173, drift: 4 },
+          { daysAgo: 7, type: '트레드밀', dist: 6.5, pace: 336, hr: 147, z2: 80, cad: 175, drift: 6 },
+          { daysAgo: 9, type: '야외', dist: 15.0, pace: 338, hr: 149, z2: 77, cad: 175, drift: 10 },
+          { daysAgo: 11, type: '야외', dist: 8.4, pace: 306, hr: 164, z2: 34, cad: 182, drift: 12 },
+          { daysAgo: 13, type: '트레드밀', dist: 6.0, pace: 355, hr: 139, z2: 93, cad: 172, drift: 3 },
+          { daysAgo: 15, type: '야외', dist: 9.5, pace: 332, hr: 150, z2: 76, cad: 176, drift: 7 },
+          { daysAgo: 17, type: '야외', dist: 11.2, pace: 328, hr: 153, z2: 68, cad: 177, drift: 8 },
+          { daysAgo: 19, type: '트레드밀', dist: 5.5, pace: 350, hr: 142, z2: 88, cad: 173, drift: 4 },
+          { daysAgo: 21, type: '야외', dist: 14.0, pace: 340, hr: 151, z2: 73, cad: 174, drift: 9 },
+          { daysAgo: 23, type: '야외', dist: 7.8, pace: 312, hr: 162, z2: 41, cad: 181, drift: 10 },
+          { daysAgo: 25, type: '트레드밀', dist: 6.2, pace: 358, hr: 140, z2: 90, cad: 171, drift: 4 },
+          { daysAgo: 27, type: '야외', dist: 10.0, pace: 335, hr: 152, z2: 71, cad: 175, drift: 8 },
+          { daysAgo: 29, type: '야외', dist: 8.6, pace: 344, hr: 146, z2: 82, cad: 174, drift: 5 },
+          { daysAgo: 32, type: '트레드밀', dist: 5.0, pace: 360, hr: 138, z2: 92, cad: 171, drift: 3 },
+          { daysAgo: 35, type: '야외', dist: 11.0, pace: 339, hr: 154, z2: 66, cad: 175, drift: 9 }
+        ];
+
+        return templates.map(function (t, idx) {
+          var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - t.daysAgo, 7, 30, 0);
+          var y = d.getFullYear();
+          var m = String(d.getMonth() + 1).padStart(2, '0');
+          var day = String(d.getDate()).padStart(2, '0');
+          var dateStr = y + '-' + m + '-' + day;
+
+          var totalSec = Math.round(t.dist * t.pace);
+          var totalMins = Math.max(12, Math.round(totalSec / 60));
+          var ts = [];
+          for (var min = 1; min <= totalMins; min++) {
+            var progress = (min - 1) / Math.max(1, totalMins - 1);
+            // Warmup ramp for first 3 mins, then progressive cardiac drift
+            var warmup = min <= 3 ? -12 + (min - 1) * 4 : 0;
+            var wave = Math.round(Math.sin(min * 0.7 + idx) * 2);
+            var hrVal = Math.round(t.hr - (t.drift * 0.45) + (t.drift * progress) + warmup + wave);
+            var paceWave = Math.round(Math.cos(min * 0.55 + idx) * 5);
+            var paceShift = min <= 2 ? 14 : (progress > 0.75 ? -5 : 0);
+            var paceVal = Math.max(230, t.pace + paceShift + paceWave);
+            var distPerMin = Math.round((1000 / paceVal) * 60);
+            ts.push({
+              minute: min,
+              offset_sec: (min - 1) * 60,
+              hr: hrVal,
+              max_hr: hrVal + 3,
+              min_hr: hrVal - 3,
+              zone2_ratio: hrVal <= 148 ? 1.0 : 0.25,
+              pace_sec: paceVal,
+              cadence: t.cad + Math.round(Math.sin(min) * 2),
+              distance_m: distPerMin
+            });
+          }
+
+          return normalizeRunRow({
+            id: 'demo-' + (idx + 1),
+            hc_session_id: 'demo-hc-' + (idx + 1),
+            source_package: 'com.sec.android.app.shealth',
+            title: t.type === '트레드밀' ? '실내 트레드밀 러닝' : '야외 유산소 러닝',
+            run_date: d.toISOString(),
+            workout_type: t.type,
+            run_type: t.type,
+            distance_km: t.dist,
+            distance_meters: Math.round(t.dist * 1000),
+            duration_sec: totalSec,
+            avg_pace_sec: t.pace,
+            avg_hr: t.hr,
+            max_hr: t.hr + 14,
+            min_hr: t.hr - 22,
+            zone2_min_bpm: 125,
+            zone2_max_bpm: 148,
+            zone2_pct: t.z2,
+            zone2_ratio: Number((t.z2 / 100).toFixed(4)),
+            avg_cadence: t.cad,
+            timeseries_1min: ts
+          }, idx);
+        });
+      }
+
+      // Config Persistence
+      function loadConfig() {
+        try {
+          var raw = localStorage.getItem(CONFIG_STORAGE_KEY);
+          if (raw) {
+            var parsed = JSON.parse(raw);
+            state.config.supabaseUrl = (parsed.supabaseUrl || '').trim().replace(/\/+$/, '');
+            state.config.supabaseKey = (parsed.supabaseKey || '').trim();
+            state.config.geminiKey = (parsed.geminiKey || '').trim();
+            state.config.geminiModel = ALLOWED_MODELS.indexOf(parsed.geminiModel) !== -1
+              ? parsed.geminiModel
+              : DEFAULT_MODEL;
+          }
+        } catch (e) {
+          console.warn('설정 로드 실패:', e);
+        }
+        syncSettingsInputs();
+        updateStatusIndicators();
+      }
+
+      function saveConfigFromInputs() {
+        var url = $('inputSupabaseUrl').value.trim().replace(/\/+$/, '');
+        var supaKey = $('inputSupabaseKey').value.trim();
+        var gemKey = $('inputGeminiKey').value.trim();
+        var model = $('selectGeminiModel').value;
+        if (ALLOWED_MODELS.indexOf(model) === -1) model = DEFAULT_MODEL;
+
+        state.config = {
+          supabaseUrl: url,
+          supabaseKey: supaKey,
+          geminiKey: gemKey,
+          geminiModel: model
+        };
+
+        try {
+          localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(state.config));
+        } catch (e) {
+          console.warn('설정 저장 실패:', e);
+        }
+        syncSettingsInputs();
+        updateStatusIndicators();
+      }
+
+      function syncSettingsInputs() {
+        $('inputSupabaseUrl').value = state.config.supabaseUrl || '';
+        $('inputSupabaseKey').value = state.config.supabaseKey || '';
+        $('inputGeminiKey').value = state.config.geminiKey || '';
+        $('selectGeminiModel').value = state.config.geminiModel || DEFAULT_MODEL;
+        $('activeModelBadge').textContent = 'Model: ' + (state.config.geminiModel || DEFAULT_MODEL);
+      }
+
+      function updateStatusIndicators() {
+        var dot = $('statusDot');
+        dot.classList.remove('bg-slate-400', 'bg-emerald-400', 'bg-amber-400');
+        if (state.isDemo) {
+          dot.classList.add('bg-amber-400');
+        } else if (state.config.supabaseUrl && state.config.supabaseKey) {
+          dot.classList.add('bg-emerald-400');
+        } else {
+          dot.classList.add('bg-slate-400');
+        }
+      }
+
+      // Notice Banners
+      function showNotice(message, variant) {
+        var banner = $('dataNoticeBanner');
+        var textEl = $('dataNoticeText');
+        banner.className = 'rounded-2xl border px-4 py-3 text-xs sm:text-sm flex items-start justify-between gap-3';
+        if (variant === 'error') {
+          banner.classList.add('border-rose-200', 'dark:border-rose-800/70', 'bg-rose-50', 'dark:bg-rose-950/40', 'text-rose-700', 'dark:text-rose-300');
+        } else if (variant === 'info') {
+          banner.classList.add('border-indigo-200', 'dark:border-indigo-800/70', 'bg-indigo-50', 'dark:bg-indigo-950/40', 'text-indigo-700', 'dark:text-indigo-300');
+        } else {
+          banner.classList.add('border-emerald-200', 'dark:border-emerald-800/70', 'bg-emerald-50', 'dark:bg-emerald-950/40', 'text-emerald-700', 'dark:text-emerald-300');
+        }
+        textEl.innerHTML = message;
+        banner.classList.remove('hidden');
+      }
+
+      function hideNotice() {
+        $('dataNoticeBanner').classList.add('hidden');
+      }
+
+      // Supabase Data Fetching
+      async function fetchRunningLogs() {
+        if (!state.config.supabaseUrl || !state.config.supabaseKey) {
+          openSettingsPanel(true);
+          showNotice('Supabase URL과 Anon Key를 입력하고 <strong>저장 및 데이터 불러오기</strong>를 눌러주세요. 키가 없다면 <strong>데모 데이터 체험</strong>을 이용할 수 있습니다.', 'info');
+          return;
+        }
+
+        state.isLoadingData = true;
+        $('refreshIcon').classList.add('animate-spin');
+        hideNotice();
+
+        var endpoint = state.config.supabaseUrl + '/rest/v1/running_logs?select=*&order=run_date.desc&limit=30';
+
+        try {
+          var res = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+              'apikey': state.config.supabaseKey,
+              'Authorization': 'Bearer ' + state.config.supabaseKey,
+              'Accept': 'application/json'
+            }
+          });
+
+          if (!res.ok) {
+            var errBody = '';
+            try { errBody = await res.text(); } catch (e) {}
+            if (res.status === 401 || res.status === 403) {
+              throw new Error('인증 또는 권한 오류 (' + res.status + '): Supabase Anon Key 또는 running_logs 테이블의 RLS 정책(SELECT 허용)을 확인하세요.');
+            }
+            if (res.status === 404) {
+              throw new Error('테이블을 찾을 수 없습니다 (404): Supabase URL 및 running_logs 테이블 이름을 확인하세요.');
+            }
+            throw new Error('Supabase 조회 실패 (' + res.status + '): ' + (errBody || res.statusText));
+          }
+
+          var data = await res.json();
+          if (!Array.isArray(data)) {
+            throw new Error('예상치 못한 응답 형식입니다. 배열 데이터가 반환되지 않았습니다.');
+          }
+
+          state.isDemo = false;
+          $('demoBanner').classList.add('hidden');
+          state.runs = data.map(normalizeRunRow).sort(function (a, b) {
+            return b.sortTime - a.sortTime;
+          });
+          updateStatusIndicators();
+          renderDashboard();
+
+          if (state.runs.length === 0) {
+            showNotice('연결에 성공했지만 <code>running_logs</code> 테이블에 조회된 러닝 기록이 없습니다.', 'info');
+          }
+        } catch (err) {
+          console.error('Supabase fetch error:', err);
+          var msg = err && err.message ? err.message : '네트워크 또는 CORS 오류가 발생했습니다.';
+          if (msg === 'Failed to fetch') {
+            msg = '네트워크 연결 실패(CORS 또는 잘못된 Supabase URL). URL 형식이 <code>https://xxx.supabase.co</code>인지 확인하세요.';
+          }
+          showNotice('⚠️ ' + escapeHtml(msg), 'error');
+        } finally {
+          state.isLoadingData = false;
+          $('refreshIcon').classList.remove('animate-spin');
+        }
+      }
+
+      // Summary Cards Rendering
+      function getRecentRunsByDays(days) {
+        var now = new Date();
+        var cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1), 0, 0, 0);
+        return state.runs.filter(function (r) {
+          return r.dateObj && r.dateObj >= cutoff;
+        });
+      }
+
+      function averageOf(runs, getter) {
+        var vals = runs.map(getter).filter(function (v) { return Number.isFinite(v); });
+        if (!vals.length) return null;
+        return vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+      }
+
+      function renderSummaryCards() {
+        if (!state.runs.length) {
+          $('statDistance7d').textContent = '-';
+          $('statDistanceSub').textContent = '조회된 기록 없음';
+          $('statAvgPace').textContent = '-';
+          $('statAvgPaceSub').textContent = '분\'초"/km';
+          $('statZone2').textContent = '-';
+          $('statZone2Bar').style.width = '0%';
+          $('statZone2Sub').textContent = '유산소 베이스 지표';
+          $('statCadence').textContent = '-';
+          $('statCadenceSub').textContent = '분당 보폭 (spm)';
+          return;
+        }
+
+        var runs7d = getRecentRunsByDays(7);
+        var dist7d = runs7d.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
+        var totalDistAll = state.runs.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
+
+        $('statDistance7d').textContent = dist7d.toFixed(1) + ' km';
+        $('statDistanceSub').textContent = '최근 7일 ' + runs7d.length + '회 · 전체 ' + state.runs.length + '회 ' + totalDistAll.toFixed(1) + ' km';
+
+        // Use 7-day scope if available, otherwise fallback to all loaded runs
+        var scopeRuns = runs7d.length > 0 ? runs7d : state.runs;
+        var scopeLabel = runs7d.length > 0 ? '최근 7일 평균' : '전체 조회(' + state.runs.length + '회) 평균';
+
+        var avgPace = averageOf(scopeRuns, function (r) { return r.avgPaceSec; });
+        var avgPaceAll = averageOf(state.runs, function (r) { return r.avgPaceSec; });
+        $('statAvgPace').textContent = formatPace(avgPace);
+        $('statAvgPaceSub').textContent = runs7d.length > 0 && avgPaceAll
+          ? scopeLabel + ' · ' + state.runs.length + '회 ' + formatPaceShort(avgPaceAll)
+          : scopeLabel;
+
+        var avgZ2 = averageOf(scopeRuns, function (r) { return r.zone2Pct; });
+        $('statZone2').textContent = avgZ2 !== null ? avgZ2.toFixed(1) + '%' : '-';
+        $('statZone2Bar').style.width = avgZ2 !== null ? Math.min(100, Math.max(0, avgZ2)).toFixed(1) + '%' : '0%';
+        $('statZone2Sub').textContent = scopeLabel + ' 유산소 비율';
+
+        var avgCad = averageOf(scopeRuns, function (r) { return r.avgCadence; });
+        $('statCadence').textContent = avgCad !== null ? Math.round(avgCad) + ' spm' : '-';
+        $('statCadenceSub').textContent = scopeLabel + ' 보폭 수';
+      }
+
+      // Chart Styling Helpers
+      function getChartColors() {
+        var dark = isDarkMode();
+        return {
+          text: dark ? '#cbd5e1' : '#475569',
+          grid: dark ? 'rgba(148, 163, 184, 0.12)' : 'rgba(15, 23, 42, 0.08)',
+          tooltipBg: dark ? '#0f172a' : '#ffffff',
+          tooltipText: dark ? '#f8fafc' : '#0f172a',
+          tooltipBorder: dark ? '#334155' : '#e2e8f0'
+        };
+      }
+
+      function destroyChart(key) {
+        if (state.charts[key]) {
+          state.charts[key].destroy();
+          state.charts[key] = null;
+        }
+      }
+
+      function renderTrendCharts() {
+        var recent15 = state.runs.slice(0, 15).slice().reverse();
+        var colors = getChartColors();
+
+        destroyChart('hrPace');
+        destroyChart('zone2');
+
+        if (!recent15.length) {
+          $('chartHrPaceEmpty').classList.remove('hidden');
+          $('chartZone2Empty').classList.remove('hidden');
+          return;
+        }
+        $('chartHrPaceEmpty').classList.add('hidden');
+        $('chartZone2Empty').classList.add('hidden');
+
+        var labels = recent15.map(function (r) { return formatDateShort(r.runDate); });
+        var hrData = recent15.map(function (r) { return r.avgHr; });
+        var paceData = recent15.map(function (r) { return r.avgPaceSec; });
+        var z2Data = recent15.map(function (r) { return r.zone2Pct !== null ? Number(r.zone2Pct.toFixed(1)) : null; });
+
+        // Chart 1: Dual-axis Avg HR vs Avg Pace
+        var ctx1 = $('chartHrPace').getContext('2d');
+        state.charts.hrPace = new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: '평균 심박수 (bpm)',
+                data: hrData,
+                yAxisID: 'yHr',
+                borderColor: '#f43f5e',
+                backgroundColor: 'rgba(244, 63, 94, 0.12)',
+                borderWidth: 2.5,
+                pointRadius: 3.5,
+                pointHoverRadius: 6,
+                tension: 0.3,
+                spanGaps: true
+              },
+              {
+                label: '평균 페이스 (분\'초"/km)',
+                data: paceData,
+                yAxisID: 'yPace',
+                borderColor: '#0ea5e9',
+                backgroundColor: 'rgba(14, 165, 233, 0.12)',
+                borderWidth: 2.5,
+                pointRadius: 3.5,
+                pointHoverRadius: 6,
+                tension: 0.3,
+                spanGaps: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: {
+                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
+              },
+              tooltip: {
+                backgroundColor: colors.tooltipBg,
+                titleColor: colors.tooltipText,
+                bodyColor: colors.tooltipText,
+                borderColor: colors.tooltipBorder,
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  title: function (items) {
+                    var idx = items[0] ? items[0].dataIndex : 0;
+                    var run = recent15[idx];
+                    return run ? formatDateKr(run.runDate) + ' · ' + run.runType + (run.distanceKm ? ' (' + run.distanceKm.toFixed(1) + 'km)' : '') : '';
+                  },
+                  label: function (ctx) {
+                    if (ctx.datasetIndex === 0) {
+                      return ' 평균 심박수: ' + (ctx.parsed.y !== null ? ctx.parsed.y + ' bpm' : '-');
+                    }
+                    return ' 평균 페이스: ' + formatPace(ctx.parsed.y);
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: colors.text, font: { size: 11 } },
+                grid: { color: colors.grid }
+              },
+              yHr: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: '심박수 (bpm)', color: '#f43f5e', font: { size: 11 } },
+                ticks: { color: colors.text, font: { size: 11 } },
+                grid: { color: colors.grid }
+              },
+              yPace: {
+                type: 'linear',
+                position: 'right',
+                reverse: true,
+                title: { display: true, text: '페이스 (빠를수록 위)', color: '#0ea5e9', font: { size: 11 } },
+                ticks: {
+                  color: colors.text,
+                  font: { size: 11 },
+                  callback: function (value) { return formatPaceShort(value); }
+                },
+                grid: { drawOnChartArea: false }
+              }
+            }
+          }
+        });
+
+        // Chart 2: Zone 2 Ratio Trend
+        var ctx2 = $('chartZone2').getContext('2d');
+        var gradient = ctx2.createLinearGradient(0, 0, 0, 260);
+        gradient.addColorStop(0, 'rgba(16, 185, 129, 0.32)');
+        gradient.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
+
+        state.charts.zone2 = new Chart(ctx2, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Zone 2 비율 (%)',
+                data: z2Data,
+                borderColor: '#10b981',
+                backgroundColor: gradient,
+                fill: true,
+                borderWidth: 2.5,
+                pointRadius: 3.5,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#10b981',
+                tension: 0.35,
+                spanGaps: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: {
+                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
+              },
+              tooltip: {
+                backgroundColor: colors.tooltipBg,
+                titleColor: colors.tooltipText,
+                bodyColor: colors.tooltipText,
+                borderColor: colors.tooltipBorder,
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  title: function (items) {
+                    var idx = items[0] ? items[0].dataIndex : 0;
+                    var run = recent15[idx];
+                    return run ? formatDateKr(run.runDate) + ' · ' + run.runType : '';
+                  },
+                  label: function (ctx) {
+                    return ' Zone 2 비율: ' + (ctx.parsed.y !== null ? ctx.parsed.y.toFixed(1) + '%' : '-');
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: colors.text, font: { size: 11 } },
+                grid: { color: colors.grid }
+              },
+              y: {
+                min: 0,
+                max: 100,
+                ticks: {
+                  color: colors.text,
+                  font: { size: 11 },
+                  stepSize: 20,
+                  callback: function (v) { return v + '%'; }
+                },
+                grid: { color: colors.grid }
+              }
+            }
+          }
+        });
+      }
+
+      // Running Logs Table Rendering
+      function getFilteredRuns() {
+        if (state.filter === 'all') return state.runs;
+        return state.runs.filter(function (r) {
+          return r.runType === state.filter;
+        });
+      }
+
+      function renderRunsTable() {
+        var tbody = $('runsTableBody');
+        var filtered = getFilteredRuns();
+        $('tableCountBadge').textContent = filtered.length + '건';
+
+        if (!filtered.length) {
+          tbody.innerHTML = '<tr><td colspan="7" class="py-10 px-4 text-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">' +
+            (state.runs.length === 0
+              ? '표시할 러닝 기록이 없습니다. 상단 <strong>[⚙️ API 설정]</strong>에서 연결하거나 데모 데이터를 실행해보세요.'
+              : '선택한 필터(' + escapeHtml(state.filter) + ')에 해당하는 러닝 기록이 없습니다.') +
+            '</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(function (run) {
+          var isTreadmill = run.runType === '트레드밀';
+          var badgeClass = isTreadmill
+            ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/70'
+            : 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/70';
+
+          var z2Text = run.zone2Pct !== null ? run.zone2Pct.toFixed(0) + '%' : '-';
+          var z2Width = run.zone2Pct !== null ? Math.min(100, Math.max(0, run.zone2Pct)).toFixed(0) : 0;
+          var hasTs = run.timeseries && run.timeseries.length > 0;
+          var timeLabel = '';
+          if (run.startedAt) {
+            var st = new Date(run.startedAt);
+            if (!isNaN(st.getTime())) {
+              timeLabel = String(st.getHours()).padStart(2, '0') + ':' + String(st.getMinutes()).padStart(2, '0');
+            }
+          }
+          var metaLine = [timeLabel, run.title].filter(Boolean).join(' · ');
+
+          return '<tr data-run-id="' + escapeHtml(run.id) + '" class="hover:bg-indigo-50/50 dark:hover:bg-indigo-950/25 cursor-pointer transition-colors">' +
+            '<td class="py-3.5 px-4 whitespace-nowrap font-medium text-slate-800 dark:text-slate-100">' +
+              '<div class="flex items-center gap-1.5">' +
+                '<span>' + escapeHtml(formatDateKr(run.runDate)) + '</span>' +
+                (hasTs ? '<span title="1분 단위 상세 데이터 있음" class="text-[11px] text-indigo-500">📊</span>' : '') +
+              '</div>' +
+              (metaLine ? '<div class="text-[11px] font-normal text-slate-400 dark:text-slate-500 mt-0.5">' + escapeHtml(metaLine) + '</div>' : '') +
+            '</td>' +
+            '<td class="py-3.5 px-4 whitespace-nowrap">' +
+              '<span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full border ' + badgeClass + '">' +
+                escapeHtml(run.runType) +
+              '</span>' +
+            '</td>' +
+            '<td class="py-3.5 px-4 whitespace-nowrap text-right font-semibold tabular-nums">' +
+              (run.distanceKm !== null ? run.distanceKm.toFixed(2) + ' km' : '-') +
+            '</td>' +
+            '<td class="py-3.5 px-4 whitespace-nowrap text-right tabular-nums text-slate-600 dark:text-slate-300">' +
+              formatDuration(run.durationSec) +
+            '</td>' +
+            '<td class="py-3.5 px-4 whitespace-nowrap text-right font-semibold tabular-nums text-sky-600 dark:text-sky-400">' +
+              formatPace(run.avgPaceSec) +
+            '</td>' +
+            '<td class="py-3.5 px-4 whitespace-nowrap text-right tabular-nums text-rose-600 dark:text-rose-400 font-medium">' +
+              (run.avgHr !== null ? run.avgHr + ' bpm' : '-') +
+            '</td>' +
+            '<td class="py-3.5 px-4 whitespace-nowrap text-right tabular-nums">' +
+              '<div class="inline-flex items-center justify-end gap-2">' +
+                '<div class="hidden sm:block w-14 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">' +
+                  '<div class="h-full rounded-full bg-emerald-500" style="width:' + z2Width + '%"></div>' +
+                '</div>' +
+                '<span class="font-medium text-emerald-600 dark:text-emerald-400 w-9 text-right">' + z2Text + '</span>' +
+              '</div>' +
+            '</td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      // 1-Minute Timeseries Detail Modal
+      function openRunModal(run) {
+        if (!run) return;
+        state.selectedRun = run;
+
+        $('modalTitle').textContent = formatDateKr(run.runDate) + (run.title ? ' · ' + run.title : ' 러닝 상세');
+        var isTreadmill = run.runType === '트레드밀';
+        var badge = $('modalTypeBadge');
+        badge.textContent = run.runType;
+        badge.className = 'px-2 py-0.5 text-xs font-semibold rounded-full border ' + (isTreadmill
+          ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/70'
+          : 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/70');
+
+        var sourceBadge = $('modalSourceBadge');
+        var sourceLabel = formatSourceLabel(run.sourcePackage);
+        if (sourceLabel) {
+          sourceBadge.textContent = sourceLabel;
+          sourceBadge.classList.remove('hidden');
+        } else {
+          sourceBadge.classList.add('hidden');
+        }
+
+        var zone2Badge = $('modalZone2Badge');
+        if (run.zone2MinBpm && run.zone2MaxBpm) {
+          zone2Badge.textContent = 'Zone 2: ' + run.zone2MinBpm + '~' + run.zone2MaxBpm + ' bpm';
+          zone2Badge.classList.remove('hidden');
+        } else {
+          zone2Badge.classList.add('hidden');
+        }
+
+        $('modalSubtitle').textContent = run.notes ? run.notes : '1분 단위 심박수 및 페이스 구간별 추이를 확인하세요.';
+
+        var hrRangeText = (run.maxHr !== null || run.minHr !== null)
+          ? '최고 ' + (run.maxHr !== null ? run.maxHr : '-') + ' / 최저 ' + (run.minHr !== null ? run.minHr : '-')
+          : '';
+        var pills = [
+          { label: '거리', value: run.distanceKm !== null ? run.distanceKm.toFixed(2) + ' km' : '-', sub: '' },
+          { label: '시간', value: formatDuration(run.durationSec), sub: '' },
+          { label: '평균 페이스', value: formatPace(run.avgPaceSec), sub: '' },
+          { label: '평균 심박수', value: run.avgHr !== null ? run.avgHr + ' bpm' : '-', sub: hrRangeText },
+          { label: 'Zone 2 / 케이던스', value: (run.zone2Pct !== null ? run.zone2Pct.toFixed(0) + '%' : '-') + ' · ' + (run.avgCadence !== null ? run.avgCadence + ' spm' : '-'), sub: '' }
+        ];
+        $('modalSummaryPills').innerHTML = pills.map(function (p) {
+          return '<div class="rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/70 px-3 py-2">' +
+            '<div class="text-[11px] text-slate-500 dark:text-slate-400">' + escapeHtml(p.label) + '</div>' +
+            '<div class="text-sm font-bold mt-0.5 tabular-nums">' + escapeHtml(p.value) + '</div>' +
+            (p.sub ? '<div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tabular-nums">' + escapeHtml(p.sub) + '</div>' : '') +
+          '</div>';
+        }).join('');
+
+        var insights = computeTimeseriesInsights(run.timeseries);
+        var driftBox = $('modalDriftBox');
+        if (insights) {
+          var hrDriftStr = insights.hrDrift !== null
+            ? (insights.hrDrift >= 0 ? '+' + insights.hrDrift : String(insights.hrDrift)) + ' bpm (' + insights.hrDriftPct.toFixed(1) + '%)'
+            : '-';
+          var splitStr = (insights.pace1 !== null && insights.pace2 !== null)
+            ? formatPaceShort(insights.pace1) + ' → ' + formatPaceShort(insights.pace2)
+            : '-';
+          driftBox.innerHTML =
+            '<span><strong>전반 vs 후반 심박 변화:</strong> ' + (insights.hr1 || '-') + ' → ' + (insights.hr2 || '-') + ' bpm (<span class="font-semibold text-rose-600 dark:text-rose-400">' + escapeHtml(hrDriftStr) + '</span>)</span>' +
+            '<span><strong>페이스 스플릿:</strong> <span class="font-semibold text-sky-600 dark:text-sky-400">' + escapeHtml(splitStr) + '</span></span>';
+          driftBox.classList.remove('hidden');
+        } else {
+          driftBox.classList.add('hidden');
+        }
+
+        renderTimeseriesModalChart(run.timeseries);
+        $('runDetailModal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      }
+
+      function renderTimeseriesModalChart(timeseries) {
+        destroyChart('timeseries');
+        var emptyEl = $('modalChartEmpty');
+        var countEl = $('modalPointsCount');
+
+        if (!timeseries || !timeseries.length) {
+          emptyEl.classList.remove('hidden');
+          countEl.textContent = '0개 구간';
+          return;
+        }
+        emptyEl.classList.add('hidden');
+        countEl.textContent = timeseries.length + '분 기록';
+
+        var colors = getChartColors();
+        var labels = timeseries.map(function (pt) { return pt.minute + '분'; });
+        var hrs = timeseries.map(function (pt) { return pt.hr; });
+        var paces = timeseries.map(function (pt) { return pt.paceSec; });
+
+        var ctx = $('chartTimeseries').getContext('2d');
+        state.charts.timeseries = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: '심박수 (bpm)',
+                data: hrs,
+                yAxisID: 'yHr',
+                borderColor: '#f43f5e',
+                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                borderWidth: 2,
+                pointRadius: timeseries.length > 40 ? 1.5 : 3,
+                pointHoverRadius: 5,
+                tension: 0.25,
+                spanGaps: true
+              },
+              {
+                label: '페이스 (분\'초"/km)',
+                data: paces,
+                yAxisID: 'yPace',
+                borderColor: '#0ea5e9',
+                backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                borderWidth: 2,
+                pointRadius: timeseries.length > 40 ? 1.5 : 3,
+                pointHoverRadius: 5,
+                tension: 0.25,
+                spanGaps: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: {
+                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
+              },
+              tooltip: {
+                backgroundColor: colors.tooltipBg,
+                titleColor: colors.tooltipText,
+                bodyColor: colors.tooltipText,
+                borderColor: colors.tooltipBorder,
+                borderWidth: 1,
+                callbacks: {
+                  label: function (ctx) {
+                    if (ctx.datasetIndex === 0) {
+                      return ' 심박수: ' + (ctx.parsed.y !== null ? ctx.parsed.y + ' bpm' : '-');
+                    }
+                    return ' 페이스: ' + formatPace(ctx.parsed.y);
+                  },
+                  afterBody: function (items) {
+                    var idx = items && items[0] ? items[0].dataIndex : -1;
+                    var pt = idx >= 0 ? timeseries[idx] : null;
+                    if (!pt) return [];
+                    var extra = [];
+                    if (pt.cadence !== null) extra.push(' 케이던스: ' + pt.cadence + ' spm');
+                    if (pt.distanceM !== null) extra.push(' 구간 거리: ' + Math.round(pt.distanceM) + ' m');
+                    if (pt.zone2Ratio !== null) extra.push(' Zone 2 비율: ' + Math.round(pt.zone2Ratio * 100) + '%');
+                    return extra;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: colors.text, font: { size: 11 }, maxTicksLimit: 12 },
+                grid: { color: colors.grid }
+              },
+              yHr: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: '심박수 (bpm)', color: '#f43f5e', font: { size: 11 } },
+                ticks: { color: colors.text, font: { size: 11 } },
+                grid: { color: colors.grid }
+              },
+              yPace: {
+                type: 'linear',
+                position: 'right',
+                reverse: true,
+                title: { display: true, text: '페이스 (빠를수록 위)', color: '#0ea5e9', font: { size: 11 } },
+                ticks: {
+                  color: colors.text,
+                  font: { size: 11 },
+                  callback: function (v) { return formatPaceShort(v); }
+                },
+                grid: { drawOnChartArea: false }
+              }
+            }
+          }
+        });
+      }
+
+      function closeRunModal() {
+        $('runDetailModal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        destroyChart('timeseries');
+      }
+
+      // Markdown Rendering (Marked + DOMPurify with safe fallback)
+      function fallbackMarkdownToHtml(md) {
+        var escaped = escapeHtml(md);
+        var lines = escaped.split(/\r?\n/);
+        var out = [];
+        var inList = false;
+        lines.forEach(function (line) {
+          if (/^###\s+(.+)/.test(line)) {
+            if (inList) { out.push('</ul>'); inList = false; }
+            out.push('<h3>' + line.replace(/^###\s+/, '') + '</h3>');
+          } else if (/^##\s+(.+)/.test(line)) {
+            if (inList) { out.push('</ul>'); inList = false; }
+            out.push('<h2>' + line.replace(/^##\s+/, '') + '</h2>');
+          } else if (/^#\s+(.+)/.test(line)) {
+            if (inList) { out.push('</ul>'); inList = false; }
+            out.push('<h1>' + line.replace(/^#\s+/, '') + '</h1>');
+          } else if (/^[-*]\s+(.+)/.test(line)) {
+            if (!inList) { out.push('<ul>'); inList = true; }
+            out.push('<li>' + line.replace(/^[-*]\s+/, '') + '</li>');
+          } else if (line.trim() === '') {
+            if (inList) { out.push('</ul>'); inList = false; }
+          } else {
+            if (inList) { out.push('</ul>'); inList = false; }
+            out.push('<p>' + line + '</p>');
+          }
+        });
+        if (inList) out.push('</ul>');
+        return out.join('\n')
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>');
+      }
+
+      function renderMarkdownSafe(mdText) {
+        if (window.marked && typeof window.marked.parse === 'function') {
+          var rawHtml = window.marked.parse(mdText, { breaks: true, gfm: true });
+          if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
+            return window.DOMPurify.sanitize(rawHtml);
+          }
+          return rawHtml;
+        }
+        return fallbackMarkdownToHtml(mdText);
+      }
+
+      // Prompt Builders for Gemini AI Running Coach
+      function formatRunLineForPrompt(run) {
+        return [
+          run.runDate || '날짜미상',
+          run.runType,
+          (run.distanceKm !== null ? run.distanceKm.toFixed(2) + 'km' : '-'),
+          formatDuration(run.durationSec),
+          '페이스 ' + formatPace(run.avgPaceSec),
+          '평균심박 ' + (run.avgHr !== null ? run.avgHr + 'bpm' : '-'),
+          'Zone2 ' + (run.zone2Pct !== null ? run.zone2Pct.toFixed(0) + '%' : '-'),
+          '케이던스 ' + (run.avgCadence !== null ? run.avgCadence + 'spm' : '-')
+        ].join(' | ');
+      }
+
+      function buildSingleRunAnalysisPrompt(targetRun) {
+        var run = targetRun || state.runs[0];
+        if (!run) return null;
+
+        var insights = computeTimeseriesInsights(run.timeseries);
+        var tsLines = (run.timeseries && run.timeseries.length)
+          ? run.timeseries.map(function (pt) {
+              return pt.minute + '분: 심박 ' + (pt.hr !== null ? pt.hr + 'bpm' : '-') +
+                ', 페이스 ' + formatPaceShort(pt.paceSec) +
+                (pt.cadence !== null ? ', 케이던스 ' + pt.cadence + 'spm' : '') +
+                (pt.distanceM !== null ? ', 거리 ' + Math.round(pt.distanceM) + 'm' : '') +
+                (pt.zone2Ratio !== null ? ', Zone2 ' + Math.round(pt.zone2Ratio * 100) + '%' : '');
+            }).join('\n')
+          : '(1분 단위 timeseries_1min 데이터가 비어 있음 — 전체 평균 지표 중심으로 분석해주세요.)';
+
+        var driftSummary = insights
+          ? '전반부 평균 심박 ' + insights.hr1 + 'bpm → 후반부 ' + insights.hr2 + 'bpm (변화 ' + (insights.hrDrift >= 0 ? '+' : '') + insights.hrDrift + 'bpm / ' + insights.hrDriftPct.toFixed(1) + '%), 전반 평균 페이스 ' + formatPaceShort(insights.pace1) + ' → 후반 ' + formatPaceShort(insights.pace2)
+          : '구간 스플릿 계산 불가';
+
+        var hrRangeNote = (run.maxHr !== null || run.minHr !== null)
+          ? '- 최고/최저 심박: ' + (run.maxHr !== null ? run.maxHr : '-') + ' / ' + (run.minHr !== null ? run.minHr : '-') + ' bpm'
+          : '';
+        var zone2BoundNote = (run.zone2MinBpm && run.zone2MaxBpm)
+          ? '- 설정된 Zone 2 심박 구간: ' + run.zone2MinBpm + '~' + run.zone2MaxBpm + ' bpm'
+          : '';
+
+        return [
+          '아래는 내가 뛴 단일 러닝 세션 기록과 1분 단위 심박·페이스 시계열 데이터입니다.',
+          '후반부 심박 드리프트(Cardiac Drift), 페이스 배분 전략(네거티브/포지티브 스플릿), Zone 2 유산소 효율, 케이던스 안정성을 정밀 분석하고 다음 러닝을 위한 구체적 개선점을 3가지 이내로 제안해주세요.',
+          '',
+          '### 러닝 요약',
+          '- ' + formatRunLineForPrompt(run),
+          hrRangeNote,
+          zone2BoundNote,
+          '- 전반/후반 비교: ' + driftSummary,
+          run.notes ? '- 메모: ' + run.notes : '',
+          '',
+          '### 1분 단위 시계열 데이터 (timeseries_1min)',
+          tsLines
+        ].filter(Boolean).join('\n');
+      }
+
+      function buildTwoWeekTrendPrompt() {
+        if (!state.runs.length) return null;
+        var recent14 = getRecentRunsByDays(14);
+        var recent7 = getRecentRunsByDays(7);
+        var prev7 = recent14.filter(function (r) { return recent7.indexOf(r) === -1; });
+
+        var scopeRuns = recent14.length >= 2 ? recent14 : state.runs.slice(0, 10);
+        var scopeTitle = recent14.length >= 2
+          ? '최근 14일 러닝 목록 (' + recent14.length + '회)'
+          : '최근 14일 내 기록이 적어 최근 조회 기록 ' + scopeRuns.length + '회를 함께 제공합니다';
+
+        var dist7 = recent7.reduce(function (s, r) { return s + (r.distanceKm || 0); }, 0);
+        var distPrev7 = prev7.reduce(function (s, r) { return s + (r.distanceKm || 0); }, 0);
+
+        return [
+          '아래는 나의 최근 2주간 러닝 훈련 요약 데이터입니다.',
+          '1) 유산소 베이스(Zone 2 비율 및 심박 대비 페이스 효율) 향상도,',
+          '2) 주간 거리 변화(1주차 ' + distPrev7.toFixed(1) + 'km → 이번 주 ' + dist7.toFixed(1) + 'km)의 적정성과 과부하(10% 룰 등) 위험,',
+          '3) 누적 피로도 진단 및 향후 1주 훈련 강도 조절 방향을 한국어로 분석해주세요.',
+          '',
+          '### ' + scopeTitle,
+          scopeRuns.map(function (r, i) { return (i + 1) + '. ' + formatRunLineForPrompt(r); }).join('\n')
+        ].join('\n');
+      }
+
+      function buildConditionRecommendationPrompt() {
+        var memo = $('inputConditionMemo').value.trim();
+        var recent14 = getRecentRunsByDays(14);
+        var scopeRuns = recent14.length > 0 ? recent14 : state.runs.slice(0, 7);
+
+        var recentText = scopeRuns.length
+          ? scopeRuns.map(function (r, i) { return (i + 1) + '. ' + formatRunLineForPrompt(r); }).join('\n')
+          : '(저장된 최근 러닝 기록 없음)';
+
+        return [
+          '오늘 나의 컨디션 메모와 최근 러닝 기록을 바탕으로 오늘의 맞춤 훈련 처방을 내려주세요.',
+          '반드시 다음 4가지를 명확히 제시해주세요:',
+          '1. **오늘 실행 여부:** 러닝 진행 / 가벼운 회복 조깅 / 완전 휴식 중 택1 및 근거',
+          '2. **권장 훈련 메뉴:** 거리 또는 시간, 목표 페이스 범위',
+          '3. **권장 심박수 구간:** 구체적인 bpm 범위 및 Zone 안내',
+          '4. **주의사항 및 보강/회복 팁**',
+          '',
+          '### 오늘의 컨디션 메모',
+          memo ? memo : '(별도 컨디션 메모 미입력 — 최근 훈련 부하 기준으로 보수적/균형 있게 제안해주세요)',
+          '',
+          '### 최근 러닝 기록 (' + scopeRuns.length + '회)',
+          recentText
+        ].join('\n');
+      }
+
+      function buildFreeQuestionPrompt(questionText) {
+        var includeData = $('chkIncludeData').checked;
+        var memo = $('inputConditionMemo').value.trim();
+        if (!includeData || !state.runs.length) {
+          return memo
+            ? questionText + '\n\n(참고 — 오늘 컨디션 메모: ' + memo + ')'
+            : questionText;
+        }
+        var recent10 = state.runs.slice(0, 10);
+        return [
+          questionText,
+          '',
+          memo ? '### 오늘 컨디션 메모\n' + memo : '',
+          '### 참고용 최근 러닝 기록 (' + recent10.length + '회)',
+          recent10.map(function (r, i) { return (i + 1) + '. ' + formatRunLineForPrompt(r); }).join('\n')
+        ].filter(Boolean).join('\n');
+      }
+
+      // Gemini API Call
+      async function askGeminiCoach(promptText, titleLabel) {
+        if (state.isAskingCoach) return;
+        if (!state.config.geminiKey) {
+          openSettingsPanel(true);
+          $('coachError').innerHTML = '⚠️ <strong>Gemini API Key</strong>가 설정되지 않았습니다. 상단 <strong>[⚙️ API 설정]</strong> 패널에서 API Key를 입력 후 저장해주세요.';
+          $('coachError').classList.remove('hidden');
+          return;
+        }
+        if (!promptText) {
+          $('coachError').innerHTML = '⚠️ 분석할 러닝 데이터가 없습니다. 먼저 Supabase에서 데이터를 불러오거나 <strong>데모 데이터 체험</strong>을 눌러주세요.';
+          $('coachError').classList.remove('hidden');
+          return;
+        }
+
+        var model = state.config.geminiModel || DEFAULT_MODEL;
+        var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/' +
+          encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(state.config.geminiKey);
+
+        state.isAskingCoach = true;
+        $('btnAskCoach').disabled = true;
+        $('coachError').classList.add('hidden');
+        $('coachLoading').classList.remove('hidden');
+        $('coachLoadingText').textContent = model + ' 모델이 데이터를 분석하고 있습니다...';
+        $('coachStatusLabel').textContent = titleLabel + ' (' + model + ')';
+
+        try {
+          var payload = {
+            system_instruction: {
+              parts: [{
+                text: '당신은 과학적 데이터(심박수, 페이스, Zone 2 유산소 비율, 케이던스, 심박 드리프트)를 기반으로 조언하는 전문 러닝 코치입니다. 한국어로 명확하고 친절하며 실전적인 가이드를 마크다운 형식으로 작성하세요. 무리한 훈련보다 부상 예방과 지속 가능한 유산소 향상을 우선합니다.'
+              }]
+            },
+            contents: [{
+              role: 'user',
+              parts: [{ text: promptText }]
+            }],
+            generationConfig: {
+              temperature: 0.6
+            }
+          };
+
+          var res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          var json = null;
+          try { json = await res.json(); } catch (e) {}
+
+          if (!res.ok) {
+            var apiMsg = json && json.error && json.error.message ? json.error.message : res.statusText;
+            var hint = '';
+            if (res.status === 400 || res.status === 401 || res.status === 403) {
+              hint = ' Gemini API Key가 올바른지 또는 선택한 모델(' + model + ')의 접근 권한(유료 티어 여부 등)을 확인하세요.';
+            } else if (res.status === 429) {
+              hint = ' 무료 티어 요청 한도(RPM/TPM)를 초과했습니다. 잠시 후 다시 시도하거나 모델을 변경해보세요.';
+            }
+            throw new Error('Gemini API 오류 (' + res.status + '): ' + apiMsg + hint);
+          }
+
+          var parts = json && json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts;
+          var replyText = Array.isArray(parts)
+            ? parts.map(function (p) { return p.text || ''; }).join('\n').trim()
+            : '';
+
+          if (!replyText) {
+            throw new Error('Gemini 응답에서 텍스트를 추출하지 못했습니다.');
+          }
+
+          state.lastCoachMarkdown = replyText;
+          $('coachOutput').innerHTML = renderMarkdownSafe(replyText);
+          $('btnCopyCoach').classList.remove('hidden');
+          $('btnClearCoach').classList.remove('hidden');
+          $('coachStatusLabel').textContent = '✅ ' + titleLabel + ' 완료 (' + model + ')';
+        } catch (err) {
+          console.error('Gemini error:', err);
+          $('coachError').innerHTML = '⚠️ ' + escapeHtml(err && err.message ? err.message : 'Gemini 호출 중 오류가 발생했습니다.');
+          $('coachError').classList.remove('hidden');
+          $('coachStatusLabel').textContent = '요청 실패';
+        } finally {
+          state.isAskingCoach = false;
+          $('btnAskCoach').disabled = false;
+          $('coachLoading').classList.add('hidden');
+        }
+      }
+
+      // Settings Panel Toggle
+      function openSettingsPanel(forceOpen) {
+        var panel = $('settingsPanel');
+        var btn = $('btnToggleSettings');
+        var shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : panel.classList.contains('hidden');
+        if (shouldOpen) {
+          panel.classList.remove('hidden');
+          btn.setAttribute('aria-expanded', 'true');
+        } else {
+          panel.classList.add('hidden');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      }
+
+      // Theme Toggle
+      function updateThemeIcon() {
+        $('themeIcon').textContent = isDarkMode() ? '☀️' : '🌙';
+      }
+
+      function toggleTheme() {
+        var nextDark = !isDarkMode();
+        if (nextDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, nextDark ? 'dark' : 'light');
+        } catch (e) {}
+        updateThemeIcon();
+        renderTrendCharts();
+        if (!$('runDetailModal').classList.contains('hidden') && state.selectedRun) {
+          renderTimeseriesModalChart(state.selectedRun.timeseries);
+        }
+      }
+
+      // Full Dashboard Render
+      function renderDashboard() {
+        renderSummaryCards();
+        renderTrendCharts();
+        renderRunsTable();
+      }
+
+      // Event Bindings
+      function bindEvents() {
+        $('btnThemeToggle').addEventListener('click', toggleTheme);
+        $('btnToggleSettings').addEventListener('click', function () { openSettingsPanel(); });
+        $('btnCloseSettings').addEventListener('click', function () { openSettingsPanel(false); });
+        $('btnCloseNotice').addEventListener('click', hideNotice);
+        $('btnRefresh').addEventListener('click', function () {
+          fetchRunningLogs();
+        });
+
+        // Password visibility toggles
+        document.querySelectorAll('[data-toggle-visibility]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var target = $(btn.getAttribute('data-toggle-visibility'));
+            if (!target) return;
+            var isPass = target.type === 'password';
+            target.type = isPass ? 'text' : 'password';
+            btn.textContent = isPass ? '숨김' : '보기';
+          });
+        });
+
+        // Save settings & fetch
+        $('settingsForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          saveConfigFromInputs();
+          openSettingsPanel(false);
+          fetchRunningLogs();
+        });
+
+        // Demo Mode
+        $('btnLoadDemo').addEventListener('click', function () {
+          saveConfigFromInputs();
+          state.isDemo = true;
+          state.runs = generateDemoRuns();
+          $('demoBanner').classList.remove('hidden');
+          hideNotice();
+          openSettingsPanel(false);
+          updateStatusIndicators();
+          renderDashboard();
+        });
+
+        $('btnDismissDemo').addEventListener('click', function () {
+          $('demoBanner').classList.add('hidden');
+        });
+
+        // Reset settings
+        $('btnResetSettings').addEventListener('click', function () {
+          try { localStorage.removeItem(CONFIG_STORAGE_KEY); } catch (e) {}
+          state.config = { supabaseUrl: '', supabaseKey: '', geminiKey: '', geminiModel: DEFAULT_MODEL };
+          state.runs = [];
+          state.isDemo = false;
+          $('demoBanner').classList.add('hidden');
+          syncSettingsInputs();
+          updateStatusIndicators();
+          renderDashboard();
+          showNotice('저장된 API 설정을 초기화했습니다.', 'info');
+        });
+
+        // Table filter tabs
+        document.querySelectorAll('.filter-tab').forEach(function (tab) {
+          tab.addEventListener('click', function () {
+            state.filter = tab.getAttribute('data-filter');
+            document.querySelectorAll('.filter-tab').forEach(function (t) {
+              var active = t === tab;
+              t.classList.toggle('bg-white', active);
+              t.classList.toggle('dark:bg-slate-700', active);
+              t.classList.toggle('text-slate-900', active);
+              t.classList.toggle('dark:text-white', active);
+              t.classList.toggle('shadow-sm', active);
+              t.classList.toggle('text-slate-600', !active);
+              t.classList.toggle('dark:text-slate-400', !active);
+            });
+            renderRunsTable();
+          });
+        });
+
+        // Table row click -> open modal
+        $('runsTableBody').addEventListener('click', function (e) {
+          var row = e.target.closest('tr[data-run-id]');
+          if (!row) return;
+          var runId = row.getAttribute('data-run-id');
+          var found = state.runs.find(function (r) { return String(r.id) === String(runId); });
+          if (found) openRunModal(found);
+        });
+
+        // Modal close controls
+        $('btnCloseModal').addEventListener('click', closeRunModal);
+        $('btnModalCloseBottom').addEventListener('click', closeRunModal);
+        $('runDetailModal').addEventListener('click', function (e) {
+          if (e.target === $('runDetailModal')) closeRunModal();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !$('runDetailModal').classList.contains('hidden')) {
+            closeRunModal();
+          }
+        });
+
+        // Analyze selected run from modal
+        $('btnAnalyzeSelectedRun').addEventListener('click', function () {
+          var run = state.selectedRun;
+          closeRunModal();
+          $('coachSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          var prompt = buildSingleRunAnalysisPrompt(run);
+          askGeminiCoach(prompt, formatDateShort(run.runDate) + ' 러닝 정밀 분석');
+        });
+
+        // Coach 3 quick buttons
+        $('btnQuickLatest').addEventListener('click', function () {
+          var prompt = buildSingleRunAnalysisPrompt(state.runs[0]);
+          askGeminiCoach(prompt, '최근 러닝 정밀 분석');
+        });
+
+        $('btnQuickTwoWeeks').addEventListener('click', function () {
+          var prompt = buildTwoWeekTrendPrompt();
+          askGeminiCoach(prompt, '최근 2주 훈련 추세 및 피로도 진단');
+        });
+
+        $('btnQuickCondition').addEventListener('click', function () {
+          var prompt = buildConditionRecommendationPrompt();
+          askGeminiCoach(prompt, '오늘 컨디션 기반 훈련 추천');
+        });
+
+        // Free-form coach form
+        $('coachForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var q = $('inputCoachQuestion').value.trim();
+          if (!q) {
+            $('inputCoachQuestion').focus();
+            return;
+          }
+          var prompt = buildFreeQuestionPrompt(q);
+          askGeminiCoach(prompt, 'AI 코치 맞춤 답변');
+        });
+
+        // Copy & clear coach output
+        $('btnCopyCoach').addEventListener('click', async function () {
+          if (!state.lastCoachMarkdown) return;
+          try {
+            await navigator.clipboard.writeText(state.lastCoachMarkdown);
+            var btn = $('btnCopyCoach');
+            btn.textContent = '복사됨 ✓';
+            setTimeout(function () { btn.textContent = '복사'; }, 1500);
+          } catch (e) {}
+        });
+
+        $('btnClearCoach').addEventListener('click', function () {
+          state.lastCoachMarkdown = '';
+          $('coachOutput').innerHTML = '<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">위의 빠른 질문 버튼을 누르거나 질문을 입력하면 데이터 기반 맞춤 코칭 결과가 여기에 표시됩니다.</p>';
+          $('btnCopyCoach').classList.add('hidden');
+          $('btnClearCoach').classList.add('hidden');
+          $('coachError').classList.add('hidden');
+          $('coachStatusLabel').textContent = '코치 응답 대기 중';
+        });
+      }
+
+      // Initialize App
+      function init() {
+        updateThemeIcon();
+        loadConfig();
+        bindEvents();
+
+        if (state.config.supabaseUrl && state.config.supabaseKey) {
+          fetchRunningLogs();
+        } else {
+          openSettingsPanel(true);
+          renderDashboard();
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
+</body>
+</html>

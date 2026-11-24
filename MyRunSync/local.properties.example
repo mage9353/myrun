@@ -1,4 +1,10 @@
-# Copy to local.properties and fill in your local SDK path and Supabase credentials.
+# Copy to local.properties and fill in your local SDK path and debug Supabase credentials.
 sdk.dir=C\:\\Users\\<USER>\\AppData\\Local\\Android\\Sdk
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Optional: local release signing (keep keystore files outside Git)
+# SIGNING_STORE_FILE=C\:\\Users\\<USER>\\myrunsync-release.jks
+# SIGNING_STORE_PASSWORD=your-store-password
+# SIGNING_KEY_ALIAS=myrunsync
+# SIGNING_KEY_PASSWORD=your-key-password

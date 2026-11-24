@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">MyRunSync</string>
+    <string name="section_supabase_settings">Supabase Settings</string>
+    <string name="label_supabase_url">Supabase URL</string>
+    <string name="hint_supabase_url">https://your-project.supabase.co</string>
+    <string name="label_supabase_anon_key">Supabase Anon Key</string>
+    <string name="hint_supabase_anon_key">eyJ... or sb_publishable_...</string>
+    <string name="cb_show_anon_key">Show Anon Key</string>
+    <string name="btn_save_settings">Save Supabase Settings</string>
+    <string name="status_missing_credentials">Enter Supabase URL and Anon Key below, then grant Health Connect permissions.</string>
+    <string name="status_settings_saved">Supabase settings saved on this device.</string>
     <string name="btn_grant_permissions">Grant Health Connect Permissions</string>
     <string name="btn_sync_runs">Sync Recent Runs to Supabase</string>
     <string name="status_ready">Ready. Grant Health Connect permissions and sync recent runs.</string>

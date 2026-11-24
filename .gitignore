@@ -5,6 +5,10 @@
 **/*.apk
 **/*.aab
 **/*.iml
+**/*.jks
+**/*.keystore
+**/*.p12
+**/keystore.properties
 .idea/
 .DS_Store
 Thumbs.db

@@ -1,3 +1,4 @@
+import java.io.File
 import java.util.Properties
 
 plugins {
@@ -13,11 +14,27 @@ val localProps = Properties().apply {
     }
 }
 
+fun configProp(key: String): String? =
+    System.getenv(key)?.takeIf { it.isNotBlank() }
+        ?: localProps.getProperty(key)?.takeIf { it.isNotBlank() }
+
 fun buildConfigString(key: String): String {
-    val raw = localProps.getProperty(key, System.getenv(key) ?: "")
+    val raw = configProp(key) ?: ""
     val escaped = raw.replace("\\", "\\\\").replace("\"", "\\\"")
     return "\"$escaped\""
 }
+
+val signingStoreFile = configProp("SIGNING_STORE_FILE")?.let { raw ->
+    File(raw).let { if (it.isAbsolute) it else rootProject.file(raw) }
+}
+val signingStorePassword = configProp("SIGNING_STORE_PASSWORD")
+val signingKeyAlias = configProp("SIGNING_KEY_ALIAS")
+val signingKeyPassword = configProp("SIGNING_KEY_PASSWORD")
+val hasReleaseSigning = signingStoreFile != null &&
+    signingStoreFile.exists() &&
+    signingStorePassword != null &&
+    signingKeyAlias != null &&
+    signingKeyPassword != null
 
 android {
     namespace = "com.myrunsync"
@@ -27,17 +44,39 @@ android {
         applicationId = "com.myrunsync"
         minSdk = 28
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull()
+            ?: System.getenv("VERSION_CODE")?.toIntOrNull()
+            ?: 10000
+        versionName = (project.findProperty("versionName") as String?)?.takeIf { it.isNotBlank() }
+            ?: System.getenv("VERSION_NAME")?.takeIf { it.isNotBlank() }
+            ?: "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
-        buildConfigField("String", "SUPABASE_URL", buildConfigString("SUPABASE_URL"))
-        buildConfigField("String", "SUPABASE_ANON_KEY", buildConfigString("SUPABASE_ANON_KEY"))
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = signingStoreFile
+                storePassword = signingStorePassword
+                keyAlias = signingKeyAlias
+                keyPassword = signingKeyPassword
+            }
+        }
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "SUPABASE_URL", buildConfigString("SUPABASE_URL"))
+            buildConfigField("String", "SUPABASE_ANON_KEY", buildConfigString("SUPABASE_ANON_KEY"))
+        }
         release {
+            // Release APKs must never bundle Supabase credentials.
+            buildConfigField("String", "SUPABASE_URL", "\"\"")
+            buildConfigField("String", "SUPABASE_ANON_KEY", "\"\"")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

@@ -7,7 +7,8 @@
 ```text
 MyRun/
 ├── .github/workflows/
-│   └── deploy-pages.yml                  # MyRunCoach/ 폴더만 GitHub Pages로 자동 배포
+│   ├── deploy-pages.yml                  # MyRunCoach/ 폴더만 GitHub Pages로 자동 배포
+│   └── release-android.yml               # MyRunSync/ 서명된 Release APK 빌드 및 GitHub Release 배포
 ├── supabase/
 │   └── migrations/
 │       └── 001_running_logs_schema.sql   # 단일 진실 원천(DB 스키마, 인덱스, 권한, RLS)
@@ -19,6 +20,7 @@ MyRun/
 
 ## 각 앱의 역할
 * **MyRunSync** (`MyRunSync/`): Android 기기에서 Health Connect의 러닝 세션(야외/트레드밀), 거리, 심박수, 케이던스를 읽어 요약 지표 및 1분 단위 다운샘플링 JSON(`timeseries_1min`)을 계산하고 Supabase `public.running_logs`에 `hc_session_id` 기준으로 `upsert`합니다.
+  * Release APK에는 Supabase 키를 내장하지 않으며, 앱 화면의 **Supabase Settings**(`SharedPreferences`)에 `Supabase URL`과 `Anon Key`를 직접 입력·저장해 사용합니다.
 * **MyRunCoach** (`MyRunCoach/`): Supabase `public.running_logs`를 조회해 주간 요약, 추세 차트, 1분 단위 상세 차트 모달, Gemini AI 맞춤 러닝 코칭을 제공하는 단일 파일(`index.html`) 웹 대시보드입니다. GitHub Actions를 통해 `https://mage9353.github.io/myrun/`으로 배포됩니다.
 
 ## 공통 DB 계약 (`public.running_logs`)
@@ -46,12 +48,20 @@ MyRun/
     ```
 
 ## 빌드 & 실행
-1. **MyRunSync (Android)**:
-   * `MyRunSync/local.properties`에 `SUPABASE_URL`, `SUPABASE_ANON_KEY`를 설정합니다(Git 제외).
+1. **MyRunSync (Android 로컬 빌드)**:
+   * `MyRunSync/local.properties`에 Debug 빌드용 `SUPABASE_URL`, `SUPABASE_ANON_KEY`를 설정할 수 있습니다(Git 제외, Release 빌드에는 포함되지 않음).
    * 빌드 및 단위 테스트:
      ```powershell
      cd MyRunSync
-     .\gradlew.bat testDebugUnitTest assembleDebug
+     .\gradlew.bat testDebugUnitTest assembleDebug assembleRelease
      ```
-2. **MyRunCoach (Web)**:
+2. **MyRunSync GitHub Releases & Obtainium 설치**:
+   * `.github/workflows/release-android.yml`은 `v*` 태그(예: `v1.0.0`) 푸시 또는 GitHub Actions `workflow_dispatch` 실행 시 서명된 `MyRunSync-vX.Y.Z.apk`를 GitHub Releases에 업로드합니다.
+   * 필요한 GitHub Repository Secrets 4개:
+     * `ANDROID_KEYSTORE_BASE64` (`.jks` 키스토어의 Base64 문자열)
+     * `ANDROID_KEYSTORE_PASSWORD`
+     * `ANDROID_KEY_ALIAS`
+     * `ANDROID_KEY_PASSWORD`
+   * Android 기기의 **Obtainium**에서 저장소 URL `https://github.com/mage9353/myrun`을 추가하면 최신 Release APK 설치 및 자동 업데이트를 받을 수 있습니다.
+3. **MyRunCoach (Web)**:
    * `MyRunCoach/index.html` 또는 GitHub Pages(`https://mage9353.github.io/myrun/`)를 열고 **[⚙️ API 설정]**에 Supabase URL/Anon Key, Gemini API Key를 입력합니다.

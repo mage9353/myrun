@@ -207,7 +207,7 @@ class HealthConnectRunningReader(
                 ExerciseSessionRecord.EXERCISE_TYPE_WALKING ->
                     EXERCISE_TYPE_WALKING to WORKOUT_TYPE_WALKING
                 else ->
-                    EXERCISE_TYPE_RUNNING to if (hasGps) WORKOUT_TYPE_OUTDOOR else WORKOUT_TYPE_INDOOR
+                    EXERCISE_TYPE_RUNNING to WORKOUT_TYPE_OUTDOOR
             }
         }
 

@@ -1,5 +1,6 @@
 package com.myrunsync.domain
 
+import androidx.health.connect.client.records.ExerciseSessionRecord
 import com.myrunsync.health.HealthConnectRunningReader
 import com.myrunsync.model.CadenceSample
 import com.myrunsync.model.DistanceSegment
@@ -261,5 +262,37 @@ class RunningTelemetryAggregatorTest {
         assertEquals("트레드밀", treadmillObj["workout_type"]?.jsonPrimitive?.content)
         assertEquals("treadmill", treadmillObj["exercise_type"]?.jsonPrimitive?.content)
         assertEquals("false", treadmillObj["has_gps"]?.jsonPrimitive?.content)
+    }
+
+    @Test
+    fun classifySessionType_defaultsRunningWithoutGpsToOutdoor() {
+        assertEquals(
+            "running" to "야외",
+            HealthConnectRunningReader.classifySessionType(
+                ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
+                hasGps = false
+            )
+        )
+        assertEquals(
+            "running" to "야외",
+            HealthConnectRunningReader.classifySessionType(
+                ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
+                hasGps = true
+            )
+        )
+        assertEquals(
+            "treadmill" to "트레드밀",
+            HealthConnectRunningReader.classifySessionType(
+                ExerciseSessionRecord.EXERCISE_TYPE_RUNNING_TREADMILL,
+                hasGps = false
+            )
+        )
+        assertEquals(
+            "walking" to "걷기",
+            HealthConnectRunningReader.classifySessionType(
+                ExerciseSessionRecord.EXERCISE_TYPE_WALKING,
+                hasGps = false
+            )
+        )
     }
 }

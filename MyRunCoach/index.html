@@ -1240,7 +1240,7 @@
         if (run.exerciseType === 'walking' || run.rawWorkoutType === '걷기') {
           return '걷기';
         }
-        if (run.hasGps === false || run.rawWorkoutType === '실내') {
+        if (run.rawWorkoutType === '실내') {
           return '실내';
         }
         if (run.avgPaceSec !== null && run.avgPaceSec >= walkPaceThresholdSec) {
@@ -1635,8 +1635,6 @@
 
           if (state.runs.length === 0) {
             showNotice('연결에 성공했지만 <code>running_logs</code> 테이블에 조회된 러닝 기록이 없습니다.', 'info');
-          } else if (state.runs.some(function (r) { return r.hasGps === null; })) {
-            showNotice('일부 기존 기록에 GPS 유무(<code>has_gps</code>) 정보가 없어 기본 야외/걷기(추정)로 표시됩니다. 업데이트된 <strong>MyRunSync</strong> 앱으로 다시 동기화하면 <strong>실내</strong>와 <strong>야외</strong>가 자동 분리됩니다.', 'info');
           }
         } catch (err) {
           console.error('Supabase fetch error:', err);

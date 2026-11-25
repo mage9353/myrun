@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>MyRunCoach — 개인 맞춤형 러닝 &amp; AI 코칭 대시보드</title>
 
   <!-- Theme initialization before paint to prevent flash -->
@@ -54,6 +54,16 @@
     }
     .dark ::-webkit-scrollbar-thumb {
       background: rgba(100, 116, 139, 0.55);
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    body {
+      word-break: keep-all;
     }
 
     /* Markdown rendering typography */
@@ -171,28 +181,28 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen overflow-x-hidden transition-colors duration-200 antialiased">
 
   <!-- Top Navigation Bar -->
   <header class="sticky top-0 z-30 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200/80 dark:border-slate-800/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white shadow-sm shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white shadow-sm shrink-0">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         </div>
         <div class="min-w-0">
-          <h1 class="text-base sm:text-lg font-bold tracking-tight truncate">MyRunCoach</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Supabase &amp; Gemini AI 러닝 대시보드</p>
+          <h1 class="text-[15px] sm:text-lg font-bold tracking-tight truncate">MyRunCoach</h1>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">Supabase &amp; Gemini AI 러닝 대시보드</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 shrink-0">
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <button
           id="btnRefresh"
           type="button"
-          class="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-colors"
+          class="inline-flex items-center justify-center gap-1.5 w-9 h-9 sm:w-auto sm:h-10 sm:px-3 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-colors"
           title="Supabase에서 데이터 새로고침"
         >
           <svg id="refreshIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -214,18 +224,18 @@
         <button
           id="btnToggleSettings"
           type="button"
-          class="inline-flex items-center gap-2 px-3 sm:px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-slate-900 text-white dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-500 transition-colors shadow-sm"
+          class="inline-flex items-center gap-1.5 sm:gap-2 h-9 sm:h-10 px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold rounded-xl bg-slate-900 text-white dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-500 transition-colors shadow-sm whitespace-nowrap"
           aria-expanded="false"
           aria-controls="settingsPanel"
         >
           <span id="statusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-          <span>⚙️ API 설정</span>
+          <span>⚙️ <span class="hidden sm:inline">API </span>설정</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-7 space-y-4 sm:space-y-6">
 
     <!-- Collapsible [⚙️ API 설정] Panel -->
     <section id="settingsPanel" class="hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-4 sm:p-6 transition-all">
@@ -363,53 +373,55 @@
     </div>
 
     <!-- Training Zone 2 & Walking Pace Classification Bar -->
-    <section id="trainingPrefsBar" aria-label="유산소 구간 및 걷기 기준 설정" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start lg:items-center">
+    <section id="trainingPrefsBar" aria-label="유산소 구간 및 걷기 기준 설정" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-start lg:items-center">
         <!-- Left: Zone 2 Heart Rate Config -->
-        <div class="lg:col-span-7 space-y-2">
-          <div class="flex flex-wrap items-center gap-2">
+        <div class="lg:col-span-7 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between sm:justify-start gap-2">
             <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">💚 유산소 구간 (Zone 2 심박수)</span>
             <span id="zone2ActiveBadge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/70">
               DB 기록 기준
             </span>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <div class="inline-flex items-center gap-1.5">
-              <input
-                id="inputZone2Min"
-                type="number"
-                min="40"
-                max="220"
-                aria-label="Zone 2 최소 심박수"
-                class="w-16 px-2.5 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
-              />
-              <span class="text-xs text-slate-400">~</span>
-              <input
-                id="inputZone2Max"
-                type="number"
-                min="40"
-                max="240"
-                aria-label="Zone 2 최대 심박수"
-                class="w-16 px-2.5 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
-              />
-              <span class="text-xs text-slate-500 dark:text-slate-400">bpm</span>
+          <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <div class="inline-flex items-center gap-1.5">
+                <input
+                  id="inputZone2Min"
+                  type="number"
+                  min="40"
+                  max="220"
+                  aria-label="Zone 2 최소 심박수"
+                  class="w-16 min-h-[36px] px-2 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
+                />
+                <span class="text-xs text-slate-400">~</span>
+                <input
+                  id="inputZone2Max"
+                  type="number"
+                  min="40"
+                  max="240"
+                  aria-label="Zone 2 최대 심박수"
+                  class="w-16 min-h-[36px] px-2 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
+                />
+                <span class="text-xs text-slate-500 dark:text-slate-400">bpm</span>
+              </div>
+              <button
+                id="btnApplyZone2"
+                type="button"
+                class="min-h-[36px] px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+              >
+                적용
+              </button>
+              <button
+                id="btnZone2UseDb"
+                type="button"
+                class="min-h-[36px] px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="동기화된 기록의 Zone 2 기준값 사용"
+              >
+                DB 기준
+              </button>
             </div>
-            <button
-              id="btnApplyZone2"
-              type="button"
-              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
-            >
-              적용
-            </button>
-            <button
-              id="btnZone2UseDb"
-              type="button"
-              class="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              title="동기화된 기록의 Zone 2 기준값 사용"
-            >
-              DB 기준
-            </button>
-            <div class="inline-flex items-center gap-1 pl-2 sm:border-l border-slate-200 dark:border-slate-700">
+            <div class="flex flex-wrap items-center gap-1.5 sm:pl-2.5 sm:border-l border-slate-200 dark:border-slate-700">
               <span class="text-[11px] text-slate-500 dark:text-slate-400">최대심박</span>
               <input
                 id="inputMhr"
@@ -418,19 +430,19 @@
                 max="230"
                 value="190"
                 aria-label="최대 심박수"
-                class="w-14 px-2 py-1 text-xs text-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
+                class="w-14 min-h-[32px] px-2 py-1 text-xs text-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 tabular-nums"
               />
               <button
                 id="btnMhr6070"
                 type="button"
-                class="px-2 py-1 text-[11px] font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 transition-colors"
+                class="min-h-[32px] px-2.5 py-1 text-[11px] font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 transition-colors"
               >
                 60~70%
               </button>
               <button
                 id="btnMhr6575"
                 type="button"
-                class="px-2 py-1 text-[11px] font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 transition-colors"
+                class="min-h-[32px] px-2.5 py-1 text-[11px] font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 transition-colors"
               >
                 65~75%
               </button>
@@ -439,114 +451,118 @@
         </div>
 
         <!-- Right: Slow GPS Run -> Walking(Inferred) Threshold -->
-        <div class="lg:col-span-5 lg:border-l lg:border-slate-200/80 lg:dark:border-slate-800 lg:pl-5 space-y-2">
+        <div class="lg:col-span-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 lg:pt-0 lg:border-t-0 lg:border-l lg:border-slate-200/80 lg:dark:border-slate-800 lg:pl-5 space-y-2">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">🚶‍♂️ 걷기(추정) 자동 분류 기준</span>
+            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">🚶‍♂️ 달리기 / 걷기(추정) 속도 분류 기준</span>
             <span id="walkSpeedHint" class="text-[11px] font-medium text-teal-600 dark:text-teal-400 tabular-nums">≈ 6.7 km/h 이하</span>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="text-xs text-slate-500 dark:text-slate-400">GPS 달리기 평균 페이스 ≥</span>
-            <div class="inline-flex items-center gap-1">
-              <input
-                id="inputWalkPaceMin"
-                type="number"
-                min="4"
-                max="30"
-                aria-label="걷기 추정 기준 분"
-                class="w-12 px-2 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 tabular-nums"
-              />
-              <span class="text-xs text-slate-500 dark:text-slate-400">분</span>
-              <input
-                id="inputWalkPaceSec"
-                type="number"
-                min="0"
-                max="59"
-                aria-label="걷기 추정 기준 초"
-                class="w-12 px-2 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 tabular-nums"
-              />
-              <span class="text-xs text-slate-500 dark:text-slate-400">초/km</span>
+          <div class="flex flex-wrap items-center justify-between sm:justify-start gap-2">
+            <span class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">평균 페이스 ≥ (야외·실내)</span>
+            <div class="flex items-center gap-1.5">
+              <div class="inline-flex items-center gap-1">
+                <input
+                  id="inputWalkPaceMin"
+                  type="number"
+                  min="4"
+                  max="30"
+                  aria-label="걷기 추정 기준 분"
+                  class="w-12 min-h-[36px] px-1.5 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 tabular-nums"
+                />
+                <span class="text-xs text-slate-500 dark:text-slate-400">분</span>
+                <input
+                  id="inputWalkPaceSec"
+                  type="number"
+                  min="0"
+                  max="59"
+                  aria-label="걷기 추정 기준 초"
+                  class="w-12 min-h-[36px] px-1.5 py-1.5 text-xs sm:text-sm text-center font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 tabular-nums"
+                />
+                <span class="text-xs text-slate-500 dark:text-slate-400">초</span>
+              </div>
+              <button
+                id="btnApplyWalkPace"
+                type="button"
+                class="min-h-[36px] px-3 py-1.5 text-xs font-semibold rounded-lg bg-teal-600 hover:bg-teal-500 text-white transition-colors"
+              >
+                적용
+              </button>
             </div>
-            <button
-              id="btnApplyWalkPace"
-              type="button"
-              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-teal-600 hover:bg-teal-500 text-white transition-colors"
-            >
-              적용
-            </button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 1. Top 4 Summary Cards -->
-    <section aria-label="주간 요약 지표" class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+    <section aria-label="주간 요약 지표" class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
       <!-- Card 1: 7일 누적 거리 -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">최근 7일 누적 거리</span>
-          <span class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm">🏃</span>
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-1.5">
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">최근 7일 누적 거리</span>
+          <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs sm:text-sm shrink-0">🏃</span>
         </div>
-        <div id="statDistance7d" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
-        <p id="statDistanceSub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">데이터 대기 중</p>
+        <div id="statDistance7d" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
+        <p id="statDistanceSub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">데이터 대기 중</p>
       </div>
 
       <!-- Card 2: 평균 페이스 -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">평균 페이스</span>
-          <span class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center text-sm">⏱️</span>
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-1.5">
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">평균 페이스</span>
+          <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs sm:text-sm shrink-0">⏱️</span>
         </div>
-        <div id="statAvgPace" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
-        <p id="statAvgPaceSub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">분'초"/km</p>
+        <div id="statAvgPace" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
+        <p id="statAvgPaceSub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">분'초"/km</p>
       </div>
 
       <!-- Card 3: 평균 Zone 2 비율 -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">평균 Zone 2 비율</span>
-          <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm">💚</span>
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-1.5">
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">평균 Zone 2 비율</span>
+          <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs sm:text-sm shrink-0">💚</span>
         </div>
-        <div id="statZone2" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
+        <div id="statZone2" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
         <div class="mt-2 w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
           <div id="statZone2Bar" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
         </div>
-        <p id="statZone2Sub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">유산소 베이스 지표</p>
+        <p id="statZone2Sub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">유산소 베이스 지표</p>
       </div>
 
       <!-- Card 4: 평균 케이던스 -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400">평균 케이던스</span>
-          <span class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm">👟</span>
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-1.5">
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">평균 케이던스</span>
+          <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs sm:text-sm shrink-0">👟</span>
         </div>
-        <div id="statCadence" class="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight">-</div>
-        <p id="statCadenceSub" class="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">분당 보폭 (spm)</p>
+        <div id="statCadence" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
+        <p id="statCadenceSub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">분당 보폭 (spm)</p>
       </div>
     </section>
 
     <!-- 2. Trend Charts (Recent 15 Runs) -->
     <section aria-label="최근 15회 러닝 추세 차트" class="space-y-3.5">
       <!-- Multi-select Chart Type Filter Bar -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-bold text-slate-700 dark:text-slate-200 mr-1">📊 추이 그래프 표시 유형 (다중 선택)</span>
-          <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
-          <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
-          <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
+      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 py-3 sm:px-4 shadow-sm space-y-2.5 lg:space-y-0 lg:flex lg:items-center lg:justify-between lg:gap-3">
+        <div class="flex flex-wrap items-center justify-between sm:justify-start gap-2">
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-200">📊 추이 그래프 유형</span>
+          <div class="inline-flex items-center gap-1.5">
+            <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
+            <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
+            <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
+          </div>
         </div>
-        <div id="chartTypeChips" class="flex flex-wrap items-center gap-1.5"></div>
+        <div id="chartTypeChips" class="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:items-center"></div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
         <!-- Chart 1: Avg HR vs Avg Pace -->
-        <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-          <div class="flex items-center justify-between gap-2 mb-3">
+        <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
             <div>
               <h2 class="text-sm sm:text-base font-bold">최근 15회 평균 심박수 대비 페이스 추이</h2>
-              <p id="chartHrPaceSub" class="text-xs text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
+              <p id="chartHrPaceSub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
             </div>
           </div>
-          <div class="relative h-64 sm:h-72">
+          <div class="relative h-56 sm:h-72">
             <canvas id="chartHrPace"></canvas>
             <div id="chartHrPaceEmpty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500 text-center px-4">
               선택한 운동 유형에 해당하는 추세 데이터가 없습니다.
@@ -555,14 +571,14 @@
         </div>
 
         <!-- Chart 2: Zone 2 Ratio Trend -->
-        <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm">
-          <div class="flex items-center justify-between gap-2 mb-3">
+        <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
             <div>
               <h2 class="text-sm sm:text-base font-bold">최근 15회 Zone 2 비율 변화</h2>
-              <p id="chartZone2Sub" class="text-xs text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
+              <p id="chartZone2Sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
             </div>
           </div>
-          <div class="relative h-64 sm:h-72">
+          <div class="relative h-56 sm:h-72">
             <canvas id="chartZone2"></canvas>
             <div id="chartZone2Empty" class="hidden absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-slate-400 dark:text-slate-500 text-center px-4">
               선택한 운동 유형에 해당하는 Zone 2 데이터가 없습니다.
@@ -573,18 +589,27 @@
     </section>
 
     <!-- 3. Gemini AI Running Coach Panel -->
-    <section id="coachSection" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-6 shadow-sm space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+    <section id="coachSection" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-6 shadow-sm space-y-3.5 sm:space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center text-sm shadow-sm shrink-0">✨</div>
           <div>
             <h2 class="text-base sm:text-lg font-bold">Gemini AI 러닝 코치</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">내 러닝 데이터와 1분 단위 심박·페이스 변화를 바탕으로 개인 맞춤 피드백을 제공합니다.</p>
+            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">내 러닝 데이터와 1분 단위 심박·페이스 변화를 바탕으로 개인 맞춤 피드백을 제공합니다.</p>
           </div>
         </div>
-        <span id="activeModelBadge" class="self-start sm:self-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70">
-          Model: gemini-4-hydrogen
-        </span>
+        <div class="w-full sm:w-auto inline-flex items-center justify-between sm:justify-start gap-1.5 px-3 py-1.5 sm:px-2.5 sm:py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70">
+          <span class="shrink-0">Model:</span>
+          <select
+            id="selectCoachModel"
+            aria-label="Gemini AI 코칭 모델 선택"
+            class="flex-1 sm:flex-none bg-transparent font-semibold text-indigo-700 dark:text-indigo-200 focus:outline-none cursor-pointer pr-1"
+          >
+            <option value="gemini-4-hydrogen" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">gemini-4-hydrogen (기본 · 무료)</option>
+            <option value="gemini-3.8-flash" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">gemini-3.8-flash (고속 · 무료)</option>
+            <option value="gemini-4-neon" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">gemini-4-neon (심층 · 유료)</option>
+          </select>
+        </div>
       </div>
 
       <!-- Today's Condition Memo -->
@@ -605,7 +630,7 @@
         <button
           id="btnQuickLatest"
           type="button"
-          class="group text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all"
+          class="group text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] transition-all"
         >
           <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
             🔍 방금 뛴 최근 러닝 정밀 분석
@@ -618,7 +643,7 @@
         <button
           id="btnQuickTwoWeeks"
           type="button"
-          class="group text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all"
+          class="group text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] transition-all"
         >
           <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
             📈 최근 2주 훈련 추세 및 피로도 진단
@@ -631,7 +656,7 @@
         <button
           id="btnQuickCondition"
           type="button"
-          class="group text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all"
+          class="group text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] transition-all"
         >
           <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
             🩺 오늘 컨디션 기반 훈련 추천
@@ -699,27 +724,29 @@
 
     <!-- 4. Running Logs Table (Recent 30 Runs) -->
     <section aria-label="최근 30회 러닝 기록 리스트" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
-      <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="p-3.5 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div class="flex items-center gap-2">
             <h2 class="text-base sm:text-lg font-bold">최근 러닝 기록</h2>
             <span id="tableCountBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0건</span>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">행을 클릭하면 1분 단위 심박수 &amp; 페이스 상세 차트를 볼 수 있습니다.</p>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">기록을 누르면 1분 단위 심박수 &amp; 페이스 상세 차트를 볼 수 있습니다.</p>
         </div>
 
-        <!-- Filter tabs -->
-        <div class="inline-flex flex-wrap gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 self-start sm:self-auto" role="tablist" aria-label="러닝 구분 필터">
-          <button type="button" data-filter="all" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition-all">전체</button>
-          <button type="button" data-filter="야외" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏃 야외</button>
-          <button type="button" data-filter="실내" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏠 실내</button>
-          <button type="button" data-filter="트레드밀" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏃‍♂️ 트레드밀</button>
-          <button type="button" data-filter="걷기(추정)" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🚶‍♂️ 걷기(추정)</button>
-          <button type="button" data-filter="걷기" class="filter-tab px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🚶 걷기</button>
+        <!-- Filter tabs (horizontally swipeable on mobile) -->
+        <div class="flex flex-nowrap overflow-x-auto no-scrollbar gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 w-full sm:w-auto sm:inline-flex sm:flex-wrap" role="tablist" aria-label="러닝 구분 필터">
+          <button type="button" data-filter="all" class="filter-tab shrink-0 whitespace-nowrap px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition-all">전체</button>
+          <button type="button" data-filter="야외 달리기" class="filter-tab shrink-0 whitespace-nowrap px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏃 야외 달리기</button>
+          <button type="button" data-filter="실내 달리기(추정)" class="filter-tab shrink-0 whitespace-nowrap px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏠 실내 달리기(추정)</button>
+          <button type="button" data-filter="트레드밀" class="filter-tab shrink-0 whitespace-nowrap px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🏃‍♂️ 트레드밀</button>
+          <button type="button" data-filter="야외 걷기(추정)" class="filter-tab shrink-0 whitespace-nowrap px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🚶‍♂️ 야외 걷기(추정)</button>
+          <button type="button" data-filter="실내 걷기(추정)" class="filter-tab shrink-0 whitespace-nowrap px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🚶‍♀️ 실내 걷기(추정)</button>
+          <button type="button" data-filter="걷기" class="filter-tab shrink-0 whitespace-nowrap px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">🚶 걷기</button>
         </div>
       </div>
 
-      <div class="overflow-x-auto">
+      <!-- Desktop / Tablet Table -->
+      <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 text-xs font-semibold text-slate-500 dark:text-slate-400">
@@ -742,31 +769,39 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Mobile Card List (Galaxy S24 Ultra optimized, no horizontal scrolling) -->
+      <div id="runsMobileList" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800/80">
+        <div class="py-8 px-4 text-center text-xs text-slate-400 dark:text-slate-500">
+          상단 <strong>[⚙️ 설정]</strong>에서 Supabase 정보를 입력하거나 <strong>데모 데이터 체험</strong>을 눌러주세요.
+        </div>
+      </div>
     </section>
 
   </main>
 
   <!-- 1-Minute Timeseries Detail Modal -->
   <div id="runDetailModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div id="modalContent" class="w-full sm:max-w-3xl max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-4 sm:p-6 space-y-4">
+    <div id="modalContent" class="w-full sm:max-w-3xl max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-4 sm:p-6 space-y-3.5 sm:space-y-4" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+      <div class="sm:hidden w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto -mt-1 mb-1"></div>
       <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div>
-          <div class="flex items-center gap-2 flex-wrap">
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <h3 id="modalTitle" class="text-base sm:text-lg font-bold">러닝 상세 분석</h3>
             <span id="modalTypeBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full"></span>
             <span id="modalGpsBadge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border"></span>
             <span id="modalSourceBadge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"></span>
             <span id="modalZone2Badge" class="hidden px-2 py-0.5 text-xs font-medium rounded-full border border-emerald-200 dark:border-emerald-800/70 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300"></span>
           </div>
-          <p id="modalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+          <p id="modalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-1"></p>
         </div>
-        <button id="btnCloseModal" type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="모달 닫기">
+        <button id="btnCloseModal" type="button" class="w-8 h-8 flex items-center justify-center shrink-0 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="모달 닫기">
           ✕
         </button>
       </div>
 
       <!-- Summary Pills -->
-      <div id="modalSummaryPills" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+      <div id="modalSummaryPills" class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5"></div>
 
       <!-- Split & Drift Insight Bar -->
       <div id="modalDriftBox" class="hidden rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 px-3.5 py-2.5 text-xs text-slate-600 dark:text-slate-300 flex flex-wrap items-center justify-between gap-2"></div>
@@ -777,7 +812,7 @@
           <h4 class="text-xs sm:text-sm font-semibold">1분 단위 심박수 &amp; 페이스 변화</h4>
           <span id="modalPointsCount" class="text-xs text-slate-400"></span>
         </div>
-        <div class="relative h-64 sm:h-72">
+        <div class="relative h-56 sm:h-72">
           <canvas id="chartTimeseries"></canvas>
           <div id="modalChartEmpty" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center px-4 text-xs sm:text-sm text-slate-400 dark:text-slate-500">
             <span>이 기록에는 <code class="px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800">timeseries_1min</code> 1분 단위 데이터가 없습니다.</span>
@@ -808,26 +843,26 @@
       var DEFAULT_ZONE2_MAX_BPM = 140;
       var DEFAULT_WALK_PACE_SEC = 540;
 
-      var ALL_ACTIVITY_TYPES = ['야외', '실내', '트레드밀', '걷기(추정)', '걷기'];
-      var RUNNING_ACTIVITY_TYPES = ['야외', '실내', '트레드밀'];
-      var WALKING_ACTIVITY_TYPES = ['걷기(추정)', '걷기'];
+      var ALL_ACTIVITY_TYPES = ['야외 달리기', '실내 달리기(추정)', '트레드밀', '야외 걷기(추정)', '실내 걷기(추정)', '걷기'];
+      var RUNNING_ACTIVITY_TYPES = ['야외 달리기', '실내 달리기(추정)', '트레드밀'];
+      var WALKING_ACTIVITY_TYPES = ['야외 걷기(추정)', '실내 걷기(추정)', '걷기'];
 
       var ACTIVITY_META = {
-        '야외': {
+        '야외 달리기': {
           icon: '🏃',
-          label: '야외',
+          label: '야외 달리기',
           badgeClass: 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/70',
           chipActiveClass: 'bg-sky-600 text-white border-sky-600 shadow-sm',
           color: '#0ea5e9',
-          description: '달리기 설정 + GPS 기록'
+          description: '달리기 설정 + GPS 기록 + 기준 이상 속도'
         },
-        '실내': {
+        '실내 달리기(추정)': {
           icon: '🏠',
-          label: '실내',
-          badgeClass: 'bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800/70',
+          label: '실내 달리기(추정)',
+          badgeClass: 'bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 border-violet-300 dark:border-violet-700 border-dashed',
           chipActiveClass: 'bg-violet-600 text-white border-violet-600 shadow-sm',
           color: '#8b5cf6',
-          description: '달리기 설정이지만 GPS 데이터 없음 (트레드밀과 구분)'
+          description: '달리기 설정 + GPS 없음 + 기준 이상 속도로 실내 달리기 추정'
         },
         '트레드밀': {
           icon: '🏃‍♂️',
@@ -837,13 +872,21 @@
           color: '#f59e0b',
           description: '워치에서 트레드밀 모드로 기록됨'
         },
-        '걷기(추정)': {
+        '야외 걷기(추정)': {
           icon: '🚶‍♂️',
-          label: '걷기(추정)',
+          label: '야외 걷기(추정)',
           badgeClass: 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-700 border-dashed',
           chipActiveClass: 'bg-teal-600 text-white border-teal-600 shadow-sm',
           color: '#14b8a6',
-          description: '달리기 설정 + GPS 기록이지만 속도가 낮아 걷기로 분류됨'
+          description: '달리기 설정 + GPS 기록이지만 속도가 낮아 야외 걷기로 추정'
+        },
+        '실내 걷기(추정)': {
+          icon: '🚶‍♀️',
+          label: '실내 걷기(추정)',
+          badgeClass: 'bg-fuchsia-50 dark:bg-fuchsia-950/50 text-fuchsia-700 dark:text-fuchsia-300 border-fuchsia-300 dark:border-fuchsia-700 border-dashed',
+          chipActiveClass: 'bg-fuchsia-600 text-white border-fuchsia-600 shadow-sm',
+          color: '#d946ef',
+          description: '달리기 설정 + GPS 없음 + 속도가 낮아 실내 걷기로 추정'
         },
         '걷기': {
           icon: '🚶',
@@ -885,6 +928,7 @@
         isLoadingData: false,
         isAskingCoach: false,
         lastCoachMarkdown: '',
+        modalChartRafId: null,
         charts: {
           hrPace: null,
           zone2: null,
@@ -1257,13 +1301,12 @@
         if (run.exerciseType === 'walking' || run.rawWorkoutType === '걷기') {
           return '걷기';
         }
-        if (run.rawWorkoutType === '실내') {
-          return '실내';
+        var isSlow = run.avgPaceSec !== null && run.avgPaceSec >= walkPaceThresholdSec;
+        var isIndoor = run.hasGps === false || run.rawWorkoutType === '실내';
+        if (isIndoor) {
+          return isSlow ? '실내 걷기(추정)' : '실내 달리기(추정)';
         }
-        if (run.avgPaceSec !== null && run.avgPaceSec >= walkPaceThresholdSec) {
-          return '걷기(추정)';
-        }
-        return '야외';
+        return isSlow ? '야외 걷기(추정)' : '야외 달리기';
       }
 
       function computeMinuteZone2Ratio(pt, minBpm, maxBpm) {
@@ -1390,6 +1433,7 @@
           { daysAgo: 9, type: '야외', exerciseType: 'running', hasGps: true, title: '장거리 LSD 러닝', dist: 15.0, pace: 338, hr: 133, z2: 82, cad: 175, drift: 10 },
           { daysAgo: 10, type: '실내', exerciseType: 'running', hasGps: false, title: '실내 체육관 러닝 (GPS 없음)', dist: 4.8, pace: 365, hr: 129, z2: 88, cad: 172, drift: 4 },
           { daysAgo: 11, type: '야외', exerciseType: 'running', hasGps: true, title: '야외 인터벌', dist: 8.4, pace: 306, hr: 154, z2: 34, cad: 182, drift: 12 },
+          { daysAgo: 12, type: '실내', exerciseType: 'running', hasGps: false, title: '실내 걷기·스트레칭 (달리기 모드)', dist: 2.3, pace: 630, hr: 109, z2: 45, cad: 115, drift: 3 },
           { daysAgo: 13, type: '걷기', exerciseType: 'walking', hasGps: true, title: '회복 걷기', dist: 3.6, pace: 680, hr: 106, z2: 31, cad: 112, drift: 2 },
           { daysAgo: 15, type: '야외', exerciseType: 'running', hasGps: true, title: '야외 유산소 러닝', dist: 9.5, pace: 332, hr: 134, z2: 76, cad: 176, drift: 7 },
           { daysAgo: 17, type: '야외', exerciseType: 'running', hasGps: true, title: '저녁 산책 (달리기 모드)', dist: 3.2, pace: 590, hr: 116, z2: 64, cad: 117, drift: 4 },
@@ -1495,8 +1539,23 @@
             }
 
             if (Array.isArray(parsed.chartTypes)) {
-              state.config.chartTypes = parsed.chartTypes.filter(function (t) {
-                return ALL_ACTIVITY_TYPES.indexOf(t) !== -1;
+              var legacyMap = {
+                '야외': ['야외 달리기'],
+                '실내': ['실내 달리기(추정)', '실내 걷기(추정)'],
+                '걷기(추정)': ['야외 걷기(추정)', '실내 걷기(추정)']
+              };
+              var expanded = [];
+              parsed.chartTypes.forEach(function (t) {
+                if (legacyMap[t]) {
+                  legacyMap[t].forEach(function (mapped) {
+                    if (expanded.indexOf(mapped) === -1) expanded.push(mapped);
+                  });
+                } else if (ALL_ACTIVITY_TYPES.indexOf(t) !== -1 && expanded.indexOf(t) === -1) {
+                  expanded.push(t);
+                }
+              });
+              state.config.chartTypes = ALL_ACTIVITY_TYPES.filter(function (t) {
+                return expanded.indexOf(t) !== -1;
               });
             }
           }
@@ -1526,11 +1585,23 @@
       }
 
       function syncSettingsInputs() {
+        var resolvedModel = ALLOWED_MODELS.indexOf(state.config.geminiModel) !== -1
+          ? state.config.geminiModel
+          : DEFAULT_MODEL;
         $('inputSupabaseUrl').value = state.config.supabaseUrl || '';
         $('inputSupabaseKey').value = state.config.supabaseKey || '';
         $('inputGeminiKey').value = state.config.geminiKey || '';
-        $('selectGeminiModel').value = state.config.geminiModel || DEFAULT_MODEL;
-        $('activeModelBadge').textContent = 'Model: ' + (state.config.geminiModel || DEFAULT_MODEL);
+        $('selectGeminiModel').value = resolvedModel;
+        if ($('selectCoachModel')) {
+          $('selectCoachModel').value = resolvedModel;
+        }
+      }
+
+      function setGeminiModel(model) {
+        var resolved = ALLOWED_MODELS.indexOf(model) !== -1 ? model : DEFAULT_MODEL;
+        state.config.geminiModel = resolved;
+        persistConfigState();
+        syncSettingsInputs();
       }
 
       function updateWalkSpeedHint(paceSec) {
@@ -1776,10 +1847,12 @@
           var cls = isSelected
             ? meta.chipActiveClass
             : 'bg-slate-50 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-slate-800 dark:hover:text-slate-200';
-          return '<button type="button" data-chart-type="' + escapeHtml(type) + '" aria-pressed="' + isSelected + '" title="' + escapeHtml(meta.description) + '" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border transition-all ' + cls + '">' +
-            '<span>' + meta.icon + '</span>' +
-            '<span>' + escapeHtml(meta.label) + '</span>' +
-            '<span class="opacity-75 text-[11px] tabular-nums">(' + count + ')</span>' +
+          return '<button type="button" data-chart-type="' + escapeHtml(type) + '" aria-pressed="' + isSelected + '" title="' + escapeHtml(meta.description) + '" class="w-full sm:w-auto inline-flex items-center justify-between sm:justify-start gap-1.5 px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-semibold rounded-xl sm:rounded-full border transition-all ' + cls + '">' +
+            '<span class="inline-flex items-center gap-1 min-w-0 truncate">' +
+              '<span class="shrink-0">' + meta.icon + '</span>' +
+              '<span class="truncate">' + escapeHtml(meta.label) + '</span>' +
+            '</span>' +
+            '<span class="opacity-80 text-[11px] tabular-nums shrink-0">(' + count + ')</span>' +
           '</button>';
         }).join('');
         $('chartTypeChips').innerHTML = chipsHtml;
@@ -1833,6 +1906,8 @@
         var paceData = recent15.map(function (r) { return r.avgPaceSec; });
         var z2Data = recent15.map(function (r) { return r.zone2Pct !== null ? Number(r.zone2Pct.toFixed(1)) : null; });
         var pointColors = recent15.map(function (r) { return getActivityMeta(r.runType).color; });
+        var isCompact = window.innerWidth < 480;
+        var axisFontSize = isCompact ? 10 : 11;
 
         // Chart 1: Dual-axis Avg HR vs Avg Pace
         var ctx1 = $('chartHrPace').getContext('2d');
@@ -1850,7 +1925,7 @@
                 pointBackgroundColor: pointColors,
                 pointBorderColor: '#f43f5e',
                 borderWidth: 2.5,
-                pointRadius: 4,
+                pointRadius: isCompact ? 3 : 4,
                 pointHoverRadius: 6.5,
                 tension: 0.3,
                 spanGaps: true
@@ -1864,7 +1939,7 @@
                 pointBackgroundColor: pointColors,
                 pointBorderColor: '#0ea5e9',
                 borderWidth: 2.5,
-                pointRadius: 4,
+                pointRadius: isCompact ? 3 : 4,
                 pointHoverRadius: 6.5,
                 tension: 0.3,
                 spanGaps: true
@@ -1875,15 +1950,22 @@
             responsive: true,
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
+            onHover: function (evt, elements) {
+              if (evt && evt.native && evt.native.target) {
+                evt.native.target.style.cursor = (elements && elements.length > 0) ? 'pointer' : 'default';
+              }
+            },
             onClick: function (evt, elements) {
               if (elements && elements.length > 0) {
                 var run = recent15[elements[0].index];
-                if (run) openRunModal(run);
+                if (run) {
+                  setTimeout(function () { openRunModal(run); }, 0);
+                }
               }
             },
             plugins: {
               legend: {
-                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
+                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: axisFontSize } }
               },
               tooltip: {
                 backgroundColor: colors.tooltipBg,
@@ -1912,24 +1994,24 @@
             },
             scales: {
               x: {
-                ticks: { color: colors.text, font: { size: 11 } },
+                ticks: { color: colors.text, font: { size: axisFontSize }, maxTicksLimit: isCompact ? 6 : 12 },
                 grid: { color: colors.grid }
               },
               yHr: {
                 type: 'linear',
                 position: 'left',
-                title: { display: true, text: '심박수 (bpm)', color: '#f43f5e', font: { size: 11 } },
-                ticks: { color: colors.text, font: { size: 11 } },
+                title: { display: true, text: isCompact ? 'bpm' : '심박수 (bpm)', color: '#f43f5e', font: { size: axisFontSize } },
+                ticks: { color: colors.text, font: { size: axisFontSize } },
                 grid: { color: colors.grid }
               },
               yPace: {
                 type: 'linear',
                 position: 'right',
                 reverse: true,
-                title: { display: true, text: '페이스 (빠를수록 위)', color: '#0ea5e9', font: { size: 11 } },
+                title: { display: true, text: isCompact ? '페이스' : '페이스 (빠를수록 위)', color: '#0ea5e9', font: { size: axisFontSize } },
                 ticks: {
                   color: colors.text,
-                  font: { size: 11 },
+                  font: { size: axisFontSize },
                   callback: function (value) { return formatPaceShort(value); }
                 },
                 grid: { drawOnChartArea: false }
@@ -1956,7 +2038,7 @@
                 backgroundColor: gradient,
                 fill: true,
                 borderWidth: 2.5,
-                pointRadius: 4,
+                pointRadius: isCompact ? 3 : 4,
                 pointHoverRadius: 6.5,
                 pointBackgroundColor: pointColors,
                 pointBorderColor: '#10b981',
@@ -1969,15 +2051,22 @@
             responsive: true,
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
+            onHover: function (evt, elements) {
+              if (evt && evt.native && evt.native.target) {
+                evt.native.target.style.cursor = (elements && elements.length > 0) ? 'pointer' : 'default';
+              }
+            },
             onClick: function (evt, elements) {
               if (elements && elements.length > 0) {
                 var run = recent15[elements[0].index];
-                if (run) openRunModal(run);
+                if (run) {
+                  setTimeout(function () { openRunModal(run); }, 0);
+                }
               }
             },
             plugins: {
               legend: {
-                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
+                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: axisFontSize } }
               },
               tooltip: {
                 backgroundColor: colors.tooltipBg,
@@ -2002,7 +2091,7 @@
             },
             scales: {
               x: {
-                ticks: { color: colors.text, font: { size: 11 } },
+                ticks: { color: colors.text, font: { size: axisFontSize }, maxTicksLimit: isCompact ? 6 : 12 },
                 grid: { color: colors.grid }
               },
               y: {
@@ -2010,7 +2099,7 @@
                 max: 100,
                 ticks: {
                   color: colors.text,
-                  font: { size: 11 },
+                  font: { size: axisFontSize },
                   stepSize: 20,
                   callback: function (v) { return v + '%'; }
                 },
@@ -2031,15 +2120,18 @@
 
       function renderRunsTable() {
         var tbody = $('runsTableBody');
+        var mobileList = $('runsMobileList');
         var filtered = getFilteredRuns();
         $('tableCountBadge').textContent = filtered.length + '건';
 
         if (!filtered.length) {
-          tbody.innerHTML = '<tr><td colspan="8" class="py-10 px-4 text-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">' +
-            (state.runs.length === 0
-              ? '표시할 러닝 기록이 없습니다. 상단 <strong>[⚙️ API 설정]</strong>에서 연결하거나 데모 데이터를 실행해보세요.'
-              : '선택한 필터(' + escapeHtml(state.filter) + ')에 해당하는 러닝 기록이 없습니다.') +
-            '</td></tr>';
+          var emptyMsg = state.runs.length === 0
+            ? '표시할 러닝 기록이 없습니다. 상단 <strong>[⚙️ 설정]</strong>에서 연결하거나 데모 데이터를 실행해보세요.'
+            : '선택한 필터(' + escapeHtml(state.filter) + ')에 해당하는 러닝 기록이 없습니다.';
+          tbody.innerHTML = '<tr><td colspan="8" class="py-10 px-4 text-center text-xs sm:text-sm text-slate-400 dark:text-slate-500">' + emptyMsg + '</td></tr>';
+          if (mobileList) {
+            mobileList.innerHTML = '<div class="py-8 px-4 text-center text-xs text-slate-400 dark:text-slate-500">' + emptyMsg + '</div>';
+          }
           return;
         }
 
@@ -2102,6 +2194,65 @@
             '</td>' +
           '</tr>';
         }).join('');
+
+        if (mobileList) {
+          mobileList.innerHTML = filtered.map(function (run) {
+            var meta = getActivityMeta(run.runType);
+            var z2Text = run.zone2Pct !== null ? run.zone2Pct.toFixed(0) + '%' : '-';
+            var hasTs = run.timeseries && run.timeseries.length > 0;
+            var timeLabel = '';
+            if (run.startedAt) {
+              var st = new Date(run.startedAt);
+              if (!isNaN(st.getTime())) {
+                timeLabel = String(st.getHours()).padStart(2, '0') + ':' + String(st.getMinutes()).padStart(2, '0');
+              }
+            }
+            var metaLine = [timeLabel, run.title].filter(Boolean).join(' · ');
+            var extraParts = [];
+            if (run.avgCadence !== null) extraParts.push('👟 ' + run.avgCadence + ' spm');
+            if (run.calories !== null) extraParts.push('🔥 ' + run.calories + ' kcal');
+            if (run.altitudeGain !== null && run.altitudeGain > 0) extraParts.push('⛰️ +' + Math.round(run.altitudeGain) + 'm');
+
+            return '<div data-run-id="' + escapeHtml(run.id) + '" class="p-3.5 active:bg-indigo-50/70 dark:active:bg-indigo-950/30 cursor-pointer transition-colors space-y-2">' +
+              '<div class="flex items-start justify-between gap-2">' +
+                '<div class="min-w-0">' +
+                  '<div class="flex items-center gap-1.5 font-semibold text-sm text-slate-800 dark:text-slate-100">' +
+                    '<span>' + escapeHtml(formatDateKr(run.runDate)) + '</span>' +
+                    (hasTs ? '<span title="1분 단위 상세 데이터 있음" class="text-[11px] text-indigo-500">📊</span>' : '') +
+                  '</div>' +
+                  (metaLine ? '<div class="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">' + escapeHtml(metaLine) + '</div>' : '') +
+                '</div>' +
+                '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ' + meta.badgeClass + '">' +
+                  '<span>' + meta.icon + '</span>' +
+                  '<span>' + escapeHtml(meta.label) + '</span>' +
+                '</span>' +
+              '</div>' +
+              '<div class="grid grid-cols-4 gap-1.5 text-center rounded-xl bg-slate-50/90 dark:bg-slate-800/60 px-2 py-2 border border-slate-100 dark:border-slate-800">' +
+                '<div>' +
+                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">거리</div>' +
+                  '<div class="text-xs font-bold tabular-nums text-slate-800 dark:text-slate-100">' + (run.distanceKm !== null ? run.distanceKm.toFixed(2) + 'km' : '-') + '</div>' +
+                  '<div class="text-[10px] tabular-nums text-slate-400 dark:text-slate-500">' + formatDuration(run.durationSec) + '</div>' +
+                '</div>' +
+                '<div>' +
+                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">페이스</div>' +
+                  '<div class="text-xs font-bold tabular-nums text-sky-600 dark:text-sky-400">' + formatPaceShort(run.avgPaceSec) + '</div>' +
+                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">/km</div>' +
+                '</div>' +
+                '<div>' +
+                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">심박수</div>' +
+                  '<div class="text-xs font-bold tabular-nums text-rose-600 dark:text-rose-400">' + (run.avgHr !== null ? run.avgHr : '-') + '</div>' +
+                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">bpm</div>' +
+                '</div>' +
+                '<div>' +
+                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">Zone 2</div>' +
+                  '<div class="text-xs font-bold tabular-nums text-emerald-600 dark:text-emerald-400">' + z2Text + '</div>' +
+                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">유산소</div>' +
+                '</div>' +
+              '</div>' +
+              (extraParts.length ? '<div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-slate-500 dark:text-slate-400">' + escapeHtml(extraParts.join(' · ')) + '</div>' : '') +
+            '</div>';
+          }).join('');
+        }
       }
 
       // 1-Minute Timeseries Detail Modal
@@ -2148,8 +2299,12 @@
 
         if (run.notes) {
           $('modalSubtitle').textContent = run.notes;
-        } else if (run.runType === '걷기(추정)') {
-          $('modalSubtitle').textContent = '워치에서 달리기 설정으로 GPS와 함께 기록되었으나 평균 속도가 낮아 걷기(추정)로 분류되었습니다.';
+        } else if (run.runType === '야외 걷기(추정)') {
+          $('modalSubtitle').textContent = '워치에서 달리기 설정으로 GPS와 함께 기록되었으나 평균 속도가 낮아 야외 걷기(추정)로 분류되었습니다.';
+        } else if (run.runType === '실내 걷기(추정)') {
+          $('modalSubtitle').textContent = '워치에서 달리기 설정으로 기록되었으나 GPS가 없고 평균 속도가 낮아 실내 걷기(추정)로 분류되었습니다.';
+        } else if (run.runType === '실내 달리기(추정)') {
+          $('modalSubtitle').textContent = '워치에서 달리기 설정으로 기록되었으나 GPS가 없어 실내 달리기(추정)로 분류되었습니다.';
         } else {
           $('modalSubtitle').textContent = '1분 단위 심박수 및 페이스 구간별 추이를 확인하세요.';
         }
@@ -2206,12 +2361,30 @@
           driftBox.classList.add('hidden');
         }
 
-        renderTimeseriesModalChart(run);
+        if (state.modalChartRafId !== null) {
+          cancelAnimationFrame(state.modalChartRafId);
+          state.modalChartRafId = null;
+        }
+        destroyChart('timeseries');
         $('runDetailModal').classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
+
+        var hasTs = run && Array.isArray(run.timeseries) && run.timeseries.length > 0;
+        if (!hasTs) {
+          $('modalChartEmpty').classList.remove('hidden');
+          $('modalPointsCount').textContent = '0개 구간';
+        } else {
+          $('modalChartEmpty').classList.add('hidden');
+          $('modalPointsCount').textContent = run.timeseries.length + '분 기록';
+          state.modalChartRafId = requestAnimationFrame(function () {
+            state.modalChartRafId = null;
+            if ($('runDetailModal').classList.contains('hidden') || state.selectedRun !== run) return;
+            renderTimeseriesModalChart(run, 0);
+          });
+        }
       }
 
-      function renderTimeseriesModalChart(run) {
+      function renderTimeseriesModalChart(run, retryCount) {
         var timeseries = run && Array.isArray(run.timeseries) ? run.timeseries : [];
         var z2Min = run && run.zone2MinBpm ? run.zone2MinBpm : null;
         var z2Max = run && run.zone2MaxBpm ? run.zone2MaxBpm : null;
@@ -2228,7 +2401,24 @@
         emptyEl.classList.add('hidden');
         countEl.textContent = timeseries.length + '분 기록';
 
+        var canvas = $('chartTimeseries');
+        var parentRect = canvas && canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : null;
+        if (!parentRect || parentRect.width <= 0 || parentRect.height <= 0) {
+          var attempt = retryCount || 0;
+          if (attempt < 5 && !$('runDetailModal').classList.contains('hidden') && state.selectedRun === run) {
+            state.modalChartRafId = requestAnimationFrame(function () {
+              state.modalChartRafId = null;
+              renderTimeseriesModalChart(run, attempt + 1);
+            });
+          }
+          return;
+        }
+        canvas.removeAttribute('width');
+        canvas.removeAttribute('height');
+
         var colors = getChartColors();
+        var isCompact = window.innerWidth < 480;
+        var axisFontSize = isCompact ? 10 : 11;
         var labels = timeseries.map(function (pt) { return pt.minute + '분'; });
         var hrs = timeseries.map(function (pt) { return pt.hr; });
         var paces = timeseries.map(function (pt) { return pt.paceSec; });
@@ -2250,7 +2440,7 @@
           }
         };
 
-        var ctx = $('chartTimeseries').getContext('2d');
+        var ctx = canvas.getContext('2d');
         state.charts.timeseries = new Chart(ctx, {
           type: 'line',
           plugins: [zone2BandPlugin],
@@ -2289,7 +2479,7 @@
             interaction: { mode: 'index', intersect: false },
             plugins: {
               legend: {
-                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: 11 } }
+                labels: { color: colors.text, usePointStyle: true, boxWidth: 8, font: { size: axisFontSize } }
               },
               tooltip: {
                 backgroundColor: colors.tooltipBg,
@@ -2320,24 +2510,24 @@
             },
             scales: {
               x: {
-                ticks: { color: colors.text, font: { size: 11 }, maxTicksLimit: 12 },
+                ticks: { color: colors.text, font: { size: axisFontSize }, maxTicksLimit: isCompact ? 6 : 12 },
                 grid: { color: colors.grid }
               },
               yHr: {
                 type: 'linear',
                 position: 'left',
-                title: { display: true, text: '심박수 (bpm)', color: '#f43f5e', font: { size: 11 } },
-                ticks: { color: colors.text, font: { size: 11 } },
+                title: { display: true, text: isCompact ? 'bpm' : '심박수 (bpm)', color: '#f43f5e', font: { size: axisFontSize } },
+                ticks: { color: colors.text, font: { size: axisFontSize } },
                 grid: { color: colors.grid }
               },
               yPace: {
                 type: 'linear',
                 position: 'right',
                 reverse: true,
-                title: { display: true, text: '페이스 (빠를수록 위)', color: '#0ea5e9', font: { size: 11 } },
+                title: { display: true, text: isCompact ? '페이스' : '페이스 (빠를수록 위)', color: '#0ea5e9', font: { size: axisFontSize } },
                 ticks: {
                   color: colors.text,
-                  font: { size: 11 },
+                  font: { size: axisFontSize },
                   callback: function (v) { return formatPaceShort(v); }
                 },
                 grid: { drawOnChartArea: false }
@@ -2348,6 +2538,10 @@
       }
 
       function closeRunModal() {
+        if (state.modalChartRafId !== null) {
+          cancelAnimationFrame(state.modalChartRafId);
+          state.modalChartRafId = null;
+        }
         $('runDetailModal').classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
         destroyChart('timeseries');
@@ -2696,6 +2890,14 @@
           fetchRunningLogs();
         });
 
+        $('selectCoachModel').addEventListener('change', function (e) {
+          setGeminiModel(e.target.value);
+        });
+
+        $('selectGeminiModel').addEventListener('change', function (e) {
+          setGeminiModel(e.target.value);
+        });
+
         // Demo Mode
         $('btnLoadDemo').addEventListener('click', function () {
           saveConfigFromInputs();
@@ -2800,7 +3002,7 @@
           var mins = parseInt($('inputWalkPaceMin').value, 10);
           var secs = parseInt($('inputWalkPaceSec').value, 10);
           if (!Number.isFinite(mins) || !Number.isFinite(secs) || mins < 4 || mins > 30 || secs < 0 || secs > 59) {
-            showNotice('⚠️ 걷기(추정) 기준 페이스는 4분 00초 ~ 30분 59초 범위로 입력해주세요.', 'error');
+            showNotice('⚠️ 달리기/걷기(추정) 기준 페이스는 4분 00초 ~ 30분 59초 범위로 입력해주세요.', 'error');
             return;
           }
           hideNotice();
@@ -2864,11 +3066,19 @@
           });
         });
 
-        // Table row click -> open modal
+        // Table row & mobile card click -> open modal
         $('runsTableBody').addEventListener('click', function (e) {
           var row = e.target.closest('tr[data-run-id]');
           if (!row) return;
           var runId = row.getAttribute('data-run-id');
+          var found = state.runs.find(function (r) { return String(r.id) === String(runId); });
+          if (found) openRunModal(found);
+        });
+
+        $('runsMobileList').addEventListener('click', function (e) {
+          var card = e.target.closest('[data-run-id]');
+          if (!card) return;
+          var runId = card.getAttribute('data-run-id');
           var found = state.runs.find(function (r) { return String(r.id) === String(runId); });
           if (found) openRunModal(found);
         });

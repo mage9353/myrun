@@ -1,7 +1,7 @@
 package com.myrunsync.sync
 
 import com.myrunsync.domain.RunningTelemetryAggregator
-import com.myrunsync.health.HealthConnectRunningReader
+import com.myrunsync.health.RunningTelemetryReader
 import com.myrunsync.model.HeartRateZone2Config
 import com.myrunsync.model.RunningLogDto
 import com.myrunsync.supabase.SupabaseRunningRepository
@@ -14,11 +14,11 @@ data class SyncResult(
 )
 
 /**
- * Coordinates reading running sessions from Health Connect, aggregating 1-minute buckets,
- * and upserting the results into Supabase `public.running_logs`.
+ * Coordinates reading running sessions from a telemetry source (Samsung Health or Health Connect),
+ * aggregating 1-minute buckets, and upserting the results into Supabase `public.running_logs`.
  */
 class RunningSyncManager(
-    private val healthReader: HealthConnectRunningReader,
+    private val healthReader: RunningTelemetryReader,
     private val supabaseRepository: SupabaseRunningRepository
 ) {
     suspend fun syncRuns(

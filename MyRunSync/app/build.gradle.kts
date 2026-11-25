@@ -5,6 +5,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("kotlin-parcelize")
 }
 
 val localProps = Properties().apply {
@@ -36,13 +37,16 @@ val hasReleaseSigning = signingStoreFile != null &&
     signingKeyAlias != null &&
     signingKeyPassword != null
 
+val samsungSdkAar = file("libs/samsung-health-data-api-1.1.0.aar")
+val hasSamsungSdk = samsungSdkAar.exists()
+
 android {
     namespace = "com.myrunsync"
     compileSdk = 36
 
     defaultConfig {
         applicationId = "com.myrunsync"
-        minSdk = 28
+        minSdk = 29
         targetSdk = 35
         versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull()
             ?: System.getenv("VERSION_CODE")?.toIntOrNull()
@@ -52,6 +56,13 @@ android {
             ?: "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("boolean", "SAMSUNG_HEALTH_SDK_ENABLED", hasSamsungSdk.toString())
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDir(if (hasSamsungSdk) "src/samsung/java" else "src/nosamsung/java")
+        }
     }
 
     signingConfigs {
@@ -96,6 +107,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        dataBinding = true
     }
 }
 
@@ -108,6 +120,12 @@ dependencies {
 
     // Health Connect SDK
     implementation("androidx.health.connect:connect-client:1.1.0")
+
+    // Samsung Health Data SDK (optional local .aar, excluded from public Git)
+    implementation("com.google.code.gson:gson:2.11.0")
+    if (hasSamsungSdk) {
+        implementation(files("libs/samsung-health-data-api-1.1.0.aar"))
+    }
 
     // Supabase Kotlin SDK + Ktor OkHttp engine
     implementation(platform("io.github.jan-tennert.supabase:bom:3.1.4"))

@@ -1,6 +1,25 @@
 package com.myrunsync.config
 
 import android.content.Context
+import com.myrunsync.BuildConfig
+
+enum class SyncDataSource(
+    val prefValue: String,
+    val label: String
+) {
+    SAMSUNG_HEALTH("samsung_health", "Samsung Health (직접 연동)"),
+    HEALTH_CONNECT("health_connect", "Health Connect");
+
+    companion object {
+        fun fromPrefValue(raw: String?, samsungSdkEnabled: Boolean): SyncDataSource {
+            val matched = entries.firstOrNull { it.prefValue == raw }
+            if (matched == SAMSUNG_HEALTH && !samsungSdkEnabled) {
+                return HEALTH_CONNECT
+            }
+            return matched ?: if (samsungSdkEnabled) SAMSUNG_HEALTH else HEALTH_CONNECT
+        }
+    }
+}
 
 data class SyncIntervalOption(
     val minutes: Long,
@@ -40,6 +59,7 @@ object SyncScheduleConfig {
 }
 
 data class SyncSettings(
+    val dataSource: SyncDataSource,
     val autoSyncOnOpen: Boolean,
     val backgroundAutoSyncEnabled: Boolean,
     val backgroundIntervalMinutes: Long,
@@ -47,7 +67,7 @@ data class SyncSettings(
 )
 
 /**
- * Persists auto-sync preferences and latest sync status in private SharedPreferences.
+ * Persists data source, auto-sync preferences, and latest sync status in private SharedPreferences.
  */
 class SyncPreferencesStore(context: Context) {
     private val prefs = context.applicationContext.getSharedPreferences(
@@ -59,12 +79,21 @@ class SyncPreferencesStore(context: Context) {
         val interval = SyncScheduleConfig.clampIntervalMinutes(
             prefs.getLong(KEY_BG_INTERVAL_MINUTES, SyncScheduleConfig.DEFAULT_INTERVAL_MINUTES)
         )
+        val dataSource = SyncDataSource.fromPrefValue(
+            raw = prefs.getString(KEY_DATA_SOURCE, null),
+            samsungSdkEnabled = BuildConfig.SAMSUNG_HEALTH_SDK_ENABLED
+        )
         return SyncSettings(
+            dataSource = dataSource,
             autoSyncOnOpen = prefs.getBoolean(KEY_AUTO_SYNC_ON_OPEN, false),
             backgroundAutoSyncEnabled = prefs.getBoolean(KEY_BG_AUTO_SYNC_ENABLED, false),
             backgroundIntervalMinutes = interval,
             lastSyncSummary = prefs.getString(KEY_LAST_SYNC_SUMMARY, null)?.takeIf { it.isNotBlank() }
         )
+    }
+
+    fun setDataSource(source: SyncDataSource) {
+        prefs.edit().putString(KEY_DATA_SOURCE, source.prefValue).apply()
     }
 
     fun setAutoSyncOnOpen(enabled: Boolean) {
@@ -86,6 +115,7 @@ class SyncPreferencesStore(context: Context) {
 
     companion object {
         private const val PREFS_NAME = "myrunsync_settings"
+        private const val KEY_DATA_SOURCE = "sync_data_source"
         private const val KEY_AUTO_SYNC_ON_OPEN = "auto_sync_on_open"
         private const val KEY_BG_AUTO_SYNC_ENABLED = "bg_auto_sync_enabled"
         private const val KEY_BG_INTERVAL_MINUTES = "bg_sync_interval_minutes"

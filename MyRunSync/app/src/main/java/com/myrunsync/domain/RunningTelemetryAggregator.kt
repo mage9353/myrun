@@ -49,12 +49,20 @@ object RunningTelemetryAggregator {
         )
 
         val avgPaceSecPerKm = computePaceSecPerKm(distanceMeters, durationSeconds.toDouble())
-        val hrSummary = summarizeHeartRate(sortedHr, telemetry.endTime, zone2Config)
+        val hrSummary = summarizeHeartRate(
+            samples = sortedHr,
+            windowEnd = telemetry.endTime,
+            zone2Config = zone2Config,
+            fallbackAvgBpm = telemetry.summaryAvgHr,
+            fallbackMaxBpm = telemetry.summaryMaxHr,
+            fallbackMinBpm = telemetry.summaryMinHr
+        )
         val zone2Ratio = hrSummary.zone2Ratio?.let(::roundTo4)
         val zone2Pct = zone2Ratio?.let { roundTo1(it * 100.0) }
 
         val avgCadenceSpm = resolveAverageCadence(
-            cadenceSamples = validCadence
+            cadenceSamples = validCadence,
+            summaryAvgCadence = telemetry.summaryAvgCadence
         )
 
         val timeseries1Min = buildMinuteSeries(
@@ -102,10 +110,21 @@ object RunningTelemetryAggregator {
     private fun summarizeHeartRate(
         samples: List<HrSample>,
         windowEnd: Instant,
-        zone2Config: HeartRateZone2Config
+        zone2Config: HeartRateZone2Config,
+        fallbackAvgBpm: Double? = null,
+        fallbackMaxBpm: Int? = null,
+        fallbackMinBpm: Int? = null
     ): HrSummary {
         if (samples.isEmpty()) {
-            return HrSummary(avgBpm = null, maxBpm = null, minBpm = null, zone2Ratio = null)
+            val validFallbackAvg = fallbackAvgBpm?.takeIf { it.isFinite() && it > 0.0 }
+            val validFallbackMax = fallbackMaxBpm?.takeIf { it > 0 }
+            val validFallbackMin = fallbackMinBpm?.takeIf { it > 0 }
+            return HrSummary(
+                avgBpm = validFallbackAvg,
+                maxBpm = validFallbackMax,
+                minBpm = validFallbackMin,
+                zone2Ratio = null
+            )
         }
         val avgBpm = samples.map { it.bpm }.average()
         val maxBpm = samples.maxOf { it.bpm }.toInt()
@@ -147,12 +166,13 @@ object RunningTelemetryAggregator {
     }
 
     private fun resolveAverageCadence(
-        cadenceSamples: List<CadenceSample>
+        cadenceSamples: List<CadenceSample>,
+        summaryAvgCadence: Double? = null
     ): Double? {
         if (cadenceSamples.isNotEmpty()) {
             return cadenceSamples.map { it.spm }.average()
         }
-        return null
+        return summaryAvgCadence?.takeIf { it.isFinite() && it > 0.0 }
     }
 
     private fun resolveTotalDistanceMeters(

@@ -87,6 +87,20 @@ jobs:
         run: |
           yes | "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
 
+      - name: Download optional Samsung Health Data SDK AAR
+        shell: bash
+        env:
+          SAMSUNG_HEALTH_SDK_AAR_URL: ${{ secrets.SAMSUNG_HEALTH_SDK_AAR_URL }}
+        run: |
+          set -euo pipefail
+          if [ -n "${SAMSUNG_HEALTH_SDK_AAR_URL:-}" ]; then
+            mkdir -p MyRunSync/app/libs
+            curl -fsSL "$SAMSUNG_HEALTH_SDK_AAR_URL" -o MyRunSync/app/libs/samsung-health-data-api-1.1.0.aar
+            echo "Downloaded Samsung Health Data SDK AAR ($(wc -c < MyRunSync/app/libs/samsung-health-data-api-1.1.0.aar) bytes)."
+          else
+            echo "SAMSUNG_HEALTH_SDK_AAR_URL secret not set; building Health Connect variant."
+          fi
+
       - name: Run unit tests and build signed Release APK
         working-directory: MyRunSync
         shell: bash

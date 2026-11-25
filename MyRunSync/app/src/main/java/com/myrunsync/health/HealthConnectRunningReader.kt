@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
  */
 class HealthConnectRunningReader(
     private val client: HealthConnectClient
-) {
+) : RunningTelemetryReader {
     suspend fun hasAllPermissions(): Boolean {
         val granted = client.permissionController.getGrantedPermissions()
         return granted.containsAll(REQUIRED_PERMISSIONS)
@@ -52,7 +52,7 @@ class HealthConnectRunningReader(
         }
     }
 
-    suspend fun readRunningSessions(
+    override suspend fun readRunningSessions(
         startTime: Instant,
         endTime: Instant
     ): List<RawRunningTelemetry> {

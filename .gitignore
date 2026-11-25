@@ -5,11 +5,14 @@
 **/.cxx/
 **/*.apk
 **/*.aab
+**/*.aar
 **/*.iml
 **/*.jks
 **/*.keystore
 **/*.p12
 **/keystore.properties
+samsung-health-data-sdk-*.zip
+/1.1.0/
 .idea/
 .DS_Store
 Thumbs.db

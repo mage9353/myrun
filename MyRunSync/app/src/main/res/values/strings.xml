@@ -19,11 +19,13 @@
     <string name="btn_save_zone2">Save</string>
     <string name="status_zone2_saved">Zone 2 heart rate saved (%1$d~%2$d bpm).</string>
     <string name="section_auto_sync">Auto Sync</string>
+    <string name="label_data_source">Data source</string>
     <string name="switch_auto_sync_on_open">Auto-sync when opening app</string>
     <string name="switch_bg_auto_sync">Background periodic auto-sync</string>
     <string name="label_bg_sync_interval">Background sync interval</string>
     <string name="last_sync_none">Last sync: none</string>
     <string name="btn_grant_permissions">Grant Health Connect Permissions</string>
+    <string name="btn_grant_samsung_permissions">Grant Samsung Health Permissions</string>
     <string name="btn_open_hc_settings">Open Health Connect Settings</string>
     <string name="btn_sync_runs">Sync Recent Runs to Supabase</string>
     <string name="status_ready">Ready. Grant Health Connect permissions and sync recent runs.</string>

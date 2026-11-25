@@ -72,7 +72,11 @@ data class RawRunningTelemetry(
     val cadenceSamples: List<CadenceSample>,
     val distanceSegments: List<DistanceSegment>,
     val hasGps: Boolean? = null,
-    val exerciseType: String? = null
+    val exerciseType: String? = null,
+    val summaryAvgCadence: Double? = null,
+    val summaryAvgHr: Double? = null,
+    val summaryMaxHr: Int? = null,
+    val summaryMinHr: Int? = null
 )
 
 /**

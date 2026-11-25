@@ -494,47 +494,64 @@
 
     <!-- 1. Top 4 Summary Cards -->
     <section aria-label="주간 요약 지표" class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-      <!-- Card 1: 7일 누적 거리 -->
+      <!-- Card 1: 주간 누적 거리 -->
       <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
         <div class="flex items-center justify-between gap-1.5">
-          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">최근 7일 누적 거리</span>
+          <span class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-tight">주간 누적 거리</span>
           <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs sm:text-sm shrink-0">🏃</span>
         </div>
-        <div id="statDistance7d" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
-        <p id="statDistanceSub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">데이터 대기 중</p>
+        <div id="statDistance7d" class="mt-2 text-lg sm:text-2xl font-bold tracking-tight tabular-nums text-slate-900 dark:text-white">-</div>
+        <p id="statDistanceSub" class="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug">이번 주 (월~일)</p>
+        <div id="statDistancePrev" class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+          <span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 shrink-0">지난 주</span>
+          <span class="text-sm sm:text-base font-bold tabular-nums text-slate-700 dark:text-slate-200">-</span>
+        </div>
       </div>
 
-      <!-- Card 2: 평균 페이스 -->
+      <!-- Card 2: 평균 페이스 (달리기) -->
       <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
         <div class="flex items-center justify-between gap-1.5">
-          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">평균 페이스</span>
+          <span class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-tight">평균 페이스 (달리기)</span>
           <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs sm:text-sm shrink-0">⏱️</span>
         </div>
-        <div id="statAvgPace" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
-        <p id="statAvgPaceSub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">분'초"/km</p>
+        <div id="statAvgPace" class="mt-2 text-lg sm:text-2xl font-bold tracking-tight tabular-nums text-slate-900 dark:text-white">-</div>
+        <p id="statAvgPaceSub" class="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug">초기 걷기 제외</p>
+        <div id="statAvgPacePrev" class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+          <span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 shrink-0">지난 주</span>
+          <span class="text-sm sm:text-base font-bold tabular-nums text-slate-700 dark:text-slate-200">-</span>
+        </div>
       </div>
 
       <!-- Card 3: 평균 Zone 2 비율 -->
       <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
         <div class="flex items-center justify-between gap-1.5">
-          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">평균 Zone 2 비율</span>
+          <span class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-tight">평균 Zone 2 비율</span>
           <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs sm:text-sm shrink-0">💚</span>
         </div>
-        <div id="statZone2" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
+        <div id="statZone2" class="mt-2 text-lg sm:text-2xl font-bold tracking-tight tabular-nums text-slate-900 dark:text-white">-</div>
         <div class="mt-2 w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
           <div id="statZone2Bar" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
         </div>
-        <p id="statZone2Sub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">유산소 베이스 지표</p>
+        <p id="statZone2Sub" class="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug">유산소 베이스 지표</p>
+        <div id="statZone2Prev" class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+          <span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 shrink-0">지난 주</span>
+          <span class="text-sm sm:text-base font-bold tabular-nums text-slate-700 dark:text-slate-200">-</span>
+        </div>
       </div>
 
       <!-- Card 4: 평균 케이던스 -->
       <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
         <div class="flex items-center justify-between gap-1.5">
-          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 leading-tight">평균 케이던스</span>
+          <span class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-tight">평균 케이던스</span>
           <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs sm:text-sm shrink-0">👟</span>
         </div>
-        <div id="statCadence" class="mt-2 sm:mt-2.5 text-xl sm:text-3xl font-bold tracking-tight tabular-nums">-</div>
-        <p id="statCadenceSub" class="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug sm:truncate">분당 보폭 (spm)</p>
+        <div id="statCadence" class="mt-2 text-base sm:text-xl font-bold tracking-tight tabular-nums text-slate-900 dark:text-white">-</div>
+        <p id="statCadenceSub" class="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug">이번 주 평균 / 달리기구간 평균</p>
+        <div id="statCadencePrev" class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+          <span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 shrink-0">지난 주</span>
+          <span class="text-sm sm:text-base font-bold tabular-nums text-slate-700 dark:text-slate-200">-</span>
+        </div>
+        <p id="statCadenceVo2" class="hidden mt-1.5 text-xs sm:text-sm font-semibold text-indigo-600 dark:text-indigo-400 leading-snug">VO2 Max -</p>
       </div>
     </section>
 
@@ -544,10 +561,14 @@
       <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 py-3 sm:px-4 shadow-sm space-y-2.5 lg:space-y-0 lg:flex lg:items-center lg:justify-between lg:gap-3">
         <div class="flex flex-wrap items-center justify-between sm:justify-start gap-2">
           <span class="text-xs font-bold text-slate-700 dark:text-slate-200">📊 추이 그래프 유형</span>
-          <div class="inline-flex items-center gap-1.5">
-            <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
-            <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
-            <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
+          <div class="inline-flex flex-wrap items-center gap-1.5">
+            <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
+            <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
+            <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
+            <label id="excludeWarmupLabel" title="달리기 유형만 선택했을 때 심박수 대비 페이스 추이에 적용됩니다" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 cursor-pointer select-none transition-colors">
+              <input id="chkExcludeWarmupWalk" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
+              <span>초기 걷기 제외</span>
+            </label>
           </div>
         </div>
         <div id="chartTypeChips" class="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:items-center"></div>
@@ -559,7 +580,7 @@
           <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
             <div>
               <h2 class="text-sm sm:text-base font-bold">최근 15회 평균 심박수 대비 페이스 추이</h2>
-              <p id="chartHrPaceSub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
+              <p id="chartHrPaceSub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
             </div>
           </div>
           <div class="relative h-56 sm:h-72">
@@ -575,7 +596,7 @@
           <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
             <div>
               <h2 class="text-sm sm:text-base font-bold">최근 15회 Zone 2 비율 변화</h2>
-              <p id="chartZone2Sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
+              <p id="chartZone2Sub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
             </div>
           </div>
           <div class="relative h-56 sm:h-72">
@@ -595,7 +616,7 @@
           <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center text-sm shadow-sm shrink-0">✨</div>
           <div>
             <h2 class="text-base sm:text-lg font-bold">Gemini AI 러닝 코치</h2>
-            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">내 러닝 데이터와 1분 단위 심박·페이스 변화를 바탕으로 개인 맞춤 피드백을 제공합니다.</p>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">내 러닝 데이터와 1분 단위 심박·페이스 변화를 바탕으로 개인 맞춤 피드백을 제공합니다.</p>
           </div>
         </div>
         <div class="w-full sm:w-auto inline-flex items-center justify-between sm:justify-start gap-1.5 px-3 py-1.5 sm:px-2.5 sm:py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70">
@@ -730,7 +751,7 @@
             <h2 class="text-base sm:text-lg font-bold">최근 러닝 기록</h2>
             <span id="tableCountBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0건</span>
           </div>
-          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">기록을 누르면 1분 단위 심박수 &amp; 페이스 상세 차트를 볼 수 있습니다.</p>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">기록을 누르면 1분 단위 심박수 &amp; 페이스 상세 차트를 볼 수 있습니다.</p>
         </div>
 
         <!-- Filter tabs (horizontally swipeable on mobile) -->
@@ -919,6 +940,7 @@
           zone2MinBpm: DEFAULT_ZONE2_MIN_BPM,
           zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
           walkPaceThresholdSec: DEFAULT_WALK_PACE_SEC,
+          excludeWarmupWalk: false,
           chartTypes: ALL_ACTIVITY_TYPES.slice()
         },
         runs: [],
@@ -1017,6 +1039,28 @@
         var m = Math.floor(rounded / 60);
         var s = rounded % 60;
         return m + "'" + String(s).padStart(2, '0') + '"';
+      }
+
+      function formatSpeedKmh(sec) {
+        if (!Number.isFinite(sec) || sec <= 0 || sec > 3600) return '';
+        return (3600 / sec).toFixed(1) + ' km/h';
+      }
+
+      function formatSpeedKmhCompact(sec) {
+        if (!Number.isFinite(sec) || sec <= 0 || sec > 3600) return '';
+        return (3600 / sec).toFixed(1) + 'km/h';
+      }
+
+      function formatPaceWithSpeed(sec) {
+        var pace = formatPace(sec);
+        var spd = formatSpeedKmh(sec);
+        return (pace !== '-' && spd) ? pace + ' (' + spd + ')' : pace;
+      }
+
+      function formatPaceShortWithSpeed(sec) {
+        var pace = formatPaceShort(sec);
+        var spd = formatSpeedKmh(sec);
+        return (pace !== '-' && spd) ? pace + ' (' + spd + ')' : pace;
       }
 
       function formatDuration(sec) {
@@ -1289,7 +1333,11 @@
           vo2Max: vo2Max !== null && vo2Max > 0 ? Math.round(vo2Max * 10) / 10 : null,
           avgPowerW: avgPowerW !== null && avgPowerW > 0 ? Math.round(avgPowerW) : null,
           notes: r.notes || r.memo || r.comment || '',
-          timeseries: timeseries
+          timeseries: timeseries,
+          warmupExcludedMin: 0,
+          runningOnlyAvgHr: null,
+          runningOnlyAvgPaceSec: null,
+          runningOnlyAvgCadence: null
         };
         return rowObj;
       }
@@ -1332,6 +1380,85 @@
         return null;
       }
 
+      function isRunningType(run) {
+        return Boolean(run && RUNNING_ACTIVITY_TYPES.indexOf(run.runType) !== -1);
+      }
+
+      function getEffectiveRunPaceSec(run) {
+        if (!run) return null;
+        if (run.warmupExcludedMin > 0 && run.runningOnlyAvgPaceSec !== null) {
+          return run.runningOnlyAvgPaceSec;
+        }
+        return run.avgPaceSec;
+      }
+
+      function computeRunningSegmentStats(run, walkPaceThresholdSec) {
+        var ts = Array.isArray(run.timeseries)
+          ? run.timeseries.slice().sort(function (a, b) { return a.minute - b.minute; })
+          : [];
+        if (!ts.length) {
+          return {
+            warmupExcludedMin: 0,
+            runningOnlyAvgHr: null,
+            runningOnlyAvgPaceSec: null,
+            runningOnlyAvgCadence: null
+          };
+        }
+
+        function isWalkingMinute(pt) {
+          if (pt.paceSec !== null) return pt.paceSec >= walkPaceThresholdSec;
+          if (pt.cadence !== null) return pt.cadence < 140;
+          return false;
+        }
+
+        var MAX_WARMUP_MIN = 15;
+        var startIdx = 0;
+        while (startIdx < ts.length && startIdx < MAX_WARMUP_MIN && isWalkingMinute(ts[startIdx])) {
+          startIdx++;
+        }
+        if (ts.length - startIdx < 3) {
+          startIdx = 0;
+        }
+
+        var trimmed = ts.slice(startIdx);
+        var hrVals = trimmed.map(function (pt) { return pt.hr; }).filter(function (v) { return Number.isFinite(v); });
+        var runningOnlyAvgHr = hrVals.length
+          ? Math.round(hrVals.reduce(function (a, b) { return a + b; }, 0) / hrVals.length)
+          : run.avgHr;
+
+        var totalDistM = 0;
+        var totalDurSec = 0;
+        trimmed.forEach(function (pt) {
+          if (pt.distanceM !== null && pt.distanceM > 0 && pt.paceSec !== null && pt.paceSec > 0) {
+            totalDistM += pt.distanceM;
+            totalDurSec += (pt.distanceM / 1000) * pt.paceSec;
+          }
+        });
+        var runningOnlyAvgPaceSec = null;
+        if (totalDistM > 0 && totalDurSec > 0) {
+          runningOnlyAvgPaceSec = Math.round(totalDurSec / (totalDistM / 1000));
+        } else {
+          var paceVals = trimmed.map(function (pt) { return pt.paceSec; }).filter(function (v) { return Number.isFinite(v) && v > 0; });
+          runningOnlyAvgPaceSec = paceVals.length
+            ? Math.round(paceVals.reduce(function (a, b) { return a + b; }, 0) / paceVals.length)
+            : run.avgPaceSec;
+        }
+
+        var runCadenceVals = ts
+          .filter(function (pt) { return !isWalkingMinute(pt) && pt.cadence !== null && pt.cadence > 0; })
+          .map(function (pt) { return pt.cadence; });
+        var runningOnlyAvgCadence = runCadenceVals.length >= 2
+          ? Math.round(runCadenceVals.reduce(function (a, b) { return a + b; }, 0) / runCadenceVals.length)
+          : null;
+
+        return {
+          warmupExcludedMin: startIdx,
+          runningOnlyAvgHr: runningOnlyAvgHr,
+          runningOnlyAvgPaceSec: runningOnlyAvgPaceSec,
+          runningOnlyAvgCadence: runningOnlyAvgCadence
+        };
+      }
+
       function recomputeDerivedRunMetrics() {
         var walkThreshold = Number.isFinite(state.config.walkPaceThresholdSec)
           ? state.config.walkPaceThresholdSec
@@ -1343,6 +1470,11 @@
 
         state.runs.forEach(function (run) {
           run.runType = classifyRun(run, walkThreshold);
+          var segStats = computeRunningSegmentStats(run, walkThreshold);
+          run.warmupExcludedMin = segStats.warmupExcludedMin;
+          run.runningOnlyAvgHr = segStats.runningOnlyAvgHr;
+          run.runningOnlyAvgPaceSec = segStats.runningOnlyAvgPaceSec;
+          run.runningOnlyAvgCadence = segStats.runningOnlyAvgCadence;
 
           if (!useCustomZ2) {
             run.zone2MinBpm = run.rawZone2MinBpm;
@@ -1445,17 +1577,27 @@
 
         return templates.map(function (t, idx) {
           var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - t.daysAgo, t.pace >= 540 ? 20 : 7, 30, 0);
-          var totalSec = Math.round(t.dist * t.pace);
-          var totalMins = Math.max(12, Math.round(totalSec / 60));
+          var isRunSession = t.exerciseType !== 'walking' && t.pace < 540;
+          var warmupWalkMins = isRunSession ? (6 + (idx % 3)) : 0;
+          var runMins = Math.max(12, Math.round((t.dist * t.pace) / 60));
+          var totalMins = warmupWalkMins + runMins;
           var ts = [];
           for (var min = 1; min <= totalMins; min++) {
-            var progress = (min - 1) / Math.max(1, totalMins - 1);
-            var warmup = min <= 3 ? -10 + (min - 1) * 3 : 0;
+            var isWarmupWalk = min <= warmupWalkMins;
+            var runIdx = min - warmupWalkMins - 1;
+            var progress = runMins > 1 ? Math.max(0, runIdx) / (runMins - 1) : 0;
             var wave = Math.round(Math.sin(min * 0.7 + idx) * 2);
-            var hrVal = Math.round(t.hr - (t.drift * 0.45) + (t.drift * progress) + warmup + wave);
+            var hrVal = isWarmupWalk
+              ? Math.round(104 + min * 1.6 + wave)
+              : Math.round(t.hr - (t.drift * 0.45) + (t.drift * progress) + wave);
             var paceWave = Math.round(Math.cos(min * 0.55 + idx) * 5);
-            var paceShift = min <= 2 ? 14 : (progress > 0.75 ? -5 : 0);
-            var paceVal = Math.max(230, t.pace + paceShift + paceWave);
+            var paceShift = (!isWarmupWalk && runIdx < 2) ? 10 : (progress > 0.75 ? -5 : 0);
+            var paceVal = isWarmupWalk
+              ? Math.round(670 - min * 8 + paceWave)
+              : Math.max(230, t.pace + paceShift + paceWave);
+            var cadVal = isWarmupWalk
+              ? 114 + Math.round(Math.sin(min) * 4)
+              : t.cad + Math.round(Math.sin(min) * 2);
             var distPerMin = Math.round((1000 / paceVal) * 60);
             ts.push({
               minute: min,
@@ -1465,11 +1607,22 @@
               min_hr: hrVal - 3,
               zone2_ratio: (hrVal >= 120 && hrVal <= 140) ? 1.0 : 0.0,
               pace_sec: paceVal,
-              cadence: t.cad + Math.round(Math.sin(min) * 2),
+              cadence: cadVal,
               distance_m: distPerMin,
               altitude_m: t.hasGps ? Number((28 + Math.sin(min * 0.35) * 14).toFixed(1)) : null
             });
           }
+
+          var totalDistM = ts.reduce(function (s, p) { return s + (p.distance_m || 0); }, 0);
+          var totalSec = ts.length * 60;
+          var overallPaceSec = totalDistM > 0 ? Math.round(totalSec / (totalDistM / 1000)) : t.pace;
+          var overallHr = Math.round(ts.reduce(function (s, p) { return s + p.hr; }, 0) / ts.length);
+          var overallMaxHr = Math.max.apply(null, ts.map(function (p) { return p.max_hr; }));
+          var overallMinHr = Math.min.apply(null, ts.map(function (p) { return p.min_hr; }));
+          var overallZ2Ratio = ts.reduce(function (s, p) { return s + p.zone2_ratio; }, 0) / ts.length;
+          var overallZ2Pct = Number((overallZ2Ratio * 100).toFixed(1));
+          var overallCad = Math.round(ts.reduce(function (s, p) { return s + p.cadence; }, 0) / ts.length);
+          var totalDistKm = Number((totalDistM / 1000).toFixed(2));
 
           return normalizeRunRow({
             id: 'demo-' + (idx + 1),
@@ -1480,23 +1633,23 @@
             workout_type: t.type,
             exercise_type: t.exerciseType,
             has_gps: t.hasGps,
-            distance_km: t.dist,
-            distance_meters: Math.round(t.dist * 1000),
+            distance_km: totalDistKm,
+            distance_meters: Math.round(totalDistM),
             duration_sec: totalSec,
-            avg_pace_sec: t.pace,
+            avg_pace_sec: overallPaceSec,
             best_pace_sec: Math.max(210, t.pace - 32),
-            avg_hr: t.hr,
-            max_hr: t.hr + 12,
-            min_hr: t.hr - 18,
+            avg_hr: overallHr,
+            max_hr: overallMaxHr,
+            min_hr: overallMinHr,
             zone2_min_bpm: 120,
             zone2_max_bpm: 140,
-            zone2_pct: t.z2,
-            zone2_ratio: Number((t.z2 / 100).toFixed(4)),
-            avg_cadence: t.cad,
+            zone2_pct: overallZ2Pct,
+            zone2_ratio: Number(overallZ2Ratio.toFixed(4)),
+            avg_cadence: overallCad,
             max_cadence: t.cad + 10,
-            calories: Math.round(t.dist * 64),
-            altitude_gain: t.hasGps ? Math.round(t.dist * 9) : 0,
-            altitude_loss: t.hasGps ? Math.round(t.dist * 8.5) : 0,
+            calories: Math.round(totalDistKm * 64),
+            altitude_gain: t.hasGps ? Math.round(totalDistKm * 9) : 0,
+            altitude_loss: t.hasGps ? Math.round(totalDistKm * 8.5) : 0,
             vo2_max: t.exerciseType === 'running' && t.hasGps ? Number((46.8 + (idx % 4) * 0.4).toFixed(1)) : null,
             avg_power_w: t.exerciseType === 'running' ? Math.round(215 + (180 - t.cad) * -1.2) : null,
             timeseries_1min: ts
@@ -1537,6 +1690,8 @@
             if (Number.isFinite(walkSec) && walkSec >= 240 && walkSec <= 1800) {
               state.config.walkPaceThresholdSec = walkSec;
             }
+
+            state.config.excludeWarmupWalk = Boolean(parsed.excludeWarmupWalk);
 
             if (Array.isArray(parsed.chartTypes)) {
               var legacyMap = {
@@ -1644,6 +1799,9 @@
         $('inputWalkPaceMin').value = Math.floor(walkSec / 60);
         $('inputWalkPaceSec').value = String(walkSec % 60).padStart(2, '0');
         updateWalkSpeedHint(walkSec);
+        if ($('chkExcludeWarmupWalk')) {
+          $('chkExcludeWarmupWalk').checked = Boolean(state.config.excludeWarmupWalk);
+        }
       }
 
       function updateStatusIndicators() {
@@ -1745,7 +1903,30 @@
         }
       }
 
-      // Summary Cards Rendering
+      // Summary Cards Rendering (Monday–Sunday weekly comparison)
+      function getWeekBounds(weekOffset) {
+        var now = new Date();
+        var day = now.getDay(); // 0 = Sun, 1 = Mon, ...
+        var daysSinceMonday = (day + 6) % 7;
+        var monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceMonday + (weekOffset * 7), 0, 0, 0, 0);
+        var nextMonday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 7, 0, 0, 0, 0);
+        return { start: monday, end: nextMonday };
+      }
+
+      function getRunsInWeek(weekOffset) {
+        var bounds = getWeekBounds(weekOffset);
+        return state.runs.filter(function (r) {
+          return r.dateObj && r.dateObj >= bounds.start && r.dateObj < bounds.end;
+        });
+      }
+
+      function formatCadencePair(allCad, runCad) {
+        var hasAll = Number.isFinite(allCad);
+        var hasRun = Number.isFinite(runCad);
+        if (!hasAll && !hasRun) return '-';
+        return (hasAll ? Math.round(allCad) : '-') + ' / ' + (hasRun ? Math.round(runCad) : '-') + ' spm';
+      }
+
       function getRecentRunsByDays(days) {
         var now = new Date();
         var cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1), 0, 0, 0);
@@ -1760,57 +1941,108 @@
         return vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
       }
 
+      function setPrevComparison(el, mainText, subText, isEmpty) {
+        var valueHtml = isEmpty
+          ? '<span class="text-xs sm:text-sm font-medium text-slate-400 dark:text-slate-500">' + escapeHtml(mainText) + '</span>'
+          : '<span class="text-sm sm:text-base font-bold tabular-nums text-slate-700 dark:text-slate-200">' + escapeHtml(mainText) +
+              (subText ? ' <span class="inline-block text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">' + escapeHtml(subText) + '</span>' : '') +
+            '</span>';
+        el.innerHTML =
+          '<span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 shrink-0">지난 주</span>' +
+          valueHtml;
+      }
+
       function renderSummaryCards() {
         if (!state.runs.length) {
           $('statDistance7d').textContent = '-';
           $('statDistanceSub').textContent = '조회된 기록 없음';
+          setPrevComparison($('statDistancePrev'), '기록 없음', '', true);
           $('statAvgPace').textContent = '-';
-          $('statAvgPaceSub').textContent = '분\'초"/km';
+          $('statAvgPaceSub').textContent = '초기 걷기 제외';
+          setPrevComparison($('statAvgPacePrev'), '달리기 기록 없음', '', true);
           $('statZone2').textContent = '-';
           $('statZone2Bar').style.width = '0%';
           $('statZone2Sub').textContent = '유산소 베이스 지표';
+          setPrevComparison($('statZone2Prev'), '기록 없음', '', true);
           $('statCadence').textContent = '-';
-          $('statCadenceSub').textContent = '분당 보폭 (spm)';
+          $('statCadenceSub').textContent = '이번 주 평균 / 달리기구간 평균';
+          setPrevComparison($('statCadencePrev'), '기록 없음', '', true);
+          $('statCadenceVo2').classList.add('hidden');
           return;
         }
 
-        var runs7d = getRecentRunsByDays(7);
-        var dist7d = runs7d.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
-        var totalDistAll = state.runs.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
-        var cal7d = runs7d.reduce(function (sum, r) { return sum + (r.calories || 0); }, 0);
-        var elev7d = runs7d.reduce(function (sum, r) { return sum + (r.altitudeGain || 0); }, 0);
+        var thisWeekRuns = getRunsInWeek(0);
+        var lastWeekRuns = getRunsInWeek(-1);
+        var thisWeekRunning = thisWeekRuns.filter(isRunningType);
+        var lastWeekRunning = lastWeekRuns.filter(isRunningType);
 
-        $('statDistance7d').textContent = dist7d.toFixed(1) + ' km';
+        // Card 1: Weekly Distance (Mon-Sun)
+        var thisWeekDist = thisWeekRuns.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
+        var lastWeekDist = lastWeekRuns.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
+        var calThisWeek = thisWeekRuns.reduce(function (sum, r) { return sum + (r.calories || 0); }, 0);
+        var elevThisWeek = thisWeekRuns.reduce(function (sum, r) { return sum + (r.altitudeGain || 0); }, 0);
+
+        $('statDistance7d').textContent = thisWeekDist.toFixed(1) + ' km';
         var distExtra = [];
-        if (cal7d > 0) distExtra.push(cal7d.toLocaleString() + ' kcal');
-        if (elev7d > 0) distExtra.push('+' + Math.round(elev7d) + 'm');
-        $('statDistanceSub').textContent = distExtra.length > 0
-          ? '최근 7일 ' + runs7d.length + '회 · ' + distExtra.join(' · ')
-          : '최근 7일 ' + runs7d.length + '회 · 전체 ' + state.runs.length + '회 ' + totalDistAll.toFixed(1) + ' km';
+        if (calThisWeek > 0) distExtra.push(calThisWeek.toLocaleString() + ' kcal');
+        if (elevThisWeek > 0) distExtra.push('+' + Math.round(elevThisWeek) + 'm');
+        $('statDistanceSub').textContent = '이번 주 ' + thisWeekRuns.length + '회' + (distExtra.length ? ' · ' + distExtra.join(' · ') : '');
+        if (lastWeekRuns.length > 0) {
+          setPrevComparison($('statDistancePrev'), lastWeekDist.toFixed(1) + ' km', '(' + lastWeekRuns.length + '회)', false);
+        } else {
+          setPrevComparison($('statDistancePrev'), '기록 없음', '', true);
+        }
 
-        // Use 7-day scope if available, otherwise fallback to all loaded runs
-        var scopeRuns = runs7d.length > 0 ? runs7d : state.runs;
-        var scopeLabel = runs7d.length > 0 ? '최근 7일 평균' : '전체 조회(' + state.runs.length + '회) 평균';
+        // Card 2: Running Avg Pace (warmup walk excluded)
+        var thisRunPace = averageOf(thisWeekRunning, getEffectiveRunPaceSec);
+        var lastRunPace = averageOf(lastWeekRunning, getEffectiveRunPaceSec);
+        var paceSpeed = formatSpeedKmh(thisRunPace);
+        $('statAvgPace').innerHTML = paceSpeed
+          ? escapeHtml(formatPace(thisRunPace)) + ' <span class="inline-block text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">(' + escapeHtml(paceSpeed) + ')</span>'
+          : escapeHtml(formatPace(thisRunPace));
+        $('statAvgPaceSub').textContent = thisWeekRunning.length > 0
+          ? '이번 주 달리기 ' + thisWeekRunning.length + '회 · 초기 걷기 제외'
+          : '이번 주 달리기 기록 없음';
+        if (lastRunPace !== null) {
+          var lastPaceSpeed = formatSpeedKmh(lastRunPace);
+          setPrevComparison($('statAvgPacePrev'), formatPace(lastRunPace), lastPaceSpeed ? '(' + lastPaceSpeed + ')' : '', false);
+        } else {
+          setPrevComparison($('statAvgPacePrev'), '달리기 기록 없음', '', true);
+        }
 
-        var avgPace = averageOf(scopeRuns, function (r) { return r.avgPaceSec; });
-        var avgPaceAll = averageOf(state.runs, function (r) { return r.avgPaceSec; });
-        $('statAvgPace').textContent = formatPace(avgPace);
-        $('statAvgPaceSub').textContent = runs7d.length > 0 && avgPaceAll
-          ? scopeLabel + ' · ' + state.runs.length + '회 ' + formatPaceShort(avgPaceAll)
-          : scopeLabel;
-
-        var avgZ2 = averageOf(scopeRuns, function (r) { return r.zone2Pct; });
+        // Card 3: Zone 2 Ratio
+        var thisZ2 = averageOf(thisWeekRuns, function (r) { return r.zone2Pct; });
+        var lastZ2 = averageOf(lastWeekRuns, function (r) { return r.zone2Pct; });
         var activeZ2 = getActiveZone2Range();
-        $('statZone2').textContent = avgZ2 !== null ? avgZ2.toFixed(1) + '%' : '-';
-        $('statZone2Bar').style.width = avgZ2 !== null ? Math.min(100, Math.max(0, avgZ2)).toFixed(1) + '%' : '0%';
-        $('statZone2Sub').textContent = scopeLabel + (activeZ2 ? ' · ' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm' : ' 유산소 비율');
+        $('statZone2').textContent = thisZ2 !== null ? thisZ2.toFixed(1) + '%' : '-';
+        $('statZone2Bar').style.width = thisZ2 !== null ? Math.min(100, Math.max(0, thisZ2)).toFixed(1) + '%' : '0%';
+        $('statZone2Sub').textContent = '이번 주 평균' + (activeZ2 ? ' · ' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm' : ' 유산소 비율');
+        if (lastZ2 !== null) {
+          setPrevComparison($('statZone2Prev'), lastZ2.toFixed(1) + '%', '', false);
+        } else {
+          setPrevComparison($('statZone2Prev'), '기록 없음', '', true);
+        }
 
-        var avgCad = averageOf(scopeRuns, function (r) { return r.avgCadence; });
+        // Card 4: Avg Cadence (Overall / Running-only) + Last Week + VO2 Max on next line
+        var thisCad = averageOf(thisWeekRuns, function (r) { return r.avgCadence; });
+        var thisRunCad = averageOf(thisWeekRunning, function (r) { return r.runningOnlyAvgCadence; });
+        var lastCad = averageOf(lastWeekRuns, function (r) { return r.avgCadence; });
+        var lastRunCad = averageOf(lastWeekRunning, function (r) { return r.runningOnlyAvgCadence; });
         var latestVo2Run = state.runs.find(function (r) { return r.vo2Max !== null; });
-        $('statCadence').textContent = avgCad !== null ? Math.round(avgCad) + ' spm' : '-';
-        $('statCadenceSub').textContent = latestVo2Run
-          ? scopeLabel + ' · VO2 Max ' + latestVo2Run.vo2Max.toFixed(1)
-          : scopeLabel + ' 보폭 수';
+
+        $('statCadence').textContent = formatCadencePair(thisCad, thisRunCad);
+        $('statCadenceSub').textContent = '이번 주 평균 / 달리기구간 평균';
+        if (lastCad !== null || lastRunCad !== null) {
+          setPrevComparison($('statCadencePrev'), formatCadencePair(lastCad, lastRunCad), '', false);
+        } else {
+          setPrevComparison($('statCadencePrev'), '기록 없음', '', true);
+        }
+        if (latestVo2Run) {
+          $('statCadenceVo2').textContent = 'VO2 Max ' + latestVo2Run.vo2Max.toFixed(1);
+          $('statCadenceVo2').classList.remove('hidden');
+        } else {
+          $('statCadenceVo2').classList.add('hidden');
+        }
       }
 
       // Chart Styling Helpers
@@ -1830,6 +2062,13 @@
           state.charts[key].destroy();
           state.charts[key] = null;
         }
+      }
+
+      function isRunningOnlyChartSelection() {
+        var selected = state.config.chartTypes || [];
+        return selected.length > 0 && selected.every(function (t) {
+          return RUNNING_ACTIVITY_TYPES.indexOf(t) !== -1;
+        });
       }
 
       function renderChartTypeFilterUI() {
@@ -1873,6 +2112,20 @@
           btn.classList.toggle('text-slate-600', !active);
           btn.classList.toggle('dark:text-slate-300', !active);
         });
+
+        var chkWarmup = $('chkExcludeWarmupWalk');
+        var lblWarmup = $('excludeWarmupLabel');
+        if (chkWarmup) chkWarmup.checked = Boolean(state.config.excludeWarmupWalk);
+        if (lblWarmup) {
+          var isRunOnly = isRunningOnlyChartSelection();
+          var isActiveWarmup = Boolean(state.config.excludeWarmupWalk) && isRunOnly;
+          lblWarmup.classList.toggle('border-indigo-500', isActiveWarmup);
+          lblWarmup.classList.toggle('bg-indigo-50', isActiveWarmup);
+          lblWarmup.classList.toggle('dark:bg-indigo-950/60', isActiveWarmup);
+          lblWarmup.classList.toggle('text-indigo-700', isActiveWarmup);
+          lblWarmup.classList.toggle('dark:text-indigo-300', isActiveWarmup);
+          lblWarmup.classList.toggle('opacity-60', !isRunOnly);
+        }
       }
 
       function renderTrendCharts() {
@@ -1884,8 +2137,9 @@
         var colors = getChartColors();
 
         var activeZ2 = getActiveZone2Range();
+        var applyWarmupExclusion = Boolean(state.config.excludeWarmupWalk) && isRunningOnlyChartSelection();
         $('chartHrPaceSub').textContent = recent15.length
-          ? '선택 유형 최근 ' + recent15.length + '회 표시 · 페이스는 위쪽일수록 빠릅니다'
+          ? '선택 유형 최근 ' + recent15.length + '회 표시' + (applyWarmupExclusion ? ' · 초기 걷기 구간 제외' : ' · 페이스는 위쪽일수록 빠릅니다')
           : '페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)';
         $('chartZone2Sub').textContent = '저강도 유산소 영역 유지율 (%)' +
           (activeZ2 ? ' · ' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm' : '');
@@ -1902,17 +2156,72 @@
         $('chartZone2Empty').classList.add('hidden');
 
         var labels = recent15.map(function (r) { return formatDateShort(r.runDate); });
-        var hrData = recent15.map(function (r) { return r.avgHr; });
-        var paceData = recent15.map(function (r) { return r.avgPaceSec; });
+        var hrData = recent15.map(function (r) {
+          return (applyWarmupExclusion && r.warmupExcludedMin > 0 && r.runningOnlyAvgHr !== null)
+            ? r.runningOnlyAvgHr
+            : r.avgHr;
+        });
+        var paceData = recent15.map(function (r) {
+          return (applyWarmupExclusion && r.warmupExcludedMin > 0 && r.runningOnlyAvgPaceSec !== null)
+            ? r.runningOnlyAvgPaceSec
+            : r.avgPaceSec;
+        });
         var z2Data = recent15.map(function (r) { return r.zone2Pct !== null ? Number(r.zone2Pct.toFixed(1)) : null; });
         var pointColors = recent15.map(function (r) { return getActivityMeta(r.runType).color; });
         var isCompact = window.innerWidth < 480;
         var axisFontSize = isCompact ? 10 : 11;
 
+        var minPaceIdx = -1;
+        var maxPaceIdx = -1;
+        for (var pi = 0; pi < paceData.length; pi++) {
+          var pv = paceData[pi];
+          if (!Number.isFinite(pv) || pv <= 0) continue;
+          if (minPaceIdx === -1 || pv < paceData[minPaceIdx]) minPaceIdx = pi;
+          if (maxPaceIdx === -1 || pv > paceData[maxPaceIdx]) maxPaceIdx = pi;
+        }
+
+        var paceExtremesPlugin = {
+          id: 'paceExtremesLabels',
+          afterDatasetsDraw: function (chart) {
+            if (minPaceIdx === -1 || maxPaceIdx === -1 || !chart.chartArea) return;
+            var meta = chart.getDatasetMeta(1);
+            if (!meta || !meta.data || !meta.data.length) return;
+            var area = chart.chartArea;
+            var ctx2d = chart.ctx;
+            ctx2d.save();
+            ctx2d.font = '600 ' + (isCompact ? 9 : 10) + 'px sans-serif';
+            ctx2d.textAlign = 'center';
+
+            function drawExtremeLabel(idx, placeAbove) {
+              var pt = meta.data[idx];
+              var val = paceData[idx];
+              if (!pt || !Number.isFinite(val)) return;
+              var labelText = formatPaceShort(val) + ' (' + formatSpeedKmhCompact(val) + ')';
+              var halfW = ctx2d.measureText(labelText).width / 2 + 4;
+              var x = Math.max(area.left + halfW, Math.min(area.right - halfW, pt.x));
+              var y = placeAbove ? pt.y - 9 : pt.y + 15;
+              y = Math.max(area.top + 11, Math.min(area.bottom - 5, y));
+
+              ctx2d.lineWidth = 3;
+              ctx2d.strokeStyle = isDarkMode() ? 'rgba(15, 23, 42, 0.88)' : 'rgba(255, 255, 255, 0.92)';
+              ctx2d.strokeText(labelText, x, y);
+              ctx2d.fillStyle = isDarkMode() ? '#38bdf8' : '#0284c7';
+              ctx2d.fillText(labelText, x, y);
+            }
+
+            drawExtremeLabel(minPaceIdx, true);
+            if (maxPaceIdx !== minPaceIdx) {
+              drawExtremeLabel(maxPaceIdx, false);
+            }
+            ctx2d.restore();
+          }
+        };
+
         // Chart 1: Dual-axis Avg HR vs Avg Pace
         var ctx1 = $('chartHrPace').getContext('2d');
         state.charts.hrPace = new Chart(ctx1, {
           type: 'line',
+          plugins: [paceExtremesPlugin],
           data: {
             labels: labels,
             datasets: [
@@ -1987,7 +2296,30 @@
                     if (ctx.datasetIndex === 0) {
                       return ' 평균 심박수: ' + (ctx.parsed.y !== null ? ctx.parsed.y + ' bpm' : '-');
                     }
-                    return ' 평균 페이스: ' + formatPace(ctx.parsed.y);
+                    var idx = ctx.dataIndex;
+                    var run = recent15[idx];
+                    var baseStr = ' 평균 페이스: ' + formatPaceWithSpeed(ctx.parsed.y);
+                    if (applyWarmupExclusion && run && run.warmupExcludedMin > 0 && run.avgPaceSec !== null) {
+                      baseStr += ' (전체 ' + formatPaceShort(run.avgPaceSec) + ')';
+                    }
+                    return baseStr;
+                  },
+                  afterBody: function (items) {
+                    var idx = items && items[0] ? items[0].dataIndex : -1;
+                    var run = idx >= 0 ? recent15[idx] : null;
+                    if (!run) return [];
+                    var extra = [];
+                    if (applyWarmupExclusion && run.warmupExcludedMin > 0) {
+                      extra.push(' 초기 걷기 ' + run.warmupExcludedMin + '분 제외 반영');
+                    }
+                    if (run.avgCadence !== null) {
+                      var cadStr = ' 케이던스: ' + run.avgCadence + ' spm';
+                      if (run.runningOnlyAvgCadence !== null && run.runningOnlyAvgCadence !== run.avgCadence) {
+                        cadStr += ' (달리기 ' + run.runningOnlyAvgCadence + ' spm)';
+                      }
+                      extra.push(cadStr);
+                    }
+                    return extra;
                   }
                 }
               }
@@ -2012,7 +2344,15 @@
                 ticks: {
                   color: colors.text,
                   font: { size: axisFontSize },
-                  callback: function (value) { return formatPaceShort(value); }
+                  callback: function (value, index, ticks) {
+                    var paceLabel = formatPaceShort(value);
+                    if (paceLabel === '-') return paceLabel;
+                    if (ticks && (index === 0 || index === ticks.length - 1)) {
+                      var spd = formatSpeedKmhCompact(value);
+                      return spd ? [paceLabel, '(' + spd + ')'] : paceLabel;
+                    }
+                    return paceLabel;
+                  }
                 },
                 grid: { drawOnChartArea: false }
               }
@@ -2154,13 +2494,16 @@
           if (run.altitudeGain !== null && run.altitudeGain > 0) distSubParts.push('⛰️+' + Math.round(run.altitudeGain) + 'm');
           var distSub = distSubParts.join(' ');
 
+          var paceSpeedStr = formatSpeedKmh(run.avgPaceSec);
+          var hasRunCad = run.runningOnlyAvgCadence !== null && run.runningOnlyAvgCadence !== run.avgCadence;
+
           return '<tr data-run-id="' + escapeHtml(run.id) + '" class="hover:bg-indigo-50/50 dark:hover:bg-indigo-950/25 cursor-pointer transition-colors">' +
             '<td class="py-3.5 px-4 whitespace-nowrap font-medium text-slate-800 dark:text-slate-100">' +
               '<div class="flex items-center gap-1.5">' +
                 '<span>' + escapeHtml(formatDateKr(run.runDate)) + '</span>' +
-                (hasTs ? '<span title="1분 단위 상세 데이터 있음" class="text-[11px] text-indigo-500">📊</span>' : '') +
+                (hasTs ? '<span title="1분 단위 상세 데이터 있음" class="text-xs text-indigo-500">📊</span>' : '') +
               '</div>' +
-              (metaLine ? '<div class="text-[11px] font-normal text-slate-400 dark:text-slate-500 mt-0.5">' + escapeHtml(metaLine) + '</div>' : '') +
+              (metaLine ? '<div class="text-xs font-normal text-slate-500 dark:text-slate-400 mt-0.5">' + escapeHtml(metaLine) + '</div>' : '') +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap">' +
               '<span title="' + escapeHtml(meta.description) + '" class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full border ' + meta.badgeClass + '">' +
@@ -2170,19 +2513,21 @@
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap text-right font-semibold tabular-nums">' +
               '<div>' + (run.distanceKm !== null ? run.distanceKm.toFixed(2) + ' km' : '-') + '</div>' +
-              (distSub ? '<div class="text-[10px] font-normal text-slate-400 dark:text-slate-500 mt-0.5">' + escapeHtml(distSub) + '</div>' : '') +
+              (distSub ? '<div class="text-xs font-normal text-slate-500 dark:text-slate-400 mt-0.5">' + escapeHtml(distSub) + '</div>' : '') +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap text-right tabular-nums text-slate-600 dark:text-slate-300">' +
               formatDuration(run.durationSec) +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap text-right font-semibold tabular-nums text-sky-600 dark:text-sky-400">' +
-              formatPace(run.avgPaceSec) +
+              '<div>' + formatPace(run.avgPaceSec) + '</div>' +
+              (paceSpeedStr ? '<div class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">(' + escapeHtml(paceSpeedStr) + ')</div>' : '') +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap text-right tabular-nums text-rose-600 dark:text-rose-400 font-medium">' +
               (run.avgHr !== null ? run.avgHr + ' bpm' : '-') +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap text-right tabular-nums text-amber-600 dark:text-amber-400 font-medium">' +
-              (run.avgCadence !== null ? run.avgCadence + ' spm' : '-') +
+              '<div>' + (run.avgCadence !== null ? run.avgCadence + ' spm' : '-') + '</div>' +
+              (hasRunCad ? '<div class="text-xs font-medium text-amber-600 dark:text-amber-300 mt-0.5">달리기 ' + run.runningOnlyAvgCadence + ' spm</div>' : '') +
             '</td>' +
             '<td class="py-3.5 px-4 whitespace-nowrap text-right tabular-nums">' +
               '<div class="inline-flex items-center justify-end gap-2">' +
@@ -2208,8 +2553,15 @@
               }
             }
             var metaLine = [timeLabel, run.title].filter(Boolean).join(' · ');
+            var paceSpeedCompact = formatSpeedKmhCompact(run.avgPaceSec);
             var extraParts = [];
-            if (run.avgCadence !== null) extraParts.push('👟 ' + run.avgCadence + ' spm');
+            if (run.avgCadence !== null) {
+              var cadMeta = '👟 ' + run.avgCadence + ' spm';
+              if (run.runningOnlyAvgCadence !== null && run.runningOnlyAvgCadence !== run.avgCadence) {
+                cadMeta += ' (달리기 ' + run.runningOnlyAvgCadence + ')';
+              }
+              extraParts.push(cadMeta);
+            }
             if (run.calories !== null) extraParts.push('🔥 ' + run.calories + ' kcal');
             if (run.altitudeGain !== null && run.altitudeGain > 0) extraParts.push('⛰️ +' + Math.round(run.altitudeGain) + 'm');
 
@@ -2218,38 +2570,38 @@
                 '<div class="min-w-0">' +
                   '<div class="flex items-center gap-1.5 font-semibold text-sm text-slate-800 dark:text-slate-100">' +
                     '<span>' + escapeHtml(formatDateKr(run.runDate)) + '</span>' +
-                    (hasTs ? '<span title="1분 단위 상세 데이터 있음" class="text-[11px] text-indigo-500">📊</span>' : '') +
+                    (hasTs ? '<span title="1분 단위 상세 데이터 있음" class="text-xs text-indigo-500">📊</span>' : '') +
                   '</div>' +
-                  (metaLine ? '<div class="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">' + escapeHtml(metaLine) + '</div>' : '') +
+                  (metaLine ? '<div class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">' + escapeHtml(metaLine) + '</div>' : '') +
                 '</div>' +
-                '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ' + meta.badgeClass + '">' +
+                '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full border shrink-0 ' + meta.badgeClass + '">' +
                   '<span>' + meta.icon + '</span>' +
                   '<span>' + escapeHtml(meta.label) + '</span>' +
                 '</span>' +
               '</div>' +
               '<div class="grid grid-cols-4 gap-1.5 text-center rounded-xl bg-slate-50/90 dark:bg-slate-800/60 px-2 py-2 border border-slate-100 dark:border-slate-800">' +
                 '<div>' +
-                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">거리</div>' +
-                  '<div class="text-xs font-bold tabular-nums text-slate-800 dark:text-slate-100">' + (run.distanceKm !== null ? run.distanceKm.toFixed(2) + 'km' : '-') + '</div>' +
-                  '<div class="text-[10px] tabular-nums text-slate-400 dark:text-slate-500">' + formatDuration(run.durationSec) + '</div>' +
+                  '<div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">거리</div>' +
+                  '<div class="text-[13px] font-bold tabular-nums text-slate-800 dark:text-slate-100">' + (run.distanceKm !== null ? run.distanceKm.toFixed(2) + 'km' : '-') + '</div>' +
+                  '<div class="text-[11px] font-medium tabular-nums text-slate-500 dark:text-slate-400">' + formatDuration(run.durationSec) + '</div>' +
                 '</div>' +
                 '<div>' +
-                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">페이스</div>' +
-                  '<div class="text-xs font-bold tabular-nums text-sky-600 dark:text-sky-400">' + formatPaceShort(run.avgPaceSec) + '</div>' +
-                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">/km</div>' +
+                  '<div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">페이스</div>' +
+                  '<div class="text-[13px] font-bold tabular-nums text-sky-600 dark:text-sky-400">' + formatPaceShort(run.avgPaceSec) + '</div>' +
+                  '<div class="text-[11px] font-medium tabular-nums text-slate-500 dark:text-slate-400">' + (paceSpeedCompact ? '(' + paceSpeedCompact + ')' : '/km') + '</div>' +
                 '</div>' +
                 '<div>' +
-                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">심박수</div>' +
-                  '<div class="text-xs font-bold tabular-nums text-rose-600 dark:text-rose-400">' + (run.avgHr !== null ? run.avgHr : '-') + '</div>' +
-                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">bpm</div>' +
+                  '<div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">심박수</div>' +
+                  '<div class="text-[13px] font-bold tabular-nums text-rose-600 dark:text-rose-400">' + (run.avgHr !== null ? run.avgHr : '-') + '</div>' +
+                  '<div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">bpm</div>' +
                 '</div>' +
                 '<div>' +
-                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">Zone 2</div>' +
-                  '<div class="text-xs font-bold tabular-nums text-emerald-600 dark:text-emerald-400">' + z2Text + '</div>' +
-                  '<div class="text-[10px] text-slate-400 dark:text-slate-500">유산소</div>' +
+                  '<div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Zone 2</div>' +
+                  '<div class="text-[13px] font-bold tabular-nums text-emerald-600 dark:text-emerald-400">' + z2Text + '</div>' +
+                  '<div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">유산소</div>' +
                 '</div>' +
               '</div>' +
-              (extraParts.length ? '<div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-slate-500 dark:text-slate-400">' + escapeHtml(extraParts.join(' · ')) + '</div>' : '') +
+              (extraParts.length ? '<div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-slate-600 dark:text-slate-300">' + escapeHtml(extraParts.join(' · ')) + '</div>' : '') +
             '</div>';
           }).join('');
         }
@@ -2312,12 +2664,19 @@
         var hrRangeText = (run.maxHr !== null || run.minHr !== null)
           ? '최고 ' + (run.maxHr !== null ? run.maxHr : '-') + ' / 최저 ' + (run.minHr !== null ? run.minHr : '-')
           : '';
-        var bestPaceSub = run.bestPaceSec !== null ? '최고 ' + formatPaceShort(run.bestPaceSec) : '';
-        var maxCadSub = run.maxCadence !== null ? '최고 ' + run.maxCadence + ' spm' : '';
+        var bestPaceSub = run.bestPaceSec !== null ? '최고 ' + formatPaceShortWithSpeed(run.bestPaceSec) : '';
+        var cadSubParts = [];
+        if (run.runningOnlyAvgCadence !== null && run.runningOnlyAvgCadence !== run.avgCadence) {
+          cadSubParts.push('달리기 ' + run.runningOnlyAvgCadence + ' spm');
+        }
+        if (run.maxCadence !== null) {
+          cadSubParts.push('최고 ' + run.maxCadence + ' spm');
+        }
+        var maxCadSub = cadSubParts.join(' · ');
         var pills = [
           { label: '거리', value: run.distanceKm !== null ? run.distanceKm.toFixed(2) + ' km' : '-', sub: '' },
           { label: '시간', value: formatDuration(run.durationSec), sub: '' },
-          { label: '평균 페이스', value: formatPace(run.avgPaceSec), sub: bestPaceSub },
+          { label: '평균 페이스', value: formatPaceWithSpeed(run.avgPaceSec), sub: bestPaceSub },
           { label: '평균 심박수', value: run.avgHr !== null ? run.avgHr + ' bpm' : '-', sub: hrRangeText },
           { label: 'Zone 2 비율', value: run.zone2Pct !== null ? run.zone2Pct.toFixed(0) + '%' : '-', sub: '' },
           { label: '케이던스', value: run.avgCadence !== null ? run.avgCadence + ' spm' : '-', sub: maxCadSub }
@@ -2338,9 +2697,9 @@
         }
         $('modalSummaryPills').innerHTML = pills.map(function (p) {
           return '<div class="rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/70 px-3 py-2">' +
-            '<div class="text-[11px] text-slate-500 dark:text-slate-400">' + escapeHtml(p.label) + '</div>' +
+            '<div class="text-xs font-medium text-slate-500 dark:text-slate-400">' + escapeHtml(p.label) + '</div>' +
             '<div class="text-sm font-bold mt-0.5 tabular-nums">' + escapeHtml(p.value) + '</div>' +
-            (p.sub ? '<div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tabular-nums">' + escapeHtml(p.sub) + '</div>' : '') +
+            (p.sub ? '<div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 tabular-nums">' + escapeHtml(p.sub) + '</div>' : '') +
           '</div>';
         }).join('');
 
@@ -2351,7 +2710,7 @@
             ? (insights.hrDrift >= 0 ? '+' + insights.hrDrift : String(insights.hrDrift)) + ' bpm (' + insights.hrDriftPct.toFixed(1) + '%)'
             : '-';
           var splitStr = (insights.pace1 !== null && insights.pace2 !== null)
-            ? formatPaceShort(insights.pace1) + ' → ' + formatPaceShort(insights.pace2)
+            ? formatPaceShortWithSpeed(insights.pace1) + ' → ' + formatPaceShortWithSpeed(insights.pace2)
             : '-';
           driftBox.innerHTML =
             '<span><strong>전반 vs 후반 심박 변화:</strong> ' + (insights.hr1 || '-') + ' → ' + (insights.hr2 || '-') + ' bpm (<span class="font-semibold text-rose-600 dark:text-rose-400">' + escapeHtml(hrDriftStr) + '</span>)</span>' +
@@ -2492,7 +2851,7 @@
                     if (ctx.datasetIndex === 0) {
                       return ' 심박수: ' + (ctx.parsed.y !== null ? ctx.parsed.y + ' bpm' : '-');
                     }
-                    return ' 페이스: ' + formatPace(ctx.parsed.y);
+                    return ' 페이스: ' + formatPaceWithSpeed(ctx.parsed.y);
                   },
                   afterBody: function (items) {
                     var idx = items && items[0] ? items[0].dataIndex : -1;
@@ -2598,10 +2957,12 @@
           run.runType + '(' + gpsLabel + ')',
           (run.distanceKm !== null ? run.distanceKm.toFixed(2) + 'km' : '-'),
           formatDuration(run.durationSec),
-          '페이스 ' + formatPace(run.avgPaceSec) + (run.bestPaceSec !== null ? '(최고 ' + formatPaceShort(run.bestPaceSec) + ')' : ''),
+          '페이스 ' + formatPaceWithSpeed(run.avgPaceSec) + (run.bestPaceSec !== null ? '(최고 ' + formatPaceShortWithSpeed(run.bestPaceSec) + ')' : ''),
           '평균심박 ' + (run.avgHr !== null ? run.avgHr + 'bpm' : '-'),
           'Zone2 ' + (run.zone2Pct !== null ? run.zone2Pct.toFixed(0) + '%' : '-'),
-          '케이던스 ' + (run.avgCadence !== null ? run.avgCadence + 'spm' : '-') + (run.maxCadence !== null ? '(최고 ' + run.maxCadence + ')' : '')
+          '케이던스 ' + (run.avgCadence !== null ? run.avgCadence + 'spm' : '-') +
+            (run.runningOnlyAvgCadence !== null && run.runningOnlyAvgCadence !== run.avgCadence ? '(달리기 ' + run.runningOnlyAvgCadence + 'spm)' : '') +
+            (run.maxCadence !== null ? '(최고 ' + run.maxCadence + ')' : '')
         ];
         if (run.calories !== null) parts.push('칼로리 ' + run.calories + 'kcal');
         if (run.altitudeGain !== null && run.altitudeGain > 0) parts.push('상승고도 +' + Math.round(run.altitudeGain) + 'm');
@@ -2928,6 +3289,7 @@
             zone2MinBpm: DEFAULT_ZONE2_MIN_BPM,
             zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
             walkPaceThresholdSec: DEFAULT_WALK_PACE_SEC,
+            excludeWarmupWalk: false,
             chartTypes: ALL_ACTIVITY_TYPES.slice()
           };
           state.runs = [];
@@ -3046,6 +3408,13 @@
             renderChartTypeFilterUI();
             renderTrendCharts();
           });
+        });
+
+        $('chkExcludeWarmupWalk').addEventListener('change', function (e) {
+          state.config.excludeWarmupWalk = Boolean(e.target.checked);
+          persistConfigState();
+          renderChartTypeFilterUI();
+          renderTrendCharts();
         });
 
         // Table filter tabs

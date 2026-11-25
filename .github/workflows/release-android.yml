@@ -94,14 +94,42 @@ jobs:
           SAMSUNG_HEALTH_SDK_AUTH_HEADER: ${{ secrets.SAMSUNG_HEALTH_SDK_AUTH_HEADER }}
         run: |
           set -euo pipefail
-          if [ -n "${SAMSUNG_HEALTH_SDK_AAR_URL:-}" ]; then
+          URL_CLEAN="$(printf '%s' "${SAMSUNG_HEALTH_SDK_AAR_URL:-}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          AUTH_CLEAN="$(printf '%s' "${SAMSUNG_HEALTH_SDK_AUTH_HEADER:-}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+          if [ -n "$URL_CLEAN" ]; then
             mkdir -p MyRunSync/app/libs
             AAR_DEST="MyRunSync/app/libs/samsung-health-data-api-1.1.0.aar"
-            if [ -n "${SAMSUNG_HEALTH_SDK_AUTH_HEADER:-}" ]; then
-              curl -fsSL -H "$SAMSUNG_HEALTH_SDK_AUTH_HEADER" "$SAMSUNG_HEALTH_SDK_AAR_URL" -o "$AAR_DEST"
+            CURL_ARGS=(-sSL -w '%{http_code}' -o "$AAR_DEST")
+
+            if [ -n "$AUTH_CLEAN" ]; then
+              if [[ "$AUTH_CLEAN" =~ ^[Aa]uthorization:[[:space:]]*[Bb]earer[[:space:]]+(.+)$ ]]; then
+                TOKEN="${BASH_REMATCH[1]}"
+                CURL_ARGS+=(-H "Authorization: Bearer $TOKEN" -H "apikey: $TOKEN")
+                echo "Auth secret detected (Authorization: Bearer + apikey)."
+              elif [[ "$AUTH_CLEAN" =~ ^[Bb]earer[[:space:]]+(.+)$ ]]; then
+                TOKEN="${BASH_REMATCH[1]}"
+                CURL_ARGS+=(-H "Authorization: Bearer $TOKEN" -H "apikey: $TOKEN")
+                echo "Auth secret detected (Bearer + apikey)."
+              elif [[ "$AUTH_CLEAN" == *:* ]]; then
+                CURL_ARGS+=(-H "$AUTH_CLEAN")
+                echo "Auth secret detected (custom header)."
+              else
+                CURL_ARGS+=(-H "Authorization: Bearer $AUTH_CLEAN" -H "apikey: $AUTH_CLEAN")
+                echo "Auth secret detected (raw key -> Authorization: Bearer + apikey)."
+              fi
             else
-              curl -fsSL "$SAMSUNG_HEALTH_SDK_AAR_URL" -o "$AAR_DEST"
+              echo "SAMSUNG_HEALTH_SDK_AUTH_HEADER secret is empty; requesting URL without auth header."
             fi
+
+            HTTP_CODE="$(curl "${CURL_ARGS[@]}" "$URL_CLEAN")"
+            if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+              echo "::error::Failed to download Samsung Health SDK AAR (HTTP $HTTP_CODE)."
+              head -c 300 "$AAR_DEST" || true
+              echo ""
+              exit 1
+            fi
+
             if ! unzip -tq "$AAR_DEST" >/dev/null 2>&1; then
               echo "::error::Downloaded Samsung Health SDK AAR is not a valid archive. Check SAMSUNG_HEALTH_SDK_AAR_URL / auth secret."
               exit 1

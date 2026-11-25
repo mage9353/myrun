@@ -43,6 +43,18 @@
     <string name="supabase_saved_summary">Supabase 연결 정보 저장됨</string>
     <string name="status_missing_credentials">아래 Supabase 연결 설정에 URL과 Anon Key를 입력해 주세요.</string>
     <string name="status_settings_saved">Supabase 연결 설정이 기기에 저장되었습니다.</string>
+
+    <string name="section_drive_settings">Google Drive 백업 (Gemini용)</string>
+    <string name="drive_not_configured_summary">미설정 · 설정 시 Supabase와 동시 업로드</string>
+    <string name="drive_connected_summary">연결됨 · Supabase와 동시 업로드</string>
+    <string name="label_drive_webhook_url">Apps Script 웹 앱 URL</string>
+    <string name="hint_drive_webhook_url">https://script.google.com/macros/s/.../exec</string>
+    <string name="label_drive_secret">보안 시크릿 (선택)</string>
+    <string name="hint_drive_secret">Apps Script SHARED_SECRET (미사용 시 비움)</string>
+    <string name="btn_save_drive">저장</string>
+    <string name="status_drive_saved">Google Drive 연동 설정이 저장되었습니다.</string>
+    <string name="status_drive_cleared">Google Drive 연동이 해제되었습니다.</string>
+
     <string name="status_ready">준비 완료. 지금 동기화 버튼을 눌러 최근 30일 기록을 업로드하세요.</string>
 
     <string name="rationale_title">Health Connect Permissions</string>

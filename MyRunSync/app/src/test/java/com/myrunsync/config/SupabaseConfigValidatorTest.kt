@@ -65,4 +65,12 @@ class SupabaseConfigValidatorTest {
         assertEquals(114 to 133, SupabaseConfigValidator.parseZone2(" 114 ", " 133 "))
         assertEquals(120 to 120, SupabaseConfigValidator.parseZone2("120", "120"))
     }
+
+    @Test
+    fun `validateGoogleDriveWebhook allows blank or http_https urls and rejects malformed schemes`() {
+        assertNull(SupabaseConfigValidator.validateGoogleDriveWebhook(""))
+        assertNull(SupabaseConfigValidator.validateGoogleDriveWebhook("   "))
+        assertNull(SupabaseConfigValidator.validateGoogleDriveWebhook("https://script.google.com/macros/s/abc/exec"))
+        assertNotNull(SupabaseConfigValidator.validateGoogleDriveWebhook("script.google.com/macros/s/abc/exec"))
+    }
 }

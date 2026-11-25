@@ -7,9 +7,13 @@ data class SupabaseConfig(
     val url: String,
     val anonKey: String,
     val zone2MinBpm: Int = DEFAULT_ZONE2_MIN_BPM,
-    val zone2MaxBpm: Int = DEFAULT_ZONE2_MAX_BPM
+    val zone2MaxBpm: Int = DEFAULT_ZONE2_MAX_BPM,
+    val googleDriveWebhookUrl: String = "",
+    val googleDriveSecret: String = ""
 ) {
     fun isComplete(): Boolean = url.isNotBlank() && anonKey.isNotBlank()
+
+    fun hasGoogleDriveWebhook(): Boolean = googleDriveWebhookUrl.isNotBlank()
 
     companion object {
         const val DEFAULT_ZONE2_MIN_BPM = 114
@@ -18,7 +22,7 @@ data class SupabaseConfig(
 }
 
 /**
- * Pure normalization and validation for Supabase credentials and Zone 2 HR entered in-app.
+ * Pure normalization and validation for Supabase credentials, Zone 2 HR, and Google Drive webhook entered in-app.
  */
 object SupabaseConfigValidator {
     const val MIN_VALID_HR_BPM = 40
@@ -27,6 +31,8 @@ object SupabaseConfigValidator {
     fun normalizeUrl(raw: String): String = raw.trim().trimEnd('/')
 
     fun normalizeAnonKey(raw: String): String = raw.trim()
+
+    fun normalizeWebhookUrl(raw: String): String = raw.trim()
 
     fun validate(url: String, anonKey: String): String? {
         val normalizedUrl = normalizeUrl(url)
@@ -39,6 +45,15 @@ object SupabaseConfigValidator {
         }
         if (normalizedKey.isBlank()) {
             return "Supabase Anon Key를 입력해 주세요."
+        }
+        return null
+    }
+
+    fun validateGoogleDriveWebhook(urlRaw: String): String? {
+        val normalized = normalizeWebhookUrl(urlRaw)
+        if (normalized.isBlank()) return null
+        if (!normalized.startsWith("https://") && !normalized.startsWith("http://")) {
+            return "Google Apps Script 웹 앱 URL은 https:// 로 시작해야 합니다."
         }
         return null
     }
@@ -80,6 +95,8 @@ class SupabaseConfigStore(context: Context) {
         val savedAnonKey = prefs.getString(KEY_ANON_KEY, null)
         val savedMinBpm = prefs.getInt(KEY_ZONE2_MIN_BPM, SupabaseConfig.DEFAULT_ZONE2_MIN_BPM)
         val savedMaxBpm = prefs.getInt(KEY_ZONE2_MAX_BPM, SupabaseConfig.DEFAULT_ZONE2_MAX_BPM)
+        val savedDriveUrl = prefs.getString(KEY_GDRIVE_WEBHOOK_URL, "").orEmpty()
+        val savedDriveSecret = prefs.getString(KEY_GDRIVE_SECRET, "").orEmpty()
         val validRange = savedMinBpm in SupabaseConfigValidator.MIN_VALID_HR_BPM..SupabaseConfigValidator.MAX_VALID_HR_BPM &&
             savedMaxBpm in savedMinBpm..SupabaseConfigValidator.MAX_VALID_HR_BPM
 
@@ -93,7 +110,9 @@ class SupabaseConfigStore(context: Context) {
             url = resolvedUrl,
             anonKey = resolvedAnonKey,
             zone2MinBpm = if (validRange) savedMinBpm else SupabaseConfig.DEFAULT_ZONE2_MIN_BPM,
-            zone2MaxBpm = if (validRange) savedMaxBpm else SupabaseConfig.DEFAULT_ZONE2_MAX_BPM
+            zone2MaxBpm = if (validRange) savedMaxBpm else SupabaseConfig.DEFAULT_ZONE2_MAX_BPM,
+            googleDriveWebhookUrl = SupabaseConfigValidator.normalizeWebhookUrl(savedDriveUrl),
+            googleDriveSecret = savedDriveSecret.trim()
         )
     }
 
@@ -101,19 +120,25 @@ class SupabaseConfigStore(context: Context) {
         url: String,
         anonKey: String,
         zone2MinBpm: Int = SupabaseConfig.DEFAULT_ZONE2_MIN_BPM,
-        zone2MaxBpm: Int = SupabaseConfig.DEFAULT_ZONE2_MAX_BPM
+        zone2MaxBpm: Int = SupabaseConfig.DEFAULT_ZONE2_MAX_BPM,
+        googleDriveWebhookUrl: String = prefs.getString(KEY_GDRIVE_WEBHOOK_URL, "").orEmpty(),
+        googleDriveSecret: String = prefs.getString(KEY_GDRIVE_SECRET, "").orEmpty()
     ): SupabaseConfig {
         val normalized = SupabaseConfig(
             url = SupabaseConfigValidator.normalizeUrl(url),
             anonKey = SupabaseConfigValidator.normalizeAnonKey(anonKey),
             zone2MinBpm = zone2MinBpm,
-            zone2MaxBpm = zone2MaxBpm
+            zone2MaxBpm = zone2MaxBpm,
+            googleDriveWebhookUrl = SupabaseConfigValidator.normalizeWebhookUrl(googleDriveWebhookUrl),
+            googleDriveSecret = googleDriveSecret.trim()
         )
         prefs.edit()
             .putString(KEY_URL, normalized.url)
             .putString(KEY_ANON_KEY, normalized.anonKey)
             .putInt(KEY_ZONE2_MIN_BPM, normalized.zone2MinBpm)
             .putInt(KEY_ZONE2_MAX_BPM, normalized.zone2MaxBpm)
+            .putString(KEY_GDRIVE_WEBHOOK_URL, normalized.googleDriveWebhookUrl)
+            .putString(KEY_GDRIVE_SECRET, normalized.googleDriveSecret)
             .apply()
         return normalized
     }
@@ -128,5 +153,7 @@ class SupabaseConfigStore(context: Context) {
         private const val KEY_ANON_KEY = "supabase_anon_key"
         private const val KEY_ZONE2_MIN_BPM = "zone2_min_bpm"
         private const val KEY_ZONE2_MAX_BPM = "zone2_max_bpm"
+        private const val KEY_GDRIVE_WEBHOOK_URL = "gdrive_webhook_url"
+        private const val KEY_GDRIVE_SECRET = "gdrive_secret"
     }
 }

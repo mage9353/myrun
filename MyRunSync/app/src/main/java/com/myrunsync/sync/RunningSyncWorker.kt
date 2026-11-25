@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.myrunsync.config.SupabaseConfigStore
 import com.myrunsync.config.SyncDataSource
 import com.myrunsync.config.SyncPreferencesStore
+import com.myrunsync.drive.GoogleDriveWebhookRepository
 import com.myrunsync.health.HealthConnectRunningReader
 import com.myrunsync.health.RunningTelemetryReader
 import com.myrunsync.health.SamsungHealthRunningReader
@@ -81,7 +82,15 @@ class RunningSyncWorker(
         )
         return try {
             val repository = SupabaseRunningRepository(supabaseClient)
-            val syncManager = RunningSyncManager(reader, repository)
+            val driveGateway = if (config.hasGoogleDriveWebhook()) {
+                GoogleDriveWebhookRepository(
+                    webhookUrl = config.googleDriveWebhookUrl,
+                    secret = config.googleDriveSecret
+                )
+            } else {
+                null
+            }
+            val syncManager = RunningSyncManager(reader, repository, driveGateway)
             val endTime = Instant.now()
             val startTime = endTime.minus(Duration.ofDays(30))
             val zone2 = HeartRateZone2Config(
@@ -96,8 +105,13 @@ class RunningSyncWorker(
             )
 
             val completedAt = Instant.now()
+            val driveSuffix = when {
+                result.driveSynced -> " + Drive 완료"
+                result.driveError != null -> " (Drive 실패: ${result.driveError})"
+                else -> ""
+            }
             val summary = if (result.sessionsSynced > 0) {
-                "$sourceTag · ${result.sessionsSynced}건 동기화 완료"
+                "$sourceTag · ${result.sessionsSynced}건 동기화 완료$driveSuffix"
             } else {
                 "$sourceTag · 최근 30일 기록 없음"
             }

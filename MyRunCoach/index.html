@@ -327,6 +327,19 @@
               <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (무료 티어 추천 · 초고속/안정 경량 모델)</option>
             </select>
           </div>
+
+          <!-- Gemini Web / Gem URL (Optional) -->
+          <div class="md:col-span-2">
+            <label for="inputGeminiWebUrl" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Gemini 웹 / Gem URL (선택 · API 한도 초과 시 바로 열기용)
+            </label>
+            <input
+              id="inputGeminiWebUrl"
+              type="url"
+              placeholder="https://gemini.google.com/app (또는 나만의 Gem URL)"
+              class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -688,6 +701,31 @@
         </button>
       </div>
 
+      <!-- Gemini Web Quick Copy & Launch Bar -->
+      <div class="rounded-xl border border-indigo-200/80 dark:border-indigo-900/70 bg-indigo-50/60 dark:bg-indigo-950/30 p-3 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+        <div class="text-xs text-indigo-900 dark:text-indigo-200">
+          <span class="font-bold">🌐 제미나이 웹에서 직접 분석</span>
+          <span class="text-indigo-700/85 dark:text-indigo-300/85"> · API 한도(429)나 서버 과부하(503) 없이 프롬프트를 복사해 바로 붙여넣을 수 있습니다.</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button id="btnWebCopyLatest" type="button" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/50 transition-colors">
+            📋 최근 러닝 복사
+          </button>
+          <button id="btnWebCopyTwoWeeks" type="button" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/50 transition-colors">
+            📋 최근 2주 복사
+          </button>
+          <button id="btnWebCopyCondition" type="button" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/50 transition-colors">
+            📋 컨디션 추천 복사
+          </button>
+          <button id="btnWebCopyQuestion" type="button" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/50 transition-colors">
+            📋 입력 질문 복사
+          </button>
+          <button id="btnOpenGeminiWeb" type="button" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors">
+            ↗️ 제미나이 웹 열기
+          </button>
+        </div>
+      </div>
+
       <!-- Free-form Question Input -->
       <form id="coachForm" class="space-y-2">
         <div class="flex flex-col sm:flex-row gap-2">
@@ -845,9 +883,14 @@
         <button id="btnModalCloseBottom" type="button" class="px-4 py-2.5 text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           닫기
         </button>
-        <button id="btnAnalyzeSelectedRun" type="button" class="px-4 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors">
-          ✨ 이 러닝 AI 정밀 분석
-        </button>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+          <button id="btnCopySelectedRunPrompt" type="button" class="px-4 py-2.5 text-sm font-semibold rounded-xl border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
+            📋 제미나이 웹용 복사
+          </button>
+          <button id="btnAnalyzeSelectedRun" type="button" class="px-4 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors">
+            ✨ 이 러닝 AI 정밀 분석
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -860,6 +903,8 @@
       var THEME_STORAGE_KEY = 'myruncoach_theme';
       var DEFAULT_MODEL = 'gemini-4-hydrogen';
       var ALLOWED_MODELS = ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.5-flash-lite'];
+      var DEFAULT_GEMINI_WEB_URL = 'https://gemini.google.com/app';
+      var COACH_SYSTEM_INSTRUCTION = '당신은 과학적 데이터(심박수, 페이스, Zone 2 유산소 비율, 케이던스, 심박 드리프트)를 기반으로 조언하는 전문 러닝 코치입니다. 한국어로 명확하고 친절하며 실전적인 가이드를 마크다운 형식으로 작성하세요. 무리한 훈련보다 부상 예방과 지속 가능한 유산소 향상을 우선합니다.';
       var DEFAULT_ZONE2_MIN_BPM = 120;
       var DEFAULT_ZONE2_MAX_BPM = 140;
       var DEFAULT_WALK_PACE_SEC = 540;
@@ -936,6 +981,7 @@
           supabaseKey: '',
           geminiKey: '',
           geminiModel: DEFAULT_MODEL,
+          geminiWebUrl: DEFAULT_GEMINI_WEB_URL,
           zone2Mode: 'db',
           zone2MinBpm: DEFAULT_ZONE2_MIN_BPM,
           zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
@@ -950,6 +996,7 @@
         isLoadingData: false,
         isAskingCoach: false,
         lastCoachMarkdown: '',
+        lastPromptText: '',
         modalChartRafId: null,
         charts: {
           hrPace: null,
@@ -1666,6 +1713,12 @@
         }
       }
 
+      function sanitizeGeminiWebUrl(rawUrl) {
+        var trimmed = (rawUrl || '').trim();
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        return DEFAULT_GEMINI_WEB_URL;
+      }
+
       function loadConfig() {
         try {
           var raw = localStorage.getItem(CONFIG_STORAGE_KEY);
@@ -1677,6 +1730,7 @@
             state.config.geminiModel = ALLOWED_MODELS.indexOf(parsed.geminiModel) !== -1
               ? parsed.geminiModel
               : DEFAULT_MODEL;
+            state.config.geminiWebUrl = sanitizeGeminiWebUrl(parsed.geminiWebUrl);
             state.config.zone2Mode = parsed.zone2Mode === 'custom' ? 'custom' : 'db';
 
             var zMin = parseInt(parsed.zone2MinBpm, 10);
@@ -1728,11 +1782,13 @@
         var gemKey = $('inputGeminiKey').value.trim();
         var model = $('selectGeminiModel').value;
         if (ALLOWED_MODELS.indexOf(model) === -1) model = DEFAULT_MODEL;
+        var gemWebUrl = sanitizeGeminiWebUrl($('inputGeminiWebUrl') ? $('inputGeminiWebUrl').value : '');
 
         state.config.supabaseUrl = url;
         state.config.supabaseKey = supaKey;
         state.config.geminiKey = gemKey;
         state.config.geminiModel = model;
+        state.config.geminiWebUrl = gemWebUrl;
 
         persistConfigState();
         syncSettingsInputs();
@@ -1747,6 +1803,11 @@
         $('inputSupabaseKey').value = state.config.supabaseKey || '';
         $('inputGeminiKey').value = state.config.geminiKey || '';
         $('selectGeminiModel').value = resolvedModel;
+        if ($('inputGeminiWebUrl')) {
+          $('inputGeminiWebUrl').value = state.config.geminiWebUrl && state.config.geminiWebUrl !== DEFAULT_GEMINI_WEB_URL
+            ? state.config.geminiWebUrl
+            : '';
+        }
         if ($('selectCoachModel')) {
           $('selectCoachModel').value = resolvedModel;
         }
@@ -3146,6 +3207,74 @@
         ].filter(Boolean).join('\n');
       }
 
+      function getGeminiWebUrl() {
+        return sanitizeGeminiWebUrl(state.config.geminiWebUrl);
+      }
+
+      function buildGeminiWebPrompt(promptText) {
+        return COACH_SYSTEM_INSTRUCTION + '\n\n' + promptText;
+      }
+
+      async function copyTextWithFallback(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(text);
+            return true;
+          } catch (e) {}
+        }
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          var ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return Boolean(ok);
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function flashButtonLabel(btn, tempText) {
+        if (!btn) return;
+        if (!btn.dataset.origLabel) {
+          btn.dataset.origLabel = btn.textContent;
+        }
+        btn.textContent = tempText;
+        clearTimeout(btn._flashTimer);
+        btn._flashTimer = setTimeout(function () {
+          btn.textContent = btn.dataset.origLabel || btn.textContent;
+        }, 1600);
+      }
+
+      async function copyPromptForGeminiWeb(promptText, openWeb, sourceButton) {
+        if (!promptText) {
+          $('coachError').innerHTML = '⚠️ 분석할 러닝 데이터가 없습니다. 먼저 Supabase에서 데이터를 불러오거나 <strong>데모 데이터 체험</strong>을 눌러주세요.';
+          $('coachError').classList.remove('hidden');
+          $('coachSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return false;
+        }
+
+        if (openWeb) {
+          window.open(getGeminiWebUrl(), '_blank', 'noopener,noreferrer');
+        }
+
+        var copied = await copyTextWithFallback(buildGeminiWebPrompt(promptText));
+        if (copied) {
+          $('coachError').classList.add('hidden');
+          $('coachStatusLabel').textContent = '📋 제미나이 웹용 프롬프트 복사 완료 — 제미나이 창에 붙여넣기(Ctrl+V)하세요';
+          flashButtonLabel(sourceButton, '복사됨 ✓');
+        } else {
+          $('coachError').innerHTML = '⚠️ 클립보드 복사가 차단되었습니다. 브라우저의 클립보드 접근 권한을 허용해 주세요.';
+          $('coachError').classList.remove('hidden');
+        }
+        return copied;
+      }
+
       // Gemini API Call with Automatic Model Fallback
       function getFallbackModels(primaryModel) {
         if (primaryModel === 'gemini-4-hydrogen') {
@@ -3166,14 +3295,15 @@
 
       async function askGeminiCoach(promptText, titleLabel) {
         if (state.isAskingCoach) return;
-        if (!state.config.geminiKey) {
-          openSettingsPanel(true);
-          $('coachError').innerHTML = '⚠️ <strong>Gemini API Key</strong>가 설정되지 않았습니다. 상단 <strong>[⚙️ API 설정]</strong> 패널에서 API Key를 입력 후 저장해주세요.';
+        if (!promptText) {
+          $('coachError').innerHTML = '⚠️ 분석할 러닝 데이터가 없습니다. 먼저 Supabase에서 데이터를 불러오거나 <strong>데모 데이터 체험</strong>을 눌러주세요.';
           $('coachError').classList.remove('hidden');
           return;
         }
-        if (!promptText) {
-          $('coachError').innerHTML = '⚠️ 분석할 러닝 데이터가 없습니다. 먼저 Supabase에서 데이터를 불러오거나 <strong>데모 데이터 체험</strong>을 눌러주세요.';
+        state.lastPromptText = promptText;
+        if (!state.config.geminiKey) {
+          openSettingsPanel(true);
+          $('coachError').innerHTML = '⚠️ <strong>Gemini API Key</strong>가 설정되지 않았습니다. API Key가 없어도 위 <strong>[🌐 제미나이 웹에서 직접 분석]</strong> 버튼으로 복사해 무료 웹 채팅에서 바로 분석할 수 있습니다.';
           $('coachError').classList.remove('hidden');
           return;
         }
@@ -3189,7 +3319,7 @@
         var payload = {
           system_instruction: {
             parts: [{
-              text: '당신은 과학적 데이터(심박수, 페이스, Zone 2 유산소 비율, 케이던스, 심박 드리프트)를 기반으로 조언하는 전문 러닝 코치입니다. 한국어로 명확하고 친절하며 실전적인 가이드를 마크다운 형식으로 작성하세요. 무리한 훈련보다 부상 예방과 지속 가능한 유산소 향상을 우선합니다.'
+              text: COACH_SYSTEM_INSTRUCTION
             }]
           },
           contents: [{
@@ -3277,7 +3407,14 @@
           }
         } catch (err) {
           console.error('Gemini error:', err);
-          $('coachError').innerHTML = '⚠️ ' + escapeHtml(err && err.message ? err.message : 'Gemini 호출 중 오류가 발생했습니다.');
+          var webFallbackBtn = state.lastPromptText
+            ? '<div class="mt-2.5 flex flex-wrap gap-2">' +
+                '<button type="button" data-action="copy-last-to-gemini-web" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-200 hover:bg-rose-100/70 dark:hover:bg-rose-900/40 transition-colors">' +
+                  '📋 방금 질문 복사 후 제미나이 웹 열기' +
+                '</button>' +
+              '</div>'
+            : '';
+          $('coachError').innerHTML = '<div>⚠️ ' + escapeHtml(err && err.message ? err.message : 'Gemini 호출 중 오류가 발생했습니다.') + '</div>' + webFallbackBtn;
           $('coachError').classList.remove('hidden');
           $('coachStatusLabel').textContent = '요청 실패';
         } finally {
@@ -3394,6 +3531,7 @@
             supabaseKey: '',
             geminiKey: '',
             geminiModel: DEFAULT_MODEL,
+            geminiWebUrl: DEFAULT_GEMINI_WEB_URL,
             zone2Mode: 'db',
             zone2MinBpm: DEFAULT_ZONE2_MIN_BPM,
             zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
@@ -3576,13 +3714,55 @@
           }
         });
 
-        // Analyze selected run from modal
+        // Analyze or copy selected run from modal
         $('btnAnalyzeSelectedRun').addEventListener('click', function () {
           var run = state.selectedRun;
           closeRunModal();
           $('coachSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
           var prompt = buildSingleRunAnalysisPrompt(run);
           askGeminiCoach(prompt, formatDateShort(run.runDate) + ' 러닝 정밀 분석');
+        });
+
+        $('btnCopySelectedRunPrompt').addEventListener('click', function () {
+          var prompt = buildSingleRunAnalysisPrompt(state.selectedRun);
+          copyPromptForGeminiWeb(prompt, true, this);
+        });
+
+        // Gemini Web copy & launch bar
+        $('btnWebCopyLatest').addEventListener('click', function () {
+          var prompt = buildSingleRunAnalysisPrompt(state.runs[0]);
+          copyPromptForGeminiWeb(prompt, true, this);
+        });
+
+        $('btnWebCopyTwoWeeks').addEventListener('click', function () {
+          var prompt = buildTwoWeekTrendPrompt();
+          copyPromptForGeminiWeb(prompt, true, this);
+        });
+
+        $('btnWebCopyCondition').addEventListener('click', function () {
+          var prompt = buildConditionRecommendationPrompt();
+          copyPromptForGeminiWeb(prompt, true, this);
+        });
+
+        $('btnWebCopyQuestion').addEventListener('click', function () {
+          var q = $('inputCoachQuestion').value.trim();
+          if (!q) {
+            $('inputCoachQuestion').focus();
+            $('coachStatusLabel').textContent = '먼저 아래 질문 입력창에 질문을 작성해 주세요.';
+            return;
+          }
+          var prompt = buildFreeQuestionPrompt(q);
+          copyPromptForGeminiWeb(prompt, true, this);
+        });
+
+        $('btnOpenGeminiWeb').addEventListener('click', function () {
+          window.open(getGeminiWebUrl(), '_blank', 'noopener,noreferrer');
+        });
+
+        $('coachError').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-action="copy-last-to-gemini-web"]');
+          if (!btn) return;
+          copyPromptForGeminiWeb(state.lastPromptText, true, btn);
         });
 
         // Coach 3 quick buttons

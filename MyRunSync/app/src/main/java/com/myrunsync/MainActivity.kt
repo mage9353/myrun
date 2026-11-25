@@ -25,6 +25,7 @@ import com.myrunsync.config.SupabaseConfigValidator
 import com.myrunsync.config.SyncDataSource
 import com.myrunsync.config.SyncPreferencesStore
 import com.myrunsync.config.SyncScheduleConfig
+import com.myrunsync.drive.GoogleDriveWebhookRepository
 import com.myrunsync.health.HealthConnectRunningReader
 import com.myrunsync.health.RunningTelemetryReader
 import com.myrunsync.health.SamsungHealthRunningReader
@@ -71,6 +72,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cbShowAnonKey: CheckBox
     private lateinit var btnSaveSettings: Button
     private lateinit var btnCancelEdit: Button
+    private lateinit var layoutDriveSummary: LinearLayout
+    private lateinit var tvDriveSummary: TextView
+    private lateinit var btnEditDrive: Button
+    private lateinit var layoutDriveEditor: LinearLayout
+    private lateinit var etDriveWebhookUrl: EditText
+    private lateinit var etDriveSecret: EditText
+    private lateinit var btnSaveDrive: Button
+    private lateinit var btnCancelDrive: Button
 
     private val configStore by lazy { SupabaseConfigStore(this) }
     private val syncPrefs by lazy { SyncPreferencesStore(this) }
@@ -158,14 +167,25 @@ class MainActivity : AppCompatActivity() {
         cbShowAnonKey = findViewById(R.id.cbShowAnonKey)
         btnSaveSettings = findViewById(R.id.btnSaveSettings)
         btnCancelEdit = findViewById(R.id.btnCancelEdit)
+        layoutDriveSummary = findViewById(R.id.layoutDriveSummary)
+        tvDriveSummary = findViewById(R.id.tvDriveSummary)
+        btnEditDrive = findViewById(R.id.btnEditDrive)
+        layoutDriveEditor = findViewById(R.id.layoutDriveEditor)
+        etDriveWebhookUrl = findViewById(R.id.etDriveWebhookUrl)
+        etDriveSecret = findViewById(R.id.etDriveSecret)
+        btnSaveDrive = findViewById(R.id.btnSaveDrive)
+        btnCancelDrive = findViewById(R.id.btnCancelDrive)
 
         val initialConfig = configStore.load()
         etSupabaseUrl.setText(initialConfig.url)
         etSupabaseAnonKey.setText(initialConfig.anonKey)
         etZone2MinBpm.setText(initialConfig.zone2MinBpm.toString())
         etZone2MaxBpm.setText(initialConfig.zone2MaxBpm.toString())
+        etDriveWebhookUrl.setText(initialConfig.googleDriveWebhookUrl)
+        etDriveSecret.setText(initialConfig.googleDriveSecret)
         updateSupabaseSectionVisibility(editing = false, config = initialConfig)
         updateZone2SectionVisibility(editing = false, config = initialConfig)
+        updateDriveSectionVisibility(editing = false, config = initialConfig)
 
         val initialSyncSettings = syncPrefs.load()
         val dataSources = SyncDataSource.entries
@@ -283,6 +303,47 @@ class MainActivity : AppCompatActivity() {
             etZone2MaxBpm.setText(saved.zone2MaxBpm.toString())
             updateZone2SectionVisibility(editing = false, config = saved)
             tvStatus.text = getString(R.string.status_zone2_saved, saved.zone2MinBpm, saved.zone2MaxBpm)
+        }
+
+        btnEditDrive.setOnClickListener {
+            val currentConfig = configStore.load()
+            etDriveWebhookUrl.setText(currentConfig.googleDriveWebhookUrl)
+            etDriveSecret.setText(currentConfig.googleDriveSecret)
+            updateDriveSectionVisibility(editing = true, config = currentConfig)
+        }
+
+        btnCancelDrive.setOnClickListener {
+            val currentConfig = configStore.load()
+            etDriveWebhookUrl.setText(currentConfig.googleDriveWebhookUrl)
+            etDriveSecret.setText(currentConfig.googleDriveSecret)
+            updateDriveSectionVisibility(editing = false, config = currentConfig)
+        }
+
+        btnSaveDrive.setOnClickListener {
+            val rawWebhookUrl = etDriveWebhookUrl.text?.toString().orEmpty()
+            val rawSecret = etDriveSecret.text?.toString().orEmpty()
+            val driveError = SupabaseConfigValidator.validateGoogleDriveWebhook(rawWebhookUrl)
+            if (driveError != null) {
+                tvStatus.text = driveError
+                return@setOnClickListener
+            }
+            val current = configStore.load()
+            val saved = configStore.save(
+                url = current.url,
+                anonKey = current.anonKey,
+                zone2MinBpm = current.zone2MinBpm,
+                zone2MaxBpm = current.zone2MaxBpm,
+                googleDriveWebhookUrl = rawWebhookUrl,
+                googleDriveSecret = if (rawWebhookUrl.isBlank()) "" else rawSecret
+            )
+            etDriveWebhookUrl.setText(saved.googleDriveWebhookUrl)
+            etDriveSecret.setText(saved.googleDriveSecret)
+            updateDriveSectionVisibility(editing = false, config = saved)
+            tvStatus.text = if (saved.hasGoogleDriveWebhook()) {
+                getString(R.string.status_drive_saved)
+            } else {
+                getString(R.string.status_drive_cleared)
+            }
         }
 
         spinnerDataSource.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -671,6 +732,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateDriveSectionVisibility(editing: Boolean, config: SupabaseConfig) {
+        if (editing) {
+            layoutDriveSummary.visibility = View.GONE
+            layoutDriveEditor.visibility = View.VISIBLE
+        } else {
+            tvDriveSummary.text = if (config.hasGoogleDriveWebhook()) {
+                getString(R.string.drive_connected_summary)
+            } else {
+                getString(R.string.drive_not_configured_summary)
+            }
+            layoutDriveSummary.visibility = View.VISIBLE
+            layoutDriveEditor.visibility = View.GONE
+        }
+    }
+
     private fun setBgSwitchChecked(checked: Boolean) {
         isUpdatingUi = true
         switchBgAutoSync.isChecked = checked
@@ -777,9 +853,22 @@ class MainActivity : AppCompatActivity() {
                     sourceLabel = "Health Connect"
                 }
 
-                tvStatus.text = "$sourceLabel 기록을 읽어 Supabase로 업로드 중…"
+                val uploadTargetLabel = if (savedConfig.hasGoogleDriveWebhook()) {
+                    "Supabase + Google Drive"
+                } else {
+                    "Supabase"
+                }
+                tvStatus.text = "$sourceLabel 기록을 읽어 ${uploadTargetLabel}로 업로드 중…"
                 val repository = SupabaseRunningRepository(supabaseClient)
-                val syncManager = RunningSyncManager(reader, repository)
+                val driveGateway = if (savedConfig.hasGoogleDriveWebhook()) {
+                    GoogleDriveWebhookRepository(
+                        webhookUrl = savedConfig.googleDriveWebhookUrl,
+                        secret = savedConfig.googleDriveSecret
+                    )
+                } else {
+                    null
+                }
+                val syncManager = RunningSyncManager(reader, repository, driveGateway)
 
                 val endTime = Instant.now()
                 val startTime = endTime.minus(Duration.ofDays(30))
@@ -809,12 +898,23 @@ class MainActivity : AppCompatActivity() {
                         latest.altitudeGain?.let { add("+${it.toInt()}m") }
                         latest.vo2Max?.let { add("VO2 $it") }
                     }.joinToString(" · ")
+                    val driveNote = when {
+                        result.driveSynced -> "\nGoogle Drive(시트·문서) 동기화 완료"
+                        result.driveError != null -> "\n(참고: Google Drive 업로드 실패 - ${result.driveError})"
+                        else -> ""
+                    }
+                    val driveSummarySuffix = when {
+                        result.driveSynced -> " + Drive 완료"
+                        result.driveError != null -> " (Drive 실패)"
+                        else -> ""
+                    }
                     tvStatus.text = "$sourceLabel ${result.sessionsSynced}건 동기화 완료!\n" +
                         "최근: ${latest.workoutType} ${latest.distanceKm}km · " +
                         "HR ${latest.avgHr ?: "-"}bpm · Z2 ${latest.zone2Pct ?: "-"}%" +
-                        if (extras.isNotEmpty()) " · $extras" else ""
+                        (if (extras.isNotEmpty()) " · $extras" else "") +
+                        driveNote
                     syncPrefs.recordSyncResult(
-                        summary = "$sourceLabel ($triggerLabel) · ${result.sessionsSynced}건 동기화 완료",
+                        summary = "$sourceLabel ($triggerLabel) · ${result.sessionsSynced}건 동기화 완료$driveSummarySuffix",
                         syncedAtIso = completedAt.toString()
                     )
                 }

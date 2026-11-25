@@ -749,16 +749,41 @@
         </label>
       </form>
 
+      <!-- Saved Coaching History Panel -->
+      <div id="coachHistoryPanel" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/40 p-3 sm:p-3.5 space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">📚 저장된 코칭 기록</span>
+            <span id="coachHistoryCount" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">0건</span>
+            <span id="coachHistorySyncBadge" class="px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">💾 이 기기 저장</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button id="btnNewCoachThread" type="button" class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors">
+              + 새 대화
+            </button>
+            <button id="btnToggleHistory" type="button" class="px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+              접기
+            </button>
+          </div>
+        </div>
+        <div id="coachHistoryList" class="max-h-56 overflow-y-auto space-y-1.5 pr-0.5">
+          <p class="text-xs text-slate-500 dark:text-slate-400 py-2">아직 저장된 코칭 대화가 없습니다. 질문을 보내면 질문·답변 내역이 자동으로 저장됩니다.</p>
+        </div>
+      </div>
+
       <!-- AI Output Area -->
       <div id="coachResultWrapper" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 p-4 sm:p-5">
-        <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200/70 dark:border-slate-800">
-          <span id="coachStatusLabel" class="text-xs font-semibold text-slate-600 dark:text-slate-300">코치 응답 대기 중</span>
-          <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200/70 dark:border-slate-800">
+          <span id="coachStatusLabel" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">코치 응답 대기 중</span>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button id="btnCopyThreadWeb" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors">
+              🌐 대화 웹 복사
+            </button>
             <button id="btnCopyCoach" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              복사
+              답변 복사
             </button>
             <button id="btnClearCoach" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              지우기
+              새 대화
             </button>
           </div>
         </div>
@@ -770,13 +795,55 @@
         </div>
 
         <!-- Error banner -->
-        <div id="coachError" class="hidden rounded-xl border border-rose-200 dark:border-rose-800/70 bg-rose-50 dark:bg-rose-950/40 p-3.5 text-xs sm:text-sm text-rose-700 dark:text-rose-300"></div>
+        <div id="coachError" class="hidden mb-3 rounded-xl border border-rose-200 dark:border-rose-800/70 bg-rose-50 dark:bg-rose-950/40 p-3.5 text-xs sm:text-sm text-rose-700 dark:text-rose-300"></div>
 
-        <!-- Markdown response -->
-        <div id="coachOutput" class="markdown-body">
+        <!-- Multi-turn Markdown Conversation -->
+        <div id="coachOutput" class="space-y-4">
           <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             위의 빠른 질문 버튼을 누르거나 질문을 입력하면 데이터 기반 맞춤 코칭 결과가 여기에 표시됩니다.
           </p>
+        </div>
+
+        <!-- Follow-up Conversation Bar -->
+        <div id="coachFollowupBox" class="hidden mt-4 pt-4 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 mr-1">💬 이어서 질문:</span>
+            <button type="button" data-followup-prompt="방금 답변의 핵심만 3줄로 쉽고 실전적으로 다시 요약해줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">🎯 핵심 3줄로 쉽게 요약</button>
+            <button type="button" data-followup-prompt="방금 데이터를 다른 관점(페이스 전략, 심박 효율, 케이던스, 회복 부하)에서 새롭게 다시 분석해줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">🔄 다른 관점으로 다시 분석</button>
+            <button type="button" data-followup-prompt="이 분석 결과를 바탕으로 다음 주 요일별 러닝 훈련 플랜을 거리·목표 심박과 함께 구체적으로 짜줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">📅 다음 주 훈련 플랜 짜줘</button>
+            <button type="button" data-followup-prompt="현재 데이터를 기준으로 주의해야 할 부상 위험과 추천 보강·스트레칭 운동 3가지를 알려줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">🦵 부상 예방·보강 추천</button>
+          </div>
+          <form id="coachFollowupForm" class="space-y-2">
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input
+                id="inputFollowupQuestion"
+                type="text"
+                placeholder="이전 답변에 이어서 추가 질문하거나 더 자세한 설명/재분석을 요청하세요..."
+                class="flex-1 px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button
+                  id="btnWebCopyFollowup"
+                  type="button"
+                  title="전체 대화와 추가 질문을 복사해 제미나이 웹 열기"
+                  class="px-3 py-2.5 text-xs font-semibold rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                >
+                  📋 이어서 웹 복사
+                </button>
+                <button
+                  id="btnAskFollowup"
+                  type="submit"
+                  class="px-4 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white shadow-sm transition-colors"
+                >
+                  이어서 질문
+                </button>
+              </div>
+            </div>
+            <label class="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 cursor-pointer select-none">
+              <input id="chkFollowupIncludeLatest" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
+              <span>예전 대화를 이어갈 때 최신 러닝 기록 5회 요약도 함께 첨부</span>
+            </label>
+          </form>
         </div>
       </div>
     </section>
@@ -901,6 +968,8 @@
 
       var CONFIG_STORAGE_KEY = 'myruncoach_config';
       var THEME_STORAGE_KEY = 'myruncoach_theme';
+      var COACH_THREADS_STORAGE_KEY = 'myruncoach_coach_threads';
+      var MAX_STORED_THREADS = 40;
       var DEFAULT_MODEL = 'gemini-4-hydrogen';
       var ALLOWED_MODELS = ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.5-flash-lite'];
       var DEFAULT_GEMINI_WEB_URL = 'https://gemini.google.com/app';
@@ -997,6 +1066,9 @@
         isAskingCoach: false,
         lastCoachMarkdown: '',
         lastPromptText: '',
+        coachThreads: [],
+        activeThreadId: null,
+        isHistoryCollapsed: false,
         modalChartRafId: null,
         charts: {
           hrPace: null,
@@ -1947,6 +2019,7 @@
           syncTrainingPrefInputs();
           updateStatusIndicators();
           renderDashboard();
+          fetchCoachThreadsFromSupabase();
 
           if (state.runs.length === 0) {
             showNotice('연결에 성공했지만 <code>running_logs</code> 테이블에 조회된 러닝 기록이 없습니다.', 'info');
@@ -3275,7 +3348,396 @@
         return copied;
       }
 
-      // Gemini API Call with Automatic Model Fallback
+      // Coach Thread Persistence & Multi-turn Gemini Conversations
+      function generateThreadId() {
+        return 'ct-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+      }
+
+      function normalizeThreadMessage(msg) {
+        if (!msg || (msg.role !== 'user' && msg.role !== 'model')) return null;
+        if (msg.role === 'user') {
+          var displayText = String(msg.display_text || msg.text || '').trim();
+          var apiText = String(msg.api_text || msg.text || displayText).trim();
+          if (!apiText && !displayText) return null;
+          return {
+            role: 'user',
+            display_text: displayText || apiText,
+            api_text: apiText || displayText,
+            created_at: msg.created_at || new Date().toISOString()
+          };
+        }
+        var modelText = String(msg.text || '').trim();
+        if (!modelText) return null;
+        return {
+          role: 'model',
+          text: modelText,
+          model: msg.model || '',
+          created_at: msg.created_at || new Date().toISOString()
+        };
+      }
+
+      function normalizeCoachThread(raw) {
+        if (!raw || !raw.id) return null;
+        var msgs = Array.isArray(raw.messages)
+          ? raw.messages.map(normalizeThreadMessage).filter(Boolean)
+          : [];
+        var nowIso = new Date().toISOString();
+        return {
+          id: String(raw.id),
+          title: String(raw.title || 'AI 러닝 코칭').slice(0, 120),
+          category: String(raw.category || 'free'),
+          run_id: raw.run_id ? String(raw.run_id) : null,
+          model: raw.model ? String(raw.model) : null,
+          messages: msgs,
+          created_at: raw.created_at || nowIso,
+          updated_at: raw.updated_at || raw.created_at || nowIso
+        };
+      }
+
+      function sortAndTrimThreads(threads) {
+        return threads
+          .slice()
+          .sort(function (a, b) {
+            return String(b.updated_at || '').localeCompare(String(a.updated_at || ''));
+          })
+          .slice(0, MAX_STORED_THREADS);
+      }
+
+      function loadCoachThreadsFromLocal() {
+        try {
+          var raw = localStorage.getItem(COACH_THREADS_STORAGE_KEY);
+          if (!raw) {
+            state.coachThreads = [];
+            return;
+          }
+          var parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) {
+            state.coachThreads = [];
+            return;
+          }
+          state.coachThreads = sortAndTrimThreads(parsed.map(normalizeCoachThread).filter(Boolean));
+        } catch (e) {
+          console.warn('코칭 기록 로컬 로드 실패:', e);
+          state.coachThreads = [];
+        }
+      }
+
+      function saveCoachThreadsToLocal() {
+        try {
+          state.coachThreads = sortAndTrimThreads(state.coachThreads);
+          localStorage.setItem(COACH_THREADS_STORAGE_KEY, JSON.stringify(state.coachThreads));
+        } catch (e) {
+          console.warn('코칭 기록 로컬 저장 실패:', e);
+        }
+      }
+
+      function canSyncCoachThreadsToSupabase() {
+        return Boolean(state.config.supabaseUrl && state.config.supabaseKey && !state.isDemo);
+      }
+
+      function setHistorySyncBadge(mode) {
+        var badge = $('coachHistorySyncBadge');
+        if (!badge) return;
+        if (mode === 'synced') {
+          badge.textContent = '☁️ Supabase 동기화됨';
+          badge.className = 'px-2 py-0.5 text-[11px] font-medium rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/70';
+        } else if (mode === 'syncing') {
+          badge.textContent = '☁️ 동기화 중…';
+          badge.className = 'px-2 py-0.5 text-[11px] font-medium rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70';
+        } else {
+          badge.textContent = '💾 이 기기 저장';
+          badge.className = 'px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700';
+        }
+      }
+
+      async function fetchCoachThreadsFromSupabase() {
+        if (!canSyncCoachThreadsToSupabase()) {
+          setHistorySyncBadge('local');
+          return;
+        }
+        setHistorySyncBadge('syncing');
+        var endpoint = state.config.supabaseUrl + '/rest/v1/coach_threads?select=*&order=updated_at.desc&limit=' + MAX_STORED_THREADS;
+        try {
+          var res = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+              'apikey': state.config.supabaseKey,
+              'Authorization': 'Bearer ' + state.config.supabaseKey,
+              'Accept': 'application/json'
+            }
+          });
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+          var rows = await res.json();
+          if (!Array.isArray(rows)) {
+            throw new Error('Invalid coach_threads payload');
+          }
+
+          var mergedMap = {};
+          state.coachThreads.forEach(function (t) {
+            mergedMap[t.id] = t;
+          });
+          rows.map(normalizeCoachThread).filter(Boolean).forEach(function (remote) {
+            var local = mergedMap[remote.id];
+            if (!local || String(remote.updated_at || '') >= String(local.updated_at || '')) {
+              mergedMap[remote.id] = remote;
+            }
+          });
+
+          state.coachThreads = sortAndTrimThreads(Object.keys(mergedMap).map(function (k) { return mergedMap[k]; }));
+          saveCoachThreadsToLocal();
+          renderCoachHistoryList();
+          if (state.activeThreadId) {
+            renderActiveCoachThread();
+          }
+          setHistorySyncBadge('synced');
+        } catch (err) {
+          console.warn('coach_threads 조회 실패(로컬 기록 사용):', err);
+          setHistorySyncBadge('local');
+        }
+      }
+
+      async function upsertCoachThreadToSupabase(thread) {
+        if (!canSyncCoachThreadsToSupabase() || !thread) return;
+        setHistorySyncBadge('syncing');
+        var endpoint = state.config.supabaseUrl + '/rest/v1/coach_threads?on_conflict=id';
+        try {
+          var res = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'apikey': state.config.supabaseKey,
+              'Authorization': 'Bearer ' + state.config.supabaseKey,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates,return=minimal'
+            },
+            body: JSON.stringify({
+              id: thread.id,
+              title: thread.title,
+              category: thread.category,
+              run_id: thread.run_id,
+              model: thread.model,
+              messages: thread.messages,
+              created_at: thread.created_at,
+              updated_at: thread.updated_at
+            })
+          });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          setHistorySyncBadge('synced');
+        } catch (err) {
+          console.warn('coach_threads 저장 실패(로컬에만 저장됨):', err);
+          setHistorySyncBadge('local');
+        }
+      }
+
+      async function deleteCoachThreadFromSupabase(threadId) {
+        if (!canSyncCoachThreadsToSupabase() || !threadId) return;
+        var endpoint = state.config.supabaseUrl + '/rest/v1/coach_threads?id=eq.' + encodeURIComponent(threadId);
+        try {
+          await fetch(endpoint, {
+            method: 'DELETE',
+            headers: {
+              'apikey': state.config.supabaseKey,
+              'Authorization': 'Bearer ' + state.config.supabaseKey
+            }
+          });
+        } catch (err) {
+          console.warn('coach_threads 삭제 동기화 실패:', err);
+        }
+      }
+
+      function upsertThreadState(thread) {
+        var idx = state.coachThreads.findIndex(function (t) { return t.id === thread.id; });
+        if (idx >= 0) {
+          state.coachThreads[idx] = thread;
+        } else {
+          state.coachThreads.unshift(thread);
+        }
+        saveCoachThreadsToLocal();
+        upsertCoachThreadToSupabase(thread);
+      }
+
+      function deleteCoachThread(threadId) {
+        state.coachThreads = state.coachThreads.filter(function (t) { return t.id !== threadId; });
+        saveCoachThreadsToLocal();
+        deleteCoachThreadFromSupabase(threadId);
+        if (state.activeThreadId === threadId) {
+          startFreshCoachView();
+        } else {
+          renderCoachHistoryList();
+        }
+      }
+
+      function getActiveThread() {
+        if (!state.activeThreadId) return null;
+        return state.coachThreads.find(function (t) { return t.id === state.activeThreadId; }) || null;
+      }
+
+      function formatShortDateTimeKr(iso) {
+        if (!iso) return '';
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return '';
+        return (d.getMonth() + 1) + '/' + d.getDate() + ' ' +
+          String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      }
+
+      function getThreadCategoryIcon(category) {
+        if (category === 'single') return '🔍';
+        if (category === 'twoweeks') return '📈';
+        if (category === 'condition') return '🩺';
+        return '💬';
+      }
+
+      function formatThreadForGeminiWeb(thread, extraFollowupText) {
+        var msgs = thread && Array.isArray(thread.messages) ? thread.messages : [];
+        if (msgs.length <= 1 && !extraFollowupText) {
+          var single = msgs[0];
+          return single ? (single.api_text || single.display_text || '') : '';
+        }
+        var lines = ['아래는 지금까지 나눈 러닝 코칭 대화 내역입니다. 문맥을 이어서 마지막 요청에 답변해주세요.'];
+        msgs.forEach(function (m) {
+          if (m.role === 'user') {
+            lines.push('\n[사용자 질문]\n' + (m.api_text || m.display_text || ''));
+          } else {
+            lines.push('\n[AI 코치 답변]\n' + (m.text || ''));
+          }
+        });
+        if (extraFollowupText) {
+          lines.push('\n[사용자 추가 질문]\n' + extraFollowupText);
+        }
+        return lines.join('\n');
+      }
+
+      function renderCoachHistoryList() {
+        var listEl = $('coachHistoryList');
+        var countEl = $('coachHistoryCount');
+        var toggleBtn = $('btnToggleHistory');
+        if (!listEl || !countEl) return;
+
+        countEl.textContent = state.coachThreads.length + '건';
+        if (toggleBtn) {
+          toggleBtn.textContent = state.isHistoryCollapsed ? '펼치기' : '접기';
+        }
+        listEl.classList.toggle('hidden', state.isHistoryCollapsed);
+
+        if (!state.coachThreads.length) {
+          listEl.innerHTML = '<p class="text-xs text-slate-500 dark:text-slate-400 py-2">아직 저장된 코칭 대화가 없습니다. 질문을 보내면 질문·답변 내역이 자동으로 저장됩니다.</p>';
+          return;
+        }
+
+        listEl.innerHTML = state.coachThreads.map(function (t) {
+          var isActive = t.id === state.activeThreadId;
+          var turns = t.messages.filter(function (m) { return m.role === 'model'; }).length;
+          var timeStr = formatShortDateTimeKr(t.updated_at || t.created_at);
+          var icon = getThreadCategoryIcon(t.category);
+          var lastModelMsg = null;
+          for (var mi = t.messages.length - 1; mi >= 0; mi--) {
+            if (t.messages[mi].role === 'model') {
+              lastModelMsg = t.messages[mi];
+              break;
+            }
+          }
+          var previewRaw = lastModelMsg ? lastModelMsg.text.replace(/[#*`>\-\n]+/g, ' ').trim() : '';
+          var preview = previewRaw.length > 72 ? previewRaw.slice(0, 72) + '…' : previewRaw;
+
+          return '<div data-thread-id="' + escapeHtml(t.id) + '" class="group flex items-start justify-between gap-2 rounded-xl border px-3 py-2 cursor-pointer transition-colors ' +
+            (isActive
+              ? 'border-indigo-400 dark:border-indigo-500 bg-indigo-50/80 dark:bg-indigo-950/50'
+              : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-300 dark:hover:border-indigo-700') + '">' +
+            '<div class="min-w-0 flex-1">' +
+              '<div class="flex flex-wrap items-center gap-1.5">' +
+                '<span class="text-xs shrink-0">' + icon + '</span>' +
+                '<span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">' + escapeHtml(t.title) + '</span>' +
+                '<span class="px-1.5 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0">대화 ' + turns + '턴</span>' +
+                (timeStr ? '<span class="text-[11px] text-slate-400 dark:text-slate-500 shrink-0">' + escapeHtml(timeStr) + '</span>' : '') +
+              '</div>' +
+              (preview ? '<p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400 truncate">' + escapeHtml(preview) + '</p>' : '') +
+            '</div>' +
+            '<button type="button" data-delete-thread-id="' + escapeHtml(t.id) + '" title="이 코칭 기록 삭제" class="px-2 py-1 text-xs rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 shrink-0 transition-colors">삭제</button>' +
+          '</div>';
+        }).join('');
+      }
+
+      function renderActiveCoachThread() {
+        var thread = getActiveThread();
+        var outputEl = $('coachOutput');
+        var followupBox = $('coachFollowupBox');
+
+        if (!thread || !thread.messages.length) {
+          state.lastCoachMarkdown = '';
+          outputEl.innerHTML = '<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">위의 빠른 질문 버튼을 누르거나 질문을 입력하면 데이터 기반 맞춤 코칭 결과가 여기에 표시됩니다.</p>';
+          followupBox.classList.add('hidden');
+          $('btnCopyThreadWeb').classList.add('hidden');
+          $('btnCopyCoach').classList.add('hidden');
+          $('btnClearCoach').classList.add('hidden');
+          $('coachStatusLabel').textContent = '코치 응답 대기 중';
+          return;
+        }
+
+        var lastModelText = '';
+        var htmlParts = thread.messages.map(function (msg, idx) {
+          var timeLabel = formatShortDateTimeKr(msg.created_at);
+          if (msg.role === 'user') {
+            var hasHiddenContext = Boolean(msg.api_text && msg.api_text !== msg.display_text);
+            return '<div class="rounded-xl border border-indigo-200/80 dark:border-indigo-800/70 bg-indigo-50/70 dark:bg-indigo-950/40 px-3.5 py-2.5">' +
+              '<div class="flex items-center justify-between gap-2 mb-1">' +
+                '<span class="text-xs font-bold text-indigo-700 dark:text-indigo-300">🙋 내 질문</span>' +
+                (timeLabel ? '<span class="text-[11px] text-indigo-500/80 dark:text-indigo-400/80">' + escapeHtml(timeLabel) + '</span>' : '') +
+              '</div>' +
+              '<div class="text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-100 whitespace-pre-wrap">' + escapeHtml(msg.display_text || msg.api_text) + '</div>' +
+              (hasHiddenContext
+                ? '<details class="mt-2">' +
+                    '<summary class="text-[11px] font-medium text-indigo-600 dark:text-indigo-400 cursor-pointer select-none">첨부된 러닝 데이터 프롬프트 보기</summary>' +
+                    '<pre class="mt-1.5 max-h-48 overflow-auto rounded-lg bg-white/80 dark:bg-slate-900/80 p-2.5 text-[11px] text-slate-600 dark:text-slate-300 whitespace-pre-wrap border border-indigo-100 dark:border-indigo-900/60">' + escapeHtml(msg.api_text) + '</pre>' +
+                  '</details>'
+                : '') +
+            '</div>';
+          }
+
+          lastModelText = msg.text || '';
+          return '<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/85 px-4 py-3.5 shadow-sm">' +
+            '<div class="flex items-center justify-between gap-2 pb-2 mb-2.5 border-b border-slate-100 dark:border-slate-800">' +
+              '<div class="flex flex-wrap items-center gap-1.5">' +
+                '<span class="text-xs font-bold text-violet-700 dark:text-violet-300">✨ AI 코치</span>' +
+                (msg.model ? '<span class="px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">' + escapeHtml(msg.model) + '</span>' : '') +
+                (timeLabel ? '<span class="text-[11px] text-slate-400 dark:text-slate-500">' + escapeHtml(timeLabel) + '</span>' : '') +
+              '</div>' +
+              '<button type="button" data-copy-msg-idx="' + idx + '" class="text-xs px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">복사</button>' +
+            '</div>' +
+            '<div class="markdown-body">' + renderMarkdownSafe(msg.text) + '</div>' +
+          '</div>';
+        });
+
+        outputEl.innerHTML = htmlParts.join('');
+        state.lastCoachMarkdown = lastModelText;
+        state.lastPromptText = formatThreadForGeminiWeb(thread);
+
+        var hasModelReply = Boolean(lastModelText);
+        followupBox.classList.toggle('hidden', !hasModelReply);
+        $('btnCopyThreadWeb').classList.remove('hidden');
+        $('btnCopyCoach').classList.toggle('hidden', !hasModelText);
+        $('btnClearCoach').classList.remove('hidden');
+
+        var turns = thread.messages.filter(function (m) { return m.role === 'model'; }).length;
+        $('coachStatusLabel').textContent = '💬 ' + thread.title + ' · ' + turns + '회 답변' + (thread.model ? ' (' + thread.model + ')' : '');
+      }
+
+      function openCoachThread(threadId) {
+        var found = state.coachThreads.find(function (t) { return t.id === threadId; });
+        if (!found) return;
+        state.activeThreadId = found.id;
+        $('coachError').classList.add('hidden');
+        renderCoachHistoryList();
+        renderActiveCoachThread();
+      }
+
+      function startFreshCoachView() {
+        state.activeThreadId = null;
+        $('coachError').classList.add('hidden');
+        renderCoachHistoryList();
+        renderActiveCoachThread();
+      }
+
       function getFallbackModels(primaryModel) {
         if (primaryModel === 'gemini-4-hydrogen') {
           return ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.5-flash-lite'];
@@ -3293,19 +3755,71 @@
         return list;
       }
 
-      async function askGeminiCoach(promptText, titleLabel) {
-        if (state.isAskingCoach) return;
-        if (!promptText) {
+      async function startNewCoachThread(opts) {
+        if (!opts || !opts.apiText) {
           $('coachError').innerHTML = '⚠️ 분석할 러닝 데이터가 없습니다. 먼저 Supabase에서 데이터를 불러오거나 <strong>데모 데이터 체험</strong>을 눌러주세요.';
           $('coachError').classList.remove('hidden');
-          return;
+          return false;
         }
-        state.lastPromptText = promptText;
+        var nowIso = new Date().toISOString();
+        var thread = {
+          id: generateThreadId(),
+          title: opts.title || 'AI 러닝 코칭',
+          category: opts.category || 'free',
+          run_id: opts.runId ? String(opts.runId) : null,
+          model: state.config.geminiModel || DEFAULT_MODEL,
+          messages: [],
+          created_at: nowIso,
+          updated_at: nowIso
+        };
+        return runGeminiThreadTurn(thread, {
+          displayText: opts.displayText || opts.title || opts.apiText,
+          apiText: opts.apiText
+        }, true, opts.sourceInputId || null);
+      }
+
+      async function sendFollowupToActiveThread(followupText, includeLatestRuns) {
+        var thread = getActiveThread();
+        var cleanQuestion = (followupText || '').trim();
+        if (!thread || !cleanQuestion) return false;
+
+        var apiText = cleanQuestion;
+        if (includeLatestRuns && state.runs.length) {
+          var latest5 = state.runs.slice(0, 5);
+          apiText = cleanQuestion + '\n\n### 참고용 최신 러닝 기록 (' + latest5.length + '회)\n' +
+            latest5.map(function (r, i) { return (i + 1) + '. ' + formatRunLineForPrompt(r); }).join('\n');
+        }
+
+        return runGeminiThreadTurn(thread, {
+          displayText: cleanQuestion,
+          apiText: apiText
+        }, false, 'inputFollowupQuestion');
+      }
+
+      async function runGeminiThreadTurn(thread, userTurn, isNewThread, clearInputId) {
+        if (state.isAskingCoach) return false;
+        if (!userTurn || !userTurn.apiText) {
+          $('coachError').innerHTML = '⚠️ 질문 내용을 입력해주세요.';
+          $('coachError').classList.remove('hidden');
+          return false;
+        }
+
+        var nowIso = new Date().toISOString();
+        var pendingUserMsg = {
+          role: 'user',
+          display_text: userTurn.displayText || userTurn.apiText,
+          api_text: userTurn.apiText,
+          created_at: nowIso
+        };
+        var workingMessages = (thread.messages || []).concat([pendingUserMsg]);
+        state.lastPromptText = formatThreadForGeminiWeb({ messages: workingMessages });
+
         if (!state.config.geminiKey) {
           openSettingsPanel(true);
-          $('coachError').innerHTML = '⚠️ <strong>Gemini API Key</strong>가 설정되지 않았습니다. API Key가 없어도 위 <strong>[🌐 제미나이 웹에서 직접 분석]</strong> 버튼으로 복사해 무료 웹 채팅에서 바로 분석할 수 있습니다.';
+          $('coachError').innerHTML = '⚠️ <strong>Gemini API Key</strong>가 설정되지 않았습니다. API Key가 없어도 <strong>[🌐 제미나이 웹에서 직접 분석]</strong> 또는 <strong>[📋 이어서 웹 복사]</strong> 버튼으로 무료 웹 채팅에서 바로 분석할 수 있습니다.' +
+            '<div class="mt-2.5 flex flex-wrap gap-2"><button type="button" data-action="copy-last-to-gemini-web" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-200 hover:bg-rose-100/70 transition-colors">📋 방금 질문 복사 후 제미나이 웹 열기</button></div>';
           $('coachError').classList.remove('hidden');
-          return;
+          return false;
         }
 
         var primaryModel = state.config.geminiModel || DEFAULT_MODEL;
@@ -3313,6 +3827,7 @@
 
         state.isAskingCoach = true;
         $('btnAskCoach').disabled = true;
+        if ($('btnAskFollowup')) $('btnAskFollowup').disabled = true;
         $('coachError').classList.add('hidden');
         $('coachLoading').classList.remove('hidden');
 
@@ -3322,10 +3837,12 @@
               text: COACH_SYSTEM_INSTRUCTION
             }]
           },
-          contents: [{
-            role: 'user',
-            parts: [{ text: promptText }]
-          }],
+          contents: workingMessages.map(function (m) {
+            return {
+              role: m.role === 'model' ? 'model' : 'user',
+              parts: [{ text: m.role === 'model' ? m.text : (m.api_text || m.display_text) }]
+            };
+          }),
           generationConfig: {
             temperature: 0.6
           }
@@ -3333,6 +3850,7 @@
 
         var failedAttempts = [];
         var lastFailureReason = '';
+        var titleLabel = thread.title || 'AI 코칭';
 
         try {
           for (var i = 0; i < candidateModels.length; i++) {
@@ -3341,7 +3859,7 @@
               encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(state.config.geminiKey);
 
             if (i === 0) {
-              $('coachLoadingText').textContent = model + ' 모델이 데이터를 분석하고 있습니다...';
+              $('coachLoadingText').textContent = model + ' 모델이 ' + (isNewThread ? '데이터를 분석' : '추가 질문에 답변') + '하고 있습니다...';
               $('coachStatusLabel').textContent = titleLabel + ' (' + model + ')';
             } else {
               var prevModel = candidateModels[i - 1];
@@ -3396,14 +3914,29 @@
               throw new Error('Gemini 응답에서 텍스트를 추출하지 못했습니다. [시도 내역: ' + failedAttempts.join(' → ') + ']');
             }
 
-            state.lastCoachMarkdown = replyText;
-            $('coachOutput').innerHTML = renderMarkdownSafe(replyText);
-            $('btnCopyCoach').classList.remove('hidden');
-            $('btnClearCoach').classList.remove('hidden');
-            $('coachStatusLabel').textContent = i === 0
-              ? '✅ ' + titleLabel + ' 완료 (' + model + ')'
-              : '✅ ' + titleLabel + ' 완료 (' + primaryModel + ' 실패 → ' + model + ' 자동 전환)';
-            break;
+            var replyIso = new Date().toISOString();
+            thread.messages = workingMessages.concat([{
+              role: 'model',
+              text: replyText,
+              model: model,
+              created_at: replyIso
+            }]);
+            thread.model = model;
+            thread.updated_at = replyIso;
+
+            state.activeThreadId = thread.id;
+            upsertThreadState(thread);
+            renderCoachHistoryList();
+            renderActiveCoachThread();
+
+            if (clearInputId && $(clearInputId)) {
+              $(clearInputId).value = '';
+            }
+
+            if (i > 0) {
+              $('coachStatusLabel').textContent = '✅ ' + titleLabel + ' 완료 (' + primaryModel + ' 실패 → ' + model + ' 자동 전환)';
+            }
+            return true;
           }
         } catch (err) {
           console.error('Gemini error:', err);
@@ -3417,11 +3950,25 @@
           $('coachError').innerHTML = '<div>⚠️ ' + escapeHtml(err && err.message ? err.message : 'Gemini 호출 중 오류가 발생했습니다.') + '</div>' + webFallbackBtn;
           $('coachError').classList.remove('hidden');
           $('coachStatusLabel').textContent = '요청 실패';
+          return false;
         } finally {
           state.isAskingCoach = false;
           $('btnAskCoach').disabled = false;
+          if ($('btnAskFollowup')) $('btnAskFollowup').disabled = false;
           $('coachLoading').classList.add('hidden');
         }
+      }
+
+      async function askGeminiCoach(promptText, titleLabel, extraOpts) {
+        var opts = extraOpts || {};
+        return startNewCoachThread({
+          title: titleLabel || 'AI 러닝 코칭',
+          category: opts.category || 'free',
+          runId: opts.runId || null,
+          displayText: opts.displayText || titleLabel || promptText,
+          apiText: promptText,
+          sourceInputId: opts.sourceInputId || null
+        });
       }
 
       // Settings Panel Toggle
@@ -3517,6 +4064,8 @@
           openSettingsPanel(false);
           updateStatusIndicators();
           renderDashboard();
+          setHistorySyncBadge('local');
+          renderCoachHistoryList();
         });
 
         $('btnDismissDemo').addEventListener('click', function () {
@@ -3720,7 +4269,18 @@
           closeRunModal();
           $('coachSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
           var prompt = buildSingleRunAnalysisPrompt(run);
-          askGeminiCoach(prompt, formatDateShort(run.runDate) + ' 러닝 정밀 분석');
+          if (!run) {
+            askGeminiCoach(null, '선택 러닝 정밀 분석');
+            return;
+          }
+          var runTitle = formatDateShort(run.runDate) + ' ' + run.runType + ' (' + run.distanceKm.toFixed(1) + 'km)';
+          startNewCoachThread({
+            title: runTitle,
+            category: 'single',
+            runId: run.id,
+            displayText: runTitle + ' 1분 단위 정밀 분석 요청',
+            apiText: prompt
+          });
         });
 
         $('btnCopySelectedRunPrompt').addEventListener('click', function () {
@@ -3767,21 +4327,44 @@
 
         // Coach 3 quick buttons
         $('btnQuickLatest').addEventListener('click', function () {
-          var prompt = buildSingleRunAnalysisPrompt(state.runs[0]);
-          askGeminiCoach(prompt, '최근 러닝 정밀 분석');
+          var run = state.runs[0];
+          var prompt = buildSingleRunAnalysisPrompt(run);
+          if (!run) {
+            askGeminiCoach(null, '최근 러닝 정밀 분석');
+            return;
+          }
+          var title = '최근 러닝 (' + formatDateShort(run.runDate) + ' · ' + run.distanceKm.toFixed(1) + 'km)';
+          startNewCoachThread({
+            title: title,
+            category: 'single',
+            runId: run.id,
+            displayText: title + ' 정밀 분석 요청',
+            apiText: prompt
+          });
         });
 
         $('btnQuickTwoWeeks').addEventListener('click', function () {
           var prompt = buildTwoWeekTrendPrompt();
-          askGeminiCoach(prompt, '최근 2주 훈련 추세 및 피로도 진단');
+          startNewCoachThread({
+            title: '최근 2주 훈련 추세 진단',
+            category: 'twoweeks',
+            displayText: '최근 2주 훈련 추세 및 피로도 진단 요청',
+            apiText: prompt
+          });
         });
 
         $('btnQuickCondition').addEventListener('click', function () {
+          var memo = $('inputConditionMemo').value.trim();
           var prompt = buildConditionRecommendationPrompt();
-          askGeminiCoach(prompt, '오늘 컨디션 기반 훈련 추천');
+          startNewCoachThread({
+            title: memo ? '컨디션 추천 (' + memo.slice(0, 22) + (memo.length > 22 ? '…' : '') + ')' : '오늘 컨디션 기반 훈련 추천',
+            category: 'condition',
+            displayText: memo ? '오늘 컨디션("' + memo + '") 기반 훈련 추천 요청' : '오늘 컨디션 기반 훈련 추천 요청',
+            apiText: prompt
+          });
         });
 
-        // Free-form coach form
+        // Free-form coach form (starts a new thread)
         $('coachForm').addEventListener('submit', function (e) {
           e.preventDefault();
           var q = $('inputCoachQuestion').value.trim();
@@ -3790,27 +4373,95 @@
             return;
           }
           var prompt = buildFreeQuestionPrompt(q);
-          askGeminiCoach(prompt, 'AI 코치 맞춤 답변');
+          startNewCoachThread({
+            title: q.length > 36 ? q.slice(0, 36) + '…' : q,
+            category: 'free',
+            displayText: q,
+            apiText: prompt,
+            sourceInputId: 'inputCoachQuestion'
+          });
         });
 
-        // Copy & clear coach output
+        // Multi-turn follow-up controls
+        $('coachFollowupForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var q = $('inputFollowupQuestion').value.trim();
+          if (!q) {
+            $('inputFollowupQuestion').focus();
+            return;
+          }
+          var includeLatest = Boolean($('chkFollowupIncludeLatest') && $('chkFollowupIncludeLatest').checked);
+          sendFollowupToActiveThread(q, includeLatest);
+        });
+
+        document.querySelectorAll('.coach-followup-chip').forEach(function (chip) {
+          chip.addEventListener('click', function () {
+            var followupPrompt = chip.getAttribute('data-followup-prompt');
+            var includeLatest = Boolean($('chkFollowupIncludeLatest') && $('chkFollowupIncludeLatest').checked);
+            sendFollowupToActiveThread(followupPrompt, includeLatest);
+          });
+        });
+
+        $('btnWebCopyFollowup').addEventListener('click', function () {
+          var thread = getActiveThread();
+          if (!thread) return;
+          var extra = $('inputFollowupQuestion').value.trim();
+          var combined = formatThreadForGeminiWeb(thread, extra);
+          copyPromptForGeminiWeb(combined, true, this);
+        });
+
+        $('btnCopyThreadWeb').addEventListener('click', function () {
+          var thread = getActiveThread();
+          if (!thread) return;
+          var combined = formatThreadForGeminiWeb(thread);
+          copyPromptForGeminiWeb(combined, true, this);
+        });
+
+        // Coach history panel controls
+        $('btnNewCoachThread').addEventListener('click', function () {
+          startFreshCoachView();
+          $('inputCoachQuestion').focus();
+        });
+
+        $('btnToggleHistory').addEventListener('click', function () {
+          state.isHistoryCollapsed = !state.isHistoryCollapsed;
+          renderCoachHistoryList();
+        });
+
+        $('coachHistoryList').addEventListener('click', function (e) {
+          var delBtn = e.target.closest('[data-delete-thread-id]');
+          if (delBtn) {
+            e.stopPropagation();
+            var delId = delBtn.getAttribute('data-delete-thread-id');
+            deleteCoachThread(delId);
+            return;
+          }
+          var item = e.target.closest('[data-thread-id]');
+          if (!item) return;
+          openCoachThread(item.getAttribute('data-thread-id'));
+        });
+
+        // Individual message copy inside conversation
+        $('coachOutput').addEventListener('click', async function (e) {
+          var btn = e.target.closest('[data-copy-msg-idx]');
+          if (!btn) return;
+          var idx = parseInt(btn.getAttribute('data-copy-msg-idx'), 10);
+          var thread = getActiveThread();
+          var msg = thread && Number.isFinite(idx) ? thread.messages[idx] : null;
+          if (!msg || !msg.text) return;
+          var copied = await copyTextWithFallback(msg.text);
+          if (copied) flashButtonLabel(btn, '복사됨 ✓');
+        });
+
+        // Copy & clear active coach output
         $('btnCopyCoach').addEventListener('click', async function () {
           if (!state.lastCoachMarkdown) return;
-          try {
-            await navigator.clipboard.writeText(state.lastCoachMarkdown);
-            var btn = $('btnCopyCoach');
-            btn.textContent = '복사됨 ✓';
-            setTimeout(function () { btn.textContent = '복사'; }, 1500);
-          } catch (e) {}
+          var copied = await copyTextWithFallback(state.lastCoachMarkdown);
+          if (copied) flashButtonLabel(this, '복사됨 ✓');
         });
 
         $('btnClearCoach').addEventListener('click', function () {
-          state.lastCoachMarkdown = '';
-          $('coachOutput').innerHTML = '<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">위의 빠른 질문 버튼을 누르거나 질문을 입력하면 데이터 기반 맞춤 코칭 결과가 여기에 표시됩니다.</p>';
-          $('btnCopyCoach').classList.add('hidden');
-          $('btnClearCoach').classList.add('hidden');
-          $('coachError').classList.add('hidden');
-          $('coachStatusLabel').textContent = '코치 응답 대기 중';
+          startFreshCoachView();
         });
       }
 
@@ -3818,6 +4469,8 @@
       function init() {
         updateThemeIcon();
         loadConfig();
+        loadCoachThreadsFromLocal();
+        renderCoachHistoryList();
         bindEvents();
 
         if (state.config.supabaseUrl && state.config.supabaseKey) {

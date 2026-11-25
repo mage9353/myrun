@@ -16,6 +16,8 @@ class SamsungHealthRunningReader(
 
     suspend fun hasLocationPermission(): Boolean = false
 
+    suspend fun hasHeartRatePermission(): Boolean = false
+
     suspend fun requestPermissions(@Suppress("UNUSED_PARAMETER") activity: Activity): Set<String> =
         emptySet()
 

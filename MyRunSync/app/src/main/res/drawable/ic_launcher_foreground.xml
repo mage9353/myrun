@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Upper clockwise sync arc -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,46 A26,26 0 0,1 77,42"
+        android:strokeWidth="4.5"
+        android:strokeColor="#6EE7B7"
+        android:strokeLineCap="round" />
+    <!-- Upper sync arrowhead -->
+    <path
+        android:fillColor="#6EE7B7"
+        android:pathData="M79.5,47.5 L79,36 L70,43.5 Z" />
+
+    <!-- Lower clockwise sync arc -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,62 A26,26 0 0,1 31,66"
+        android:strokeWidth="4.5"
+        android:strokeColor="#A5F3FC"
+        android:strokeLineCap="round" />
+    <!-- Lower sync arrowhead -->
+    <path
+        android:fillColor="#A5F3FC"
+        android:pathData="M28.5,60.5 L29,72 L38,64.5 Z" />
+
+    <!-- Runner head -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M59,35.5 A4.2,4.2 0 1,0 59,43.9 A4.2,4.2 0 1,0 59,35.5 Z" />
+
+    <!-- Runner torso -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M56.5,46 L51,57.5"
+        android:strokeWidth="4.6"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round" />
+
+    <!-- Runner front arm -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M55,48.5 L62.5,51.5 L66,46.5"
+        android:strokeWidth="3.6"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Runner back arm -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M55,48.5 L47,49.5 L43.5,54.5"
+        android:strokeWidth="3.6"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Runner front leg -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M51,57.5 L59,61.5 L62.5,70.5"
+        android:strokeWidth="4.0"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Runner back leg -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M51,57.5 L44.5,64.5 L38.5,63.5"
+        android:strokeWidth="4.0"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

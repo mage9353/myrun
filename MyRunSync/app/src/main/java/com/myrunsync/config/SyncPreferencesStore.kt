@@ -63,7 +63,8 @@ data class SyncSettings(
     val autoSyncOnOpen: Boolean,
     val backgroundAutoSyncEnabled: Boolean,
     val backgroundIntervalMinutes: Long,
-    val lastSyncSummary: String?
+    val lastSyncSummary: String?,
+    val lastSyncAtIso: String?
 )
 
 /**
@@ -88,7 +89,8 @@ class SyncPreferencesStore(context: Context) {
             autoSyncOnOpen = prefs.getBoolean(KEY_AUTO_SYNC_ON_OPEN, false),
             backgroundAutoSyncEnabled = prefs.getBoolean(KEY_BG_AUTO_SYNC_ENABLED, false),
             backgroundIntervalMinutes = interval,
-            lastSyncSummary = prefs.getString(KEY_LAST_SYNC_SUMMARY, null)?.takeIf { it.isNotBlank() }
+            lastSyncSummary = prefs.getString(KEY_LAST_SYNC_SUMMARY, null)?.takeIf { it.isNotBlank() },
+            lastSyncAtIso = prefs.getString(KEY_LAST_SYNC_AT_ISO, null)?.takeIf { it.isNotBlank() }
         )
     }
 
@@ -113,6 +115,15 @@ class SyncPreferencesStore(context: Context) {
         prefs.edit().putString(KEY_LAST_SYNC_SUMMARY, summary).apply()
     }
 
+    fun recordSyncResult(summary: String, syncedAtIso: String? = null) {
+        prefs.edit().apply {
+            putString(KEY_LAST_SYNC_SUMMARY, summary)
+            if (syncedAtIso != null) {
+                putString(KEY_LAST_SYNC_AT_ISO, syncedAtIso)
+            }
+        }.apply()
+    }
+
     companion object {
         private const val PREFS_NAME = "myrunsync_settings"
         private const val KEY_DATA_SOURCE = "sync_data_source"
@@ -120,5 +131,6 @@ class SyncPreferencesStore(context: Context) {
         private const val KEY_BG_AUTO_SYNC_ENABLED = "bg_auto_sync_enabled"
         private const val KEY_BG_INTERVAL_MINUTES = "bg_sync_interval_minutes"
         private const val KEY_LAST_SYNC_SUMMARY = "last_sync_summary"
+        private const val KEY_LAST_SYNC_AT_ISO = "last_sync_at_iso"
     }
 }

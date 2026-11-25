@@ -2,6 +2,7 @@ package com.myrunsync.health
 
 import android.app.Activity
 import android.content.Context
+import com.myrunsync.model.AltitudeSample
 import com.myrunsync.model.CadenceSample
 import com.myrunsync.model.HrSample
 import com.myrunsync.model.RawRunningTelemetry
@@ -41,6 +42,11 @@ class SamsungHealthRunningReader(
     suspend fun hasLocationPermission(): Boolean {
         val granted = store.getGrantedPermissions(ALL_PERMISSIONS)
         return EXERCISE_LOCATION_PERMISSION in granted
+    }
+
+    suspend fun hasHeartRatePermission(): Boolean {
+        val granted = store.getGrantedPermissions(ALL_PERMISSIONS)
+        return HEART_RATE_PERMISSION in granted
     }
 
     suspend fun requestPermissions(activity: Activity): Set<String> {
@@ -139,6 +145,15 @@ class SamsungHealthRunningReader(
             )
         }
 
+        val altitudeSamples = session.route.orEmpty().mapNotNull { loc ->
+            val alt = loc.altitude
+            if (alt != null && alt.isFinite()) {
+                AltitudeSample(time = loc.timestamp, altitudeM = alt.toDouble())
+            } else {
+                null
+            }
+        }
+
         val classification = SamsungExerciseMapper.classifySamsungWorkout(
             kind = kind,
             hasRoute = routePoints.isNotEmpty(),
@@ -199,7 +214,15 @@ class SamsungHealthRunningReader(
             summaryAvgCadence = session.meanCadence?.takeIf { it.isFinite() && it > 0f }?.toDouble(),
             summaryAvgHr = session.meanHeartRate?.takeIf { it.isFinite() && it > 0f }?.toDouble(),
             summaryMaxHr = session.maxHeartRate?.takeIf { it.isFinite() && it > 0f }?.roundToInt(),
-            summaryMinHr = session.minHeartRate?.takeIf { it.isFinite() && it > 0f }?.roundToInt()
+            summaryMinHr = session.minHeartRate?.takeIf { it.isFinite() && it > 0f }?.roundToInt(),
+            calories = session.calories.takeIf { it.isFinite() && it > 0f }?.roundToInt(),
+            maxCadence = session.maxCadence?.takeIf { it.isFinite() && it > 0f }?.roundToInt(),
+            maxSpeedMps = session.maxSpeed?.takeIf { it.isFinite() && it > 0f }?.toDouble(),
+            altitudeGainM = session.altitudeGain?.takeIf { it.isFinite() && it >= 0f }?.toDouble(),
+            altitudeLossM = session.altitudeLoss?.takeIf { it.isFinite() && it >= 0f }?.toDouble(),
+            vo2Max = session.vo2Max?.takeIf { it.isFinite() && it > 0f }?.toDouble(),
+            avgPowerW = session.meanPower?.takeIf { it.isFinite() && it > 0f }?.roundToInt(),
+            altitudeSamples = altitudeSamples
         )
     }
 

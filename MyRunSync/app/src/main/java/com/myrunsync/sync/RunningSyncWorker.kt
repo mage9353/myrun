@@ -95,12 +95,13 @@ class RunningSyncWorker(
                 zone2Config = zone2
             )
 
+            val completedAt = Instant.now()
             val summary = if (result.sessionsSynced > 0) {
-                "$timeStr · $sourceTag: synced ${result.sessionsSynced} run(s)"
+                "$sourceTag · ${result.sessionsSynced}건 동기화 완료"
             } else {
-                "$timeStr · $sourceTag: no runs in last 30 days"
+                "$sourceTag · 최근 30일 기록 없음"
             }
-            syncPrefs.setLastSyncSummary(summary)
+            syncPrefs.recordSyncResult(summary = summary, syncedAtIso = completedAt.toString())
             Result.success()
         } catch (e: Exception) {
             val message = if (syncSettings.dataSource == SyncDataSource.SAMSUNG_HEALTH) {

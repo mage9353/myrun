@@ -1,34 +1,50 @@
 <resources>
     <string name="app_name">MyRunSync</string>
-    <string name="section_supabase_settings">Supabase Settings</string>
+    <string name="label_last_sync_title">최종 동기화 시각</string>
+    <string name="last_sync_time_none">아직 기록 없음</string>
+    <string name="last_sync_detail_none">아래 버튼을 눌러 러닝 기록을 동기화하세요</string>
+
+    <string name="section_permissions">권한 상태</string>
+    <string name="perm_badge_checking">확인 중…</string>
+    <string name="perm_badge_granted">✓ 허용 완료</string>
+    <string name="perm_badge_partial">! 일부 미허용</string>
+    <string name="perm_badge_needed">권한 필요</string>
+    <string name="btn_grant_permissions">Health Connect 권한 허용하기</string>
+    <string name="btn_grant_samsung_permissions">Samsung Health 권한 허용하기</string>
+    <string name="btn_permissions_granted">✓ 권한 허용 완료 (다시 확인)</string>
+    <string name="btn_open_hc_settings">Health Connect 설정 열기</string>
+
+    <string name="btn_sync_runs">지금 Supabase로 동기화</string>
+    <string name="btn_syncing">동기화 중…</string>
+
+    <string name="section_auto_sync">데이터 소스 &amp; 자동 동기화</string>
+    <string name="label_data_source">데이터 소스</string>
+    <string name="switch_auto_sync_on_open">앱 열 때 자동 동기화</string>
+    <string name="switch_bg_auto_sync">백그라운드 주기 자동 동기화</string>
+    <string name="label_bg_sync_interval">동기화 주기</string>
+
+    <string name="section_zone2_settings">Zone 2 심박수 구간</string>
+    <string name="zone2_summary_format">%1$d ~ %2$d bpm</string>
+    <string name="hint_zone2_min">최소 (114)</string>
+    <string name="hint_zone2_max">최대 (133)</string>
+    <string name="btn_save_zone2">저장</string>
+    <string name="status_zone2_saved">Zone 2 심박수 저장됨 (%1$d~%2$d bpm).</string>
+
+    <string name="section_supabase_settings">Supabase 연결 설정</string>
     <string name="label_supabase_url">Supabase URL</string>
     <string name="hint_supabase_url">https://your-project.supabase.co</string>
     <string name="label_supabase_anon_key">Supabase Anon Key</string>
     <string name="hint_supabase_anon_key">eyJ... or sb_publishable_...</string>
-    <string name="cb_show_anon_key">Show Anon Key</string>
-    <string name="btn_save_settings">Save Supabase Settings</string>
+    <string name="cb_show_anon_key">Anon Key 보기</string>
+    <string name="btn_save_settings">저장</string>
     <string name="btn_edit_settings">Edit</string>
-    <string name="btn_cancel_edit">Cancel</string>
-    <string name="supabase_connected_summary">Connected: %1$s</string>
-    <string name="supabase_saved_summary">Supabase credentials saved</string>
-    <string name="status_missing_credentials">Enter Supabase URL and Anon Key below, then grant Health Connect permissions.</string>
-    <string name="status_settings_saved">Supabase settings saved on this device.</string>
-    <string name="section_zone2_settings">Zone 2 Heart Rate (bpm)</string>
-    <string name="hint_zone2_min">Min (114)</string>
-    <string name="hint_zone2_max">Max (133)</string>
-    <string name="btn_save_zone2">Save</string>
-    <string name="status_zone2_saved">Zone 2 heart rate saved (%1$d~%2$d bpm).</string>
-    <string name="section_auto_sync">Auto Sync</string>
-    <string name="label_data_source">Data source</string>
-    <string name="switch_auto_sync_on_open">Auto-sync when opening app</string>
-    <string name="switch_bg_auto_sync">Background periodic auto-sync</string>
-    <string name="label_bg_sync_interval">Background sync interval</string>
-    <string name="last_sync_none">Last sync: none</string>
-    <string name="btn_grant_permissions">Grant Health Connect Permissions</string>
-    <string name="btn_grant_samsung_permissions">Grant Samsung Health Permissions</string>
-    <string name="btn_open_hc_settings">Open Health Connect Settings</string>
-    <string name="btn_sync_runs">Sync Recent Runs to Supabase</string>
-    <string name="status_ready">Ready. Grant Health Connect permissions and sync recent runs.</string>
+    <string name="btn_cancel_edit">취소</string>
+    <string name="supabase_connected_summary">연결됨 · %1$s</string>
+    <string name="supabase_saved_summary">Supabase 연결 정보 저장됨</string>
+    <string name="status_missing_credentials">아래 Supabase 연결 설정에 URL과 Anon Key를 입력해 주세요.</string>
+    <string name="status_settings_saved">Supabase 연결 설정이 기기에 저장되었습니다.</string>
+    <string name="status_ready">준비 완료. 지금 동기화 버튼을 눌러 최근 30일 기록을 업로드하세요.</string>
+
     <string name="rationale_title">Health Connect Permissions</string>
     <string name="rationale_body">MyRunSync reads your running sessions, distance, heart rate, and cadence from Health Connect solely to compute summary metrics and 1-minute downsampled series and store them in your Supabase account. When background auto-sync is enabled, MyRunSync also reads these metrics periodically in the background.</string>
 </resources>

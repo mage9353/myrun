@@ -1,6 +1,7 @@
 package com.myrunsync.health
 
 import com.myrunsync.domain.RunningTelemetryAggregator
+import com.myrunsync.model.AltitudeSample
 import com.myrunsync.model.HeartRateZone2Config
 import com.myrunsync.model.RawRunningTelemetry
 import org.junit.Assert.assertEquals
@@ -138,7 +139,18 @@ class SamsungExerciseMapperTest {
             summaryAvgCadence = 174.6,
             summaryAvgHr = 132.4,
             summaryMaxHr = 148,
-            summaryMinHr = 112
+            summaryMinHr = 112,
+            calories = 342,
+            maxCadence = 186,
+            maxSpeedMps = 4.0,
+            altitudeGainM = 45.67,
+            altitudeLossM = 42.12,
+            vo2Max = 49.34,
+            avgPowerW = 245,
+            altitudeSamples = listOf(
+                AltitudeSample(start.plusSeconds(10), 31.2),
+                AltitudeSample(start.plusSeconds(40), 33.4)
+            )
         )
 
         val dto = RunningTelemetryAggregator.aggregate(
@@ -147,8 +159,16 @@ class SamsungExerciseMapperTest {
             syncedAt = end
         )
         assertEquals(175, dto.avgCadence)
+        assertEquals(186, dto.maxCadence)
         assertEquals(132, dto.avgHr)
         assertEquals(148, dto.maxHr)
         assertEquals(112, dto.minHr)
+        assertEquals(342, dto.calories)
+        assertEquals(250, dto.bestPaceSec)
+        assertEquals(45.7, dto.altitudeGain!!, 0.01)
+        assertEquals(42.1, dto.altitudeLoss!!, 0.01)
+        assertEquals(49.3, dto.vo2Max!!, 0.01)
+        assertEquals(245, dto.avgPowerW)
+        assertEquals(32.3, dto.timeseries1Min.first().altitudeM!!, 0.01)
     }
 }

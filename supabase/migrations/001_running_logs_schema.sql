@@ -23,10 +23,17 @@ create table if not exists public.running_logs (
     zone2_ratio numeric check (zone2_ratio is null or (zone2_ratio >= 0 and zone2_ratio <= 1)),
     zone2_pct numeric check (zone2_pct is null or (zone2_pct >= 0 and zone2_pct <= 100)),
     avg_cadence integer,
+    max_cadence integer check (max_cadence is null or max_cadence >= 0),
+    calories integer check (calories is null or calories >= 0),
+    best_pace_sec integer check (best_pace_sec is null or best_pace_sec > 0),
+    altitude_gain numeric check (altitude_gain is null or altitude_gain >= 0),
+    altitude_loss numeric check (altitude_loss is null or altitude_loss >= 0),
+    vo2_max numeric check (vo2_max is null or vo2_max > 0),
+    avg_power_w integer check (avg_power_w is null or avg_power_w >= 0),
     -- 1-minute downsampled JSONB array:
     -- [{"minute":1,"offset_sec":0,"timestamp":"2026-11-24T06:00:00Z",
     --   "hr":135,"max_hr":140,"min_hr":130,"zone2_ratio":1.0,
-    --   "pace_sec":300,"cadence":172,"distance_m":200.0}]
+    --   "pace_sec":300,"cadence":172,"distance_m":200.0,"altitude_m":35.2}]
     timeseries_1min jsonb not null default '[]'::jsonb,
     notes text,
     synced_at timestamptz not null default now(),
@@ -45,6 +52,13 @@ alter table public.running_logs add column if not exists min_hr integer;
 alter table public.running_logs add column if not exists zone2_min_bpm integer;
 alter table public.running_logs add column if not exists zone2_max_bpm integer;
 alter table public.running_logs add column if not exists zone2_pct numeric;
+alter table public.running_logs add column if not exists max_cadence integer check (max_cadence is null or max_cadence >= 0);
+alter table public.running_logs add column if not exists calories integer check (calories is null or calories >= 0);
+alter table public.running_logs add column if not exists best_pace_sec integer check (best_pace_sec is null or best_pace_sec > 0);
+alter table public.running_logs add column if not exists altitude_gain numeric check (altitude_gain is null or altitude_gain >= 0);
+alter table public.running_logs add column if not exists altitude_loss numeric check (altitude_loss is null or altitude_loss >= 0);
+alter table public.running_logs add column if not exists vo2_max numeric check (vo2_max is null or vo2_max > 0);
+alter table public.running_logs add column if not exists avg_power_w integer check (avg_power_w is null or avg_power_w >= 0);
 alter table public.running_logs add column if not exists notes text;
 alter table public.running_logs add column if not exists synced_at timestamptz not null default now();
 alter table public.running_logs add column if not exists updated_at timestamptz not null default now();

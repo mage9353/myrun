@@ -56,8 +56,13 @@ data class DistanceSegment(
     val meters: Double
 )
 
+data class AltitudeSample(
+    val time: Instant,
+    val altitudeM: Double
+)
+
 /**
- * Raw Health Connect running telemetry extracted for a single ExerciseSessionRecord.
+ * Raw Health Connect / Samsung Health running telemetry extracted for a single exercise session.
  */
 data class RawRunningTelemetry(
     val hcSessionId: String,
@@ -76,7 +81,15 @@ data class RawRunningTelemetry(
     val summaryAvgCadence: Double? = null,
     val summaryAvgHr: Double? = null,
     val summaryMaxHr: Int? = null,
-    val summaryMinHr: Int? = null
+    val summaryMinHr: Int? = null,
+    val calories: Int? = null,
+    val maxCadence: Int? = null,
+    val maxSpeedMps: Double? = null,
+    val altitudeGainM: Double? = null,
+    val altitudeLossM: Double? = null,
+    val vo2Max: Double? = null,
+    val avgPowerW: Int? = null,
+    val altitudeSamples: List<AltitudeSample> = emptyList()
 )
 
 /**
@@ -95,7 +108,8 @@ data class MinuteBucket(
     @SerialName("pace_sec") val paceSec: Int? = null,
     @SerialName("cadence") val cadence: Int? = null,
     @EncodeDefault(EncodeDefault.Mode.ALWAYS)
-    @SerialName("distance_m") val distanceM: Double = 0.0
+    @SerialName("distance_m") val distanceM: Double = 0.0,
+    @SerialName("altitude_m") val altitudeM: Double? = null
 )
 
 /**
@@ -118,6 +132,7 @@ data class RunningLogDto(
     @SerialName("distance_meters") val distanceMeters: Double = 0.0,
     @SerialName("duration_sec") val durationSec: Int,
     @SerialName("avg_pace_sec") val avgPaceSec: Int? = null,
+    @SerialName("best_pace_sec") val bestPaceSec: Int? = null,
     @SerialName("avg_hr") val avgHr: Int? = null,
     @SerialName("max_hr") val maxHr: Int? = null,
     @SerialName("min_hr") val minHr: Int? = null,
@@ -126,6 +141,12 @@ data class RunningLogDto(
     @SerialName("zone2_ratio") val zone2Ratio: Double? = null,
     @SerialName("zone2_pct") val zone2Pct: Double? = null,
     @SerialName("avg_cadence") val avgCadence: Int? = null,
+    @SerialName("max_cadence") val maxCadence: Int? = null,
+    @SerialName("calories") val calories: Int? = null,
+    @SerialName("altitude_gain") val altitudeGain: Double? = null,
+    @SerialName("altitude_loss") val altitudeLoss: Double? = null,
+    @SerialName("vo2_max") val vo2Max: Double? = null,
+    @SerialName("avg_power_w") val avgPowerW: Int? = null,
     @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("timeseries_1min") val timeseries1Min: List<MinuteBucket> = emptyList(),
     @SerialName("synced_at") val syncedAt: String

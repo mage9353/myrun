@@ -1,5 +1,6 @@
 package com.myrunsync.domain
 
+import com.myrunsync.model.AltitudeSample
 import com.myrunsync.model.CadenceSample
 import com.myrunsync.model.DistanceSegment
 import com.myrunsync.model.HeartRateZone2Config
@@ -43,12 +44,20 @@ object RunningTelemetryAggregator {
         val validSegments = telemetry.distanceSegments
             .filter { it.meters > 0.0 && !it.endTime.isBefore(it.startTime) }
 
+        val validAltitude = telemetry.altitudeSamples
+            .filter { !it.time.isBefore(telemetry.startTime) && !it.time.isAfter(telemetry.endTime) && it.altitudeM.isFinite() }
+            .sortedBy { it.time }
+
         val distanceMeters = resolveTotalDistanceMeters(
             aggregatedDistanceMeters = telemetry.aggregatedDistanceMeters,
             segments = validSegments
         )
 
         val avgPaceSecPerKm = computePaceSecPerKm(distanceMeters, durationSeconds.toDouble())
+        val bestPaceSecPerKm = telemetry.maxSpeedMps
+            ?.takeIf { it.isFinite() && it > 0.5 && it <= 15.0 }
+            ?.let { (1000.0 / it).roundToInt() }
+
         val hrSummary = summarizeHeartRate(
             samples = sortedHr,
             windowEnd = telemetry.endTime,
@@ -64,6 +73,8 @@ object RunningTelemetryAggregator {
             cadenceSamples = validCadence,
             summaryAvgCadence = telemetry.summaryAvgCadence
         )
+        val maxCadenceSpm = telemetry.maxCadence?.takeIf { it > 0 }
+            ?: validCadence.maxOfOrNull { it.spm.roundToInt() }?.takeIf { it > 0 }
 
         val timeseries1Min = buildMinuteSeries(
             startTime = telemetry.startTime,
@@ -71,6 +82,7 @@ object RunningTelemetryAggregator {
             hrSamples = sortedHr,
             cadenceSamples = validCadence,
             distanceSegments = validSegments,
+            altitudeSamples = validAltitude,
             zone2Config = zone2Config
         )
 
@@ -87,6 +99,7 @@ object RunningTelemetryAggregator {
             distanceMeters = roundTo2(distanceMeters),
             durationSec = durationSeconds,
             avgPaceSec = avgPaceSecPerKm?.roundToInt(),
+            bestPaceSec = bestPaceSecPerKm,
             avgHr = hrSummary.avgBpm?.roundToInt(),
             maxHr = hrSummary.maxBpm,
             minHr = hrSummary.minBpm,
@@ -95,6 +108,12 @@ object RunningTelemetryAggregator {
             zone2Ratio = zone2Ratio,
             zone2Pct = zone2Pct,
             avgCadence = avgCadenceSpm?.roundToInt(),
+            maxCadence = maxCadenceSpm,
+            calories = telemetry.calories?.takeIf { it >= 0 },
+            altitudeGain = telemetry.altitudeGainM?.takeIf { it.isFinite() && it >= 0.0 }?.let(::roundTo1),
+            altitudeLoss = telemetry.altitudeLossM?.takeIf { it.isFinite() && it >= 0.0 }?.let(::roundTo1),
+            vo2Max = telemetry.vo2Max?.takeIf { it.isFinite() && it > 0.0 }?.let(::roundTo1),
+            avgPowerW = telemetry.avgPowerW?.takeIf { it > 0 },
             timeseries1Min = timeseries1Min,
             syncedAt = syncedAt.toString()
         )
@@ -191,6 +210,7 @@ object RunningTelemetryAggregator {
         hrSamples: List<HrSample>,
         cadenceSamples: List<CadenceSample>,
         distanceSegments: List<DistanceSegment>,
+        altitudeSamples: List<AltitudeSample>,
         zone2Config: HeartRateZone2Config
     ): List<MinuteBucket> {
         if (!endTime.isAfter(startTime)) return emptyList()
@@ -223,6 +243,15 @@ object RunningTelemetryAggregator {
                 null
             }
 
+            val bucketAltitude = altitudeSamples.filter {
+                !it.time.isBefore(bucketStart) && it.time.isBefore(bucketEnd)
+            }
+            val avgAltitudeM = if (bucketAltitude.isNotEmpty()) {
+                roundTo1(bucketAltitude.map { it.altitudeM }.average())
+            } else {
+                null
+            }
+
             val distanceM = computeBucketDistanceMeters(distanceSegments, bucketStart, bucketEnd)
             val paceSecPerKm = computePaceSecPerKm(distanceM, bucketDurationSec)
 
@@ -237,7 +266,8 @@ object RunningTelemetryAggregator {
                     zone2Ratio = hrSummary.zone2Ratio?.let(::roundTo4),
                     paceSec = paceSecPerKm?.roundToInt(),
                     cadence = avgCadence?.roundToInt(),
-                    distanceM = roundTo2(distanceM)
+                    distanceM = roundTo2(distanceM),
+                    altitudeM = avgAltitudeM
                 )
             )
         }

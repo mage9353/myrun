@@ -11,9 +11,10 @@ This monorepo (`e:\vscode_temp\MyRun`, GitHub repository `https://github.com/mag
 - **Primary key**: `id` (`bigint` identity).
 - **Upsert conflict key**: `hc_session_id` (`text not null unique`, constraint `running_logs_hc_session_id_key`).
 - **Required NOT NULL columns**: `hc_session_id`, `run_date` (`timestamptz`), `workout_type` (`'야외'` or `'트레드밀'`), `distance_km`, `duration_sec`, `timeseries_1min`.
-- **Integer columns**: `duration_sec`, `avg_pace_sec`, `avg_hr`, `max_hr`, `min_hr`, `zone2_min_bpm`, `zone2_max_bpm`, and `avg_cadence` must be serialized as integers from `MyRunSync`.
+- **Integer columns**: `duration_sec`, `avg_pace_sec`, `best_pace_sec`, `avg_hr`, `max_hr`, `min_hr`, `zone2_min_bpm`, `zone2_max_bpm`, `avg_cadence`, `max_cadence`, `calories`, and `avg_power_w` must be serialized as integers from `MyRunSync`.
+- **Additional Samsung Health metrics**: `altitude_gain`, `altitude_loss`, `vo2_max` (numeric, nullable).
 - **1-minute JSONB column**: `timeseries_1min` containing objects with keys:
   - `minute` (1-based integer), `offset_sec` (0-based integer), `timestamp` (ISO-8601 UTC string)
   - `hr` (rounded avg bpm, int?), `max_hr` (int?), `min_hr` (int?)
-  - `zone2_ratio` (0.0..1.0), `pace_sec` (rounded sec/km, int?), `cadence` (rounded spm, int?), `distance_m` (double)
+  - `zone2_ratio` (0.0..1.0), `pace_sec` (rounded sec/km, int?), `cadence` (rounded spm, int?), `distance_m` (double), `altitude_m` (double?)
 - Whenever changing columns or `timeseries_1min` keys, update Supabase (`mwjurzrnkpnqsfqrhaex`), `supabase/migrations/001_running_logs_schema.sql`, `MyRunSync`, and `MyRunCoach` together.

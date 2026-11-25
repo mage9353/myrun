@@ -91,13 +91,25 @@ jobs:
         shell: bash
         env:
           SAMSUNG_HEALTH_SDK_AAR_URL: ${{ secrets.SAMSUNG_HEALTH_SDK_AAR_URL }}
+          SAMSUNG_HEALTH_SDK_AUTH_HEADER: ${{ secrets.SAMSUNG_HEALTH_SDK_AUTH_HEADER }}
         run: |
           set -euo pipefail
           if [ -n "${SAMSUNG_HEALTH_SDK_AAR_URL:-}" ]; then
             mkdir -p MyRunSync/app/libs
-            curl -fsSL "$SAMSUNG_HEALTH_SDK_AAR_URL" -o MyRunSync/app/libs/samsung-health-data-api-1.1.0.aar
-            echo "Downloaded Samsung Health Data SDK AAR ($(wc -c < MyRunSync/app/libs/samsung-health-data-api-1.1.0.aar) bytes)."
+            AAR_DEST="MyRunSync/app/libs/samsung-health-data-api-1.1.0.aar"
+            if [ -n "${SAMSUNG_HEALTH_SDK_AUTH_HEADER:-}" ]; then
+              curl -fsSL -H "$SAMSUNG_HEALTH_SDK_AUTH_HEADER" "$SAMSUNG_HEALTH_SDK_AAR_URL" -o "$AAR_DEST"
+            else
+              curl -fsSL "$SAMSUNG_HEALTH_SDK_AAR_URL" -o "$AAR_DEST"
+            fi
+            if ! unzip -tq "$AAR_DEST" >/dev/null 2>&1; then
+              echo "::error::Downloaded Samsung Health SDK AAR is not a valid archive. Check SAMSUNG_HEALTH_SDK_AAR_URL / auth secret."
+              exit 1
+            fi
+            echo "EXPECT_SAMSUNG_SDK=true" >> "$GITHUB_ENV"
+            echo "Downloaded valid Samsung Health Data SDK AAR ($(wc -c < "$AAR_DEST") bytes)."
           else
+            echo "EXPECT_SAMSUNG_SDK=false" >> "$GITHUB_ENV"
             echo "SAMSUNG_HEALTH_SDK_AAR_URL secret not set; building Health Connect variant."
           fi
 
@@ -130,6 +142,10 @@ jobs:
           RELEASE_BC="app/build/generated/source/buildConfig/release/com/myrunsync/BuildConfig.java"
           if ! grep -q 'SUPABASE_URL = ""' "$RELEASE_BC" || ! grep -q 'SUPABASE_ANON_KEY = ""' "$RELEASE_BC"; then
             echo "::error::Release BuildConfig must have empty SUPABASE_URL and SUPABASE_ANON_KEY."
+            exit 1
+          fi
+          if [ "${EXPECT_SAMSUNG_SDK:-false}" = "true" ] && ! grep -q 'SAMSUNG_HEALTH_SDK_ENABLED = true' "$RELEASE_BC"; then
+            echo "::error::Expected SAMSUNG_HEALTH_SDK_ENABLED = true in Release BuildConfig."
             exit 1
           fi
 

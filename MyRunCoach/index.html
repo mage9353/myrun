@@ -324,7 +324,7 @@
             >
               <option value="gemini-4-hydrogen">gemini-4-hydrogen (기본값 · 무료 티어 지원 최신 Gemini 4 주력 모델)</option>
               <option value="gemini-3.8-flash">gemini-3.8-flash (무료 티어 지원 고속 모델)</option>
-              <option value="gemini-4-neon">gemini-4-neon (유료 티어 전용 심층 추론 플래그십 모델)</option>
+              <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (무료 티어 추천 · 초고속/안정 경량 모델)</option>
             </select>
           </div>
         </div>
@@ -492,6 +492,23 @@
       </div>
     </section>
 
+    <!-- 0. Activity Type Filter Bar (Applies to Summary Cards & Trend Charts) -->
+    <section aria-label="분석 대상 운동 유형 필터" class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 py-3 sm:px-4 shadow-sm space-y-2.5 lg:space-y-0 lg:flex lg:items-center lg:justify-between lg:gap-3">
+      <div class="flex flex-wrap items-center justify-between sm:justify-start gap-2">
+        <span class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">📊 운동 유형 필터</span>
+        <div class="inline-flex flex-wrap items-center gap-1.5">
+          <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
+          <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
+          <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
+          <label id="excludeWarmupLabel" title="달리기 유형만 선택했을 때 요약 카드 평균 페이스와 심박수 대비 페이스 추이에 적용됩니다" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 cursor-pointer select-none transition-colors">
+            <input id="chkExcludeWarmupWalk" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
+            <span>초기 걷기 제외</span>
+          </label>
+        </div>
+      </div>
+      <div id="chartTypeChips" class="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:items-center"></div>
+    </section>
+
     <!-- 1. Top 4 Summary Cards -->
     <section aria-label="주간 요약 지표" class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
       <!-- Card 1: 주간 누적 거리 -->
@@ -508,14 +525,14 @@
         </div>
       </div>
 
-      <!-- Card 2: 평균 페이스 (달리기) -->
+      <!-- Card 2: 평균 페이스 -->
       <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
         <div class="flex items-center justify-between gap-1.5">
-          <span class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-tight">평균 페이스 (달리기)</span>
+          <span id="statAvgPaceTitle" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-tight">평균 페이스</span>
           <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs sm:text-sm shrink-0">⏱️</span>
         </div>
         <div id="statAvgPace" class="mt-2 text-lg sm:text-2xl font-bold tracking-tight tabular-nums text-slate-900 dark:text-white">-</div>
-        <p id="statAvgPaceSub" class="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug">초기 걷기 제외</p>
+        <p id="statAvgPaceSub" class="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug">이번 주 평균</p>
         <div id="statAvgPacePrev" class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
           <span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 shrink-0">지난 주</span>
           <span class="text-sm sm:text-base font-bold tabular-nums text-slate-700 dark:text-slate-200">-</span>
@@ -557,23 +574,6 @@
 
     <!-- 2. Trend Charts (Recent 15 Runs) -->
     <section aria-label="최근 15회 러닝 추세 차트" class="space-y-3.5">
-      <!-- Multi-select Chart Type Filter Bar -->
-      <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 py-3 sm:px-4 shadow-sm space-y-2.5 lg:space-y-0 lg:flex lg:items-center lg:justify-between lg:gap-3">
-        <div class="flex flex-wrap items-center justify-between sm:justify-start gap-2">
-          <span class="text-xs font-bold text-slate-700 dark:text-slate-200">📊 추이 그래프 유형</span>
-          <div class="inline-flex flex-wrap items-center gap-1.5">
-            <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
-            <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
-            <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
-            <label id="excludeWarmupLabel" title="달리기 유형만 선택했을 때 심박수 대비 페이스 추이에 적용됩니다" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 cursor-pointer select-none transition-colors">
-              <input id="chkExcludeWarmupWalk" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
-              <span>초기 걷기 제외</span>
-            </label>
-          </div>
-        </div>
-        <div id="chartTypeChips" class="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:items-center"></div>
-      </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
         <!-- Chart 1: Avg HR vs Avg Pace -->
         <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
@@ -628,7 +628,7 @@
           >
             <option value="gemini-4-hydrogen" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">gemini-4-hydrogen (기본 · 무료)</option>
             <option value="gemini-3.8-flash" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">gemini-3.8-flash (고속 · 무료)</option>
-            <option value="gemini-4-neon" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">gemini-4-neon (심층 · 유료)</option>
+            <option value="gemini-3.5-flash-lite" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">gemini-3.5-flash-lite (경량 · 안정)</option>
           </select>
         </div>
       </div>
@@ -859,7 +859,7 @@
       var CONFIG_STORAGE_KEY = 'myruncoach_config';
       var THEME_STORAGE_KEY = 'myruncoach_theme';
       var DEFAULT_MODEL = 'gemini-4-hydrogen';
-      var ALLOWED_MODELS = ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-4-neon'];
+      var ALLOWED_MODELS = ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.5-flash-lite'];
       var DEFAULT_ZONE2_MIN_BPM = 120;
       var DEFAULT_ZONE2_MAX_BPM = 140;
       var DEFAULT_WALK_PACE_SEC = 540;
@@ -1913,10 +1913,18 @@
         return { start: monday, end: nextMonday };
       }
 
-      function getRunsInWeek(weekOffset) {
+      function getRunsInWeek(weekOffset, sourceRuns) {
         var bounds = getWeekBounds(weekOffset);
-        return state.runs.filter(function (r) {
+        var list = sourceRuns || state.runs;
+        return list.filter(function (r) {
           return r.dateObj && r.dateObj >= bounds.start && r.dateObj < bounds.end;
+        });
+      }
+
+      function getSelectedActivityRuns() {
+        var selected = state.config.chartTypes || [];
+        return state.runs.filter(function (r) {
+          return selected.indexOf(r.runType) !== -1;
         });
       }
 
@@ -1957,9 +1965,10 @@
           $('statDistance7d').textContent = '-';
           $('statDistanceSub').textContent = '조회된 기록 없음';
           setPrevComparison($('statDistancePrev'), '기록 없음', '', true);
+          $('statAvgPaceTitle').textContent = '평균 페이스';
           $('statAvgPace').textContent = '-';
-          $('statAvgPaceSub').textContent = '초기 걷기 제외';
-          setPrevComparison($('statAvgPacePrev'), '달리기 기록 없음', '', true);
+          $('statAvgPaceSub').textContent = '조회된 기록 없음';
+          setPrevComparison($('statAvgPacePrev'), '기록 없음', '', true);
           $('statZone2').textContent = '-';
           $('statZone2Bar').style.width = '0%';
           $('statZone2Sub').textContent = '유산소 베이스 지표';
@@ -1971,12 +1980,39 @@
           return;
         }
 
-        var thisWeekRuns = getRunsInWeek(0);
-        var lastWeekRuns = getRunsInWeek(-1);
+        var selectedTypes = state.config.chartTypes || [];
+        var selectedRuns = getSelectedActivityRuns();
+
+        if (!selectedTypes.length) {
+          $('statDistance7d').textContent = '-';
+          $('statDistanceSub').textContent = '운동 유형을 선택하세요';
+          setPrevComparison($('statDistancePrev'), '선택 없음', '', true);
+          $('statAvgPaceTitle').textContent = '평균 페이스';
+          $('statAvgPace').textContent = '-';
+          $('statAvgPaceSub').textContent = '운동 유형을 선택하세요';
+          setPrevComparison($('statAvgPacePrev'), '선택 없음', '', true);
+          $('statZone2').textContent = '-';
+          $('statZone2Bar').style.width = '0%';
+          $('statZone2Sub').textContent = '운동 유형을 선택하세요';
+          setPrevComparison($('statZone2Prev'), '선택 없음', '', true);
+          $('statCadence').textContent = '-';
+          $('statCadenceSub').textContent = '운동 유형을 선택하세요';
+          setPrevComparison($('statCadencePrev'), '선택 없음', '', true);
+          $('statCadenceVo2').classList.add('hidden');
+          return;
+        }
+
+        var thisWeekRuns = getRunsInWeek(0, selectedRuns);
+        var lastWeekRuns = getRunsInWeek(-1, selectedRuns);
         var thisWeekRunning = thisWeekRuns.filter(isRunningType);
         var lastWeekRunning = lastWeekRuns.filter(isRunningType);
+        var isRunOnly = isRunningOnlyChartSelection();
+        var isWalkOnly = selectedTypes.length > 0 && selectedTypes.every(function (t) {
+          return WALKING_ACTIVITY_TYPES.indexOf(t) !== -1;
+        });
+        var applyWarmupExclusion = Boolean(state.config.excludeWarmupWalk) && isRunOnly;
 
-        // Card 1: Weekly Distance (Mon-Sun)
+        // Card 1: Weekly Distance (Mon-Sun, filtered)
         var thisWeekDist = thisWeekRuns.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
         var lastWeekDist = lastWeekRuns.reduce(function (sum, r) { return sum + (r.distanceKm || 0); }, 0);
         var calThisWeek = thisWeekRuns.reduce(function (sum, r) { return sum + (r.calories || 0); }, 0);
@@ -1993,24 +2029,34 @@
           setPrevComparison($('statDistancePrev'), '기록 없음', '', true);
         }
 
-        // Card 2: Running Avg Pace (warmup walk excluded)
-        var thisRunPace = averageOf(thisWeekRunning, getEffectiveRunPaceSec);
-        var lastRunPace = averageOf(lastWeekRunning, getEffectiveRunPaceSec);
-        var paceSpeed = formatSpeedKmh(thisRunPace);
+        // Card 2: Avg Pace (filtered, respects warmup-walk exclusion when running-only)
+        $('statAvgPaceTitle').textContent = isRunOnly
+          ? '평균 페이스 (달리기)'
+          : (isWalkOnly ? '평균 페이스 (걷기)' : '평균 페이스');
+        var paceGetter = applyWarmupExclusion
+          ? getEffectiveRunPaceSec
+          : function (r) { return r.avgPaceSec; };
+        var thisPace = averageOf(thisWeekRuns, paceGetter);
+        var lastPace = averageOf(lastWeekRuns, paceGetter);
+        var paceSpeed = formatSpeedKmh(thisPace);
         $('statAvgPace').innerHTML = paceSpeed
-          ? escapeHtml(formatPace(thisRunPace)) + ' <span class="inline-block text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">(' + escapeHtml(paceSpeed) + ')</span>'
-          : escapeHtml(formatPace(thisRunPace));
-        $('statAvgPaceSub').textContent = thisWeekRunning.length > 0
-          ? '이번 주 달리기 ' + thisWeekRunning.length + '회 · 초기 걷기 제외'
-          : '이번 주 달리기 기록 없음';
-        if (lastRunPace !== null) {
-          var lastPaceSpeed = formatSpeedKmh(lastRunPace);
-          setPrevComparison($('statAvgPacePrev'), formatPace(lastRunPace), lastPaceSpeed ? '(' + lastPaceSpeed + ')' : '', false);
+          ? escapeHtml(formatPace(thisPace)) + ' <span class="inline-block text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">(' + escapeHtml(paceSpeed) + ')</span>'
+          : escapeHtml(formatPace(thisPace));
+        if (thisWeekRuns.length > 0) {
+          $('statAvgPaceSub').textContent = isRunOnly
+            ? '이번 주 ' + thisWeekRuns.length + '회 · ' + (applyWarmupExclusion ? '초기 걷기 제외' : '전체 구간 기준')
+            : '이번 주 ' + thisWeekRuns.length + '회 평균';
         } else {
-          setPrevComparison($('statAvgPacePrev'), '달리기 기록 없음', '', true);
+          $('statAvgPaceSub').textContent = '이번 주 기록 없음';
+        }
+        if (lastPace !== null) {
+          var lastPaceSpeed = formatSpeedKmh(lastPace);
+          setPrevComparison($('statAvgPacePrev'), formatPace(lastPace), lastPaceSpeed ? '(' + lastPaceSpeed + ')' : '', false);
+        } else {
+          setPrevComparison($('statAvgPacePrev'), '기록 없음', '', true);
         }
 
-        // Card 3: Zone 2 Ratio
+        // Card 3: Zone 2 Ratio (filtered)
         var thisZ2 = averageOf(thisWeekRuns, function (r) { return r.zone2Pct; });
         var lastZ2 = averageOf(lastWeekRuns, function (r) { return r.zone2Pct; });
         var activeZ2 = getActiveZone2Range();
@@ -2023,19 +2069,29 @@
           setPrevComparison($('statZone2Prev'), '기록 없음', '', true);
         }
 
-        // Card 4: Avg Cadence (Overall / Running-only) + Last Week + VO2 Max on next line
+        // Card 4: Avg Cadence (filtered) + Last Week + VO2 Max on next line
         var thisCad = averageOf(thisWeekRuns, function (r) { return r.avgCadence; });
         var thisRunCad = averageOf(thisWeekRunning, function (r) { return r.runningOnlyAvgCadence; });
         var lastCad = averageOf(lastWeekRuns, function (r) { return r.avgCadence; });
         var lastRunCad = averageOf(lastWeekRunning, function (r) { return r.runningOnlyAvgCadence; });
-        var latestVo2Run = state.runs.find(function (r) { return r.vo2Max !== null; });
+        var latestVo2Run = selectedRuns.find(function (r) { return r.vo2Max !== null; });
 
-        $('statCadence').textContent = formatCadencePair(thisCad, thisRunCad);
-        $('statCadenceSub').textContent = '이번 주 평균 / 달리기구간 평균';
-        if (lastCad !== null || lastRunCad !== null) {
-          setPrevComparison($('statCadencePrev'), formatCadencePair(lastCad, lastRunCad), '', false);
+        if (isWalkOnly) {
+          $('statCadence').textContent = thisCad !== null ? Math.round(thisCad) + ' spm' : '-';
+          $('statCadenceSub').textContent = '이번 주 걷기 평균';
+          if (lastCad !== null) {
+            setPrevComparison($('statCadencePrev'), Math.round(lastCad) + ' spm', '', false);
+          } else {
+            setPrevComparison($('statCadencePrev'), '기록 없음', '', true);
+          }
         } else {
-          setPrevComparison($('statCadencePrev'), '기록 없음', '', true);
+          $('statCadence').textContent = formatCadencePair(thisCad, thisRunCad);
+          $('statCadenceSub').textContent = '이번 주 평균 / 달리기구간 평균';
+          if (lastCad !== null || lastRunCad !== null) {
+            setPrevComparison($('statCadencePrev'), formatCadencePair(lastCad, lastRunCad), '', false);
+          } else {
+            setPrevComparison($('statCadencePrev'), '기록 없음', '', true);
+          }
         }
         if (latestVo2Run) {
           $('statCadenceVo2').textContent = 'VO2 Max ' + latestVo2Run.vo2Max.toFixed(1);
@@ -3090,7 +3146,24 @@
         ].filter(Boolean).join('\n');
       }
 
-      // Gemini API Call
+      // Gemini API Call with Automatic Model Fallback
+      function getFallbackModels(primaryModel) {
+        if (primaryModel === 'gemini-4-hydrogen') {
+          return ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.5-flash-lite'];
+        }
+        if (primaryModel === 'gemini-3.8-flash') {
+          return ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-4-hydrogen'];
+        }
+        if (primaryModel === 'gemini-3.5-flash-lite') {
+          return ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-4-hydrogen'];
+        }
+        var list = primaryModel ? [primaryModel] : [];
+        ALLOWED_MODELS.forEach(function (m) {
+          if (list.indexOf(m) === -1) list.push(m);
+        });
+        return list;
+      }
+
       async function askGeminiCoach(promptText, titleLabel) {
         if (state.isAskingCoach) return;
         if (!state.config.geminiKey) {
@@ -3105,67 +3178,103 @@
           return;
         }
 
-        var model = state.config.geminiModel || DEFAULT_MODEL;
-        var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/' +
-          encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(state.config.geminiKey);
+        var primaryModel = state.config.geminiModel || DEFAULT_MODEL;
+        var candidateModels = getFallbackModels(primaryModel);
 
         state.isAskingCoach = true;
         $('btnAskCoach').disabled = true;
         $('coachError').classList.add('hidden');
         $('coachLoading').classList.remove('hidden');
-        $('coachLoadingText').textContent = model + ' 모델이 데이터를 분석하고 있습니다...';
-        $('coachStatusLabel').textContent = titleLabel + ' (' + model + ')';
+
+        var payload = {
+          system_instruction: {
+            parts: [{
+              text: '당신은 과학적 데이터(심박수, 페이스, Zone 2 유산소 비율, 케이던스, 심박 드리프트)를 기반으로 조언하는 전문 러닝 코치입니다. 한국어로 명확하고 친절하며 실전적인 가이드를 마크다운 형식으로 작성하세요. 무리한 훈련보다 부상 예방과 지속 가능한 유산소 향상을 우선합니다.'
+            }]
+          },
+          contents: [{
+            role: 'user',
+            parts: [{ text: promptText }]
+          }],
+          generationConfig: {
+            temperature: 0.6
+          }
+        };
+
+        var failedAttempts = [];
+        var lastFailureReason = '';
 
         try {
-          var payload = {
-            system_instruction: {
-              parts: [{
-                text: '당신은 과학적 데이터(심박수, 페이스, Zone 2 유산소 비율, 케이던스, 심박 드리프트)를 기반으로 조언하는 전문 러닝 코치입니다. 한국어로 명확하고 친절하며 실전적인 가이드를 마크다운 형식으로 작성하세요. 무리한 훈련보다 부상 예방과 지속 가능한 유산소 향상을 우선합니다.'
-              }]
-            },
-            contents: [{
-              role: 'user',
-              parts: [{ text: promptText }]
-            }],
-            generationConfig: {
-              temperature: 0.6
+          for (var i = 0; i < candidateModels.length; i++) {
+            var model = candidateModels[i];
+            var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/' +
+              encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(state.config.geminiKey);
+
+            if (i === 0) {
+              $('coachLoadingText').textContent = model + ' 모델이 데이터를 분석하고 있습니다...';
+              $('coachStatusLabel').textContent = titleLabel + ' (' + model + ')';
+            } else {
+              var prevModel = candidateModels[i - 1];
+              $('coachLoadingText').textContent = prevModel + ' 실패(' + lastFailureReason + ') → ' + model + ' 모델로 자동 전환 중...';
+              $('coachStatusLabel').textContent = titleLabel + ' (' + model + ' 자동 전환 시도)';
             }
-          };
 
-          var res = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+            var res = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
 
-          var json = null;
-          try { json = await res.json(); } catch (e) {}
+            var json = null;
+            try { json = await res.json(); } catch (e) {}
 
-          if (!res.ok) {
-            var apiMsg = json && json.error && json.error.message ? json.error.message : res.statusText;
-            var hint = '';
-            if (res.status === 400 || res.status === 401 || res.status === 403) {
-              hint = ' Gemini API Key가 올바른지 또는 선택한 모델(' + model + ')의 접근 권한(유료 티어 여부 등)을 확인하세요.';
-            } else if (res.status === 429) {
-              hint = ' 무료 티어 요청 한도(RPM/TPM)를 초과했습니다. 잠시 후 다시 시도하거나 모델을 변경해보세요.';
+            if (!res.ok) {
+              var apiMsg = json && json.error && json.error.message ? json.error.message : res.statusText;
+              var canFallback = res.status === 429 || res.status === 404 || res.status >= 500;
+              lastFailureReason = String(res.status);
+              failedAttempts.push(model + ' (' + res.status + ')');
+
+              if (canFallback && i < candidateModels.length - 1) {
+                continue;
+              }
+
+              var hint = '';
+              if (res.status === 400 || res.status === 401 || res.status === 403) {
+                hint = ' Gemini API Key가 올바른지 또는 선택한 모델(' + model + ')의 접근 권한을 확인하세요.';
+              } else if (res.status === 429) {
+                hint = ' 무료 티어 요청 한도(RPM/RPD)를 초과했습니다. 잠시 후 다시 시도해 주세요.';
+              } else if (res.status >= 500) {
+                hint = ' Google 서버 일시 과부하(' + res.status + ')가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+              }
+              var attemptHistory = failedAttempts.length > 1
+                ? ' [시도 내역: ' + failedAttempts.join(' → ') + ']'
+                : '';
+              throw new Error('Gemini API 오류 (' + res.status + '): ' + apiMsg + hint + attemptHistory);
             }
-            throw new Error('Gemini API 오류 (' + res.status + '): ' + apiMsg + hint);
+
+            var parts = json && json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts;
+            var replyText = Array.isArray(parts)
+              ? parts.map(function (p) { return p.text || ''; }).join('\n').trim()
+              : '';
+
+            if (!replyText) {
+              lastFailureReason = '빈 응답';
+              failedAttempts.push(model + ' (빈 응답)');
+              if (i < candidateModels.length - 1) {
+                continue;
+              }
+              throw new Error('Gemini 응답에서 텍스트를 추출하지 못했습니다. [시도 내역: ' + failedAttempts.join(' → ') + ']');
+            }
+
+            state.lastCoachMarkdown = replyText;
+            $('coachOutput').innerHTML = renderMarkdownSafe(replyText);
+            $('btnCopyCoach').classList.remove('hidden');
+            $('btnClearCoach').classList.remove('hidden');
+            $('coachStatusLabel').textContent = i === 0
+              ? '✅ ' + titleLabel + ' 완료 (' + model + ')'
+              : '✅ ' + titleLabel + ' 완료 (' + primaryModel + ' 실패 → ' + model + ' 자동 전환)';
+            break;
           }
-
-          var parts = json && json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts;
-          var replyText = Array.isArray(parts)
-            ? parts.map(function (p) { return p.text || ''; }).join('\n').trim()
-            : '';
-
-          if (!replyText) {
-            throw new Error('Gemini 응답에서 텍스트를 추출하지 못했습니다.');
-          }
-
-          state.lastCoachMarkdown = replyText;
-          $('coachOutput').innerHTML = renderMarkdownSafe(replyText);
-          $('btnCopyCoach').classList.remove('hidden');
-          $('btnClearCoach').classList.remove('hidden');
-          $('coachStatusLabel').textContent = '✅ ' + titleLabel + ' 완료 (' + model + ')';
         } catch (err) {
           console.error('Gemini error:', err);
           $('coachError').innerHTML = '⚠️ ' + escapeHtml(err && err.message ? err.message : 'Gemini 호출 중 오류가 발생했습니다.');
@@ -3378,7 +3487,7 @@
           }
         });
 
-        // Trend Charts Multi-Select Filter Chips & Presets
+        // Activity Type Multi-Select Filter Chips & Presets
         $('chartTypeChips').addEventListener('click', function (e) {
           var btn = e.target.closest('[data-chart-type]');
           if (!btn) return;
@@ -3395,6 +3504,7 @@
           });
           persistConfigState();
           renderChartTypeFilterUI();
+          renderSummaryCards();
           renderTrendCharts();
         });
 
@@ -3406,6 +3516,7 @@
             else if (preset === 'walking') state.config.chartTypes = WALKING_ACTIVITY_TYPES.slice();
             persistConfigState();
             renderChartTypeFilterUI();
+            renderSummaryCards();
             renderTrendCharts();
           });
         });
@@ -3414,6 +3525,7 @@
           state.config.excludeWarmupWalk = Boolean(e.target.checked);
           persistConfigState();
           renderChartTypeFilterUI();
+          renderSummaryCards();
           renderTrendCharts();
         });
 

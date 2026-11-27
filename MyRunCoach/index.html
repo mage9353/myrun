@@ -513,9 +513,19 @@
           <button type="button" data-chart-preset="all" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">전체</button>
           <button type="button" data-chart-preset="running" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">달리기만</button>
           <button type="button" data-chart-preset="walking" class="chart-preset-btn px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">걷기만</button>
-          <label id="excludeWarmupLabel" title="달리기 유형만 선택했을 때 요약 카드 평균 페이스와 심박수 대비 페이스 추이에 적용됩니다" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 cursor-pointer select-none transition-colors">
+          <label id="excludeWarmupLabel" title="달리기 유형만 선택했을 때 요약 카드 평균 페이스와 심박수 대비 페이스 추이에 초기 및 마무리 걷기 구간 제외를 적용합니다" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 cursor-pointer select-none transition-colors">
             <input id="chkExcludeWarmupWalk" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
-            <span>초기 걷기 제외</span>
+            <span>초기·마무리 걷기 제외</span>
+          </label>
+          <label class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300">
+            <span>그래프</span>
+            <select id="selectChartLimit" aria-label="추이 그래프 표시 횟수" class="bg-transparent font-semibold text-indigo-700 dark:text-indigo-300 focus:outline-none cursor-pointer">
+              <option value="10" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">최근 10회</option>
+              <option value="15" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">최근 15회</option>
+              <option value="30" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">최근 30회</option>
+              <option value="50" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">최근 50회</option>
+              <option value="0" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">전체</option>
+            </select>
           </label>
         </div>
       </div>
@@ -585,14 +595,14 @@
       </div>
     </section>
 
-    <!-- 2. Trend Charts (Recent 15 Runs) -->
-    <section aria-label="최근 15회 러닝 추세 차트" class="space-y-3.5">
+    <!-- 2. Trend Charts -->
+    <section aria-label="러닝 추세 차트" class="space-y-3.5">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
         <!-- Chart 1: Avg HR vs Avg Pace -->
         <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
           <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
             <div>
-              <h2 class="text-sm sm:text-base font-bold">최근 15회 평균 심박수 대비 페이스 추이</h2>
+              <h2 id="chartHrPaceTitle" class="text-sm sm:text-base font-bold">최근 15회 평균 심박수 대비 페이스 추이</h2>
               <p id="chartHrPaceSub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)</p>
             </div>
           </div>
@@ -608,7 +618,7 @@
         <div class="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 sm:p-5 shadow-sm">
           <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
             <div>
-              <h2 class="text-sm sm:text-base font-bold">최근 15회 Zone 2 비율 변화</h2>
+              <h2 id="chartZone2Title" class="text-sm sm:text-base font-bold">최근 15회 Zone 2 비율 변화</h2>
               <p id="chartZone2Sub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">저강도 유산소 영역 유지율 (%)</p>
             </div>
           </div>
@@ -660,16 +670,17 @@
       </div>
 
       <!-- 3 Quick Prompt Buttons -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-2.5">
         <button
           id="btnQuickLatest"
           type="button"
-          class="group text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] transition-all"
+          class="coach-quick-btn group text-left p-2.5 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
-            🔍 방금 뛴 최근 러닝 정밀 분석
+          <div class="flex items-center justify-between gap-2 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+            <span>🔍 방금 뛴 최근 러닝 정밀 분석</span>
+            <span class="coach-btn-spinner hidden shrink-0 text-[11px] font-bold text-indigo-600 dark:text-indigo-300 animate-pulse">⏳ 분석 중…</span>
           </div>
-          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1 sm:line-clamp-none">
             최근 1회 + 1분 단위 심박/페이스로 후반 심박 드리프트와 페이스 배분 피드백
           </p>
         </button>
@@ -677,12 +688,13 @@
         <button
           id="btnQuickTwoWeeks"
           type="button"
-          class="group text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] transition-all"
+          class="coach-quick-btn group text-left p-2.5 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
-            📈 최근 2주 훈련 추세 및 피로도 진단
+          <div class="flex items-center justify-between gap-2 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+            <span>📈 최근 2주 훈련 추세 및 피로도 진단</span>
+            <span class="coach-btn-spinner hidden shrink-0 text-[11px] font-bold text-indigo-600 dark:text-indigo-300 animate-pulse">⏳ 분석 중…</span>
           </div>
-          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1 sm:line-clamp-none">
             최근 14일 기록으로 유산소 베이스 향상도와 주간 거리 적정성 평가
           </p>
         </button>
@@ -690,12 +702,13 @@
         <button
           id="btnQuickCondition"
           type="button"
-          class="group text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] transition-all"
+          class="coach-quick-btn group text-left p-2.5 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
-            🩺 오늘 컨디션 기반 훈련 추천
+          <div class="flex items-center justify-between gap-2 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+            <span>🩺 오늘 컨디션 기반 훈련 추천</span>
+            <span class="coach-btn-spinner hidden shrink-0 text-[11px] font-bold text-indigo-600 dark:text-indigo-300 animate-pulse">⏳ 분석 중…</span>
           </div>
-          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1 sm:line-clamp-none">
             컨디션 메모 + 최근 기록을 조합해 오늘 뛸지 쉴지와 권장 심박 구간 제안
           </p>
         </button>
@@ -758,6 +771,9 @@
             <span id="coachHistorySyncBadge" class="px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">💾 이 기기 저장</span>
           </div>
           <div class="flex items-center gap-1.5">
+            <button id="btnSyncCoachHistory" type="button" title="다른 기기에서 추가/삭제한 코칭 기록 불러오기" class="px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+              🔄 동기화
+            </button>
             <button id="btnNewCoachThread" type="button" class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors">
               + 새 대화
             </button>
@@ -782,16 +798,16 @@
             <button id="btnCopyCoach" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               답변 복사
             </button>
-            <button id="btnClearCoach" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              새 대화
+            <button id="btnClearCoach" type="button" class="hidden text-xs px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              ✕ 닫기
             </button>
           </div>
         </div>
 
         <!-- Loading indicator -->
-        <div id="coachLoading" class="hidden py-6 flex flex-col items-center justify-center gap-2.5 text-slate-500 dark:text-slate-400">
-          <div class="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          <p id="coachLoadingText" class="text-xs sm:text-sm">Gemini AI 코치가 러닝 데이터를 분석하고 있습니다...</p>
+        <div id="coachLoading" class="hidden mb-3 rounded-xl border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/90 dark:bg-indigo-950/50 py-5 px-4 flex flex-col items-center justify-center gap-2.5 text-indigo-800 dark:text-indigo-200">
+          <div class="w-7 h-7 border-[3px] border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+          <p id="coachLoadingText" class="text-xs sm:text-sm font-semibold text-center">Gemini AI 코치가 러닝 데이터를 분석하고 있습니다...</p>
         </div>
 
         <!-- Error banner -->
@@ -808,10 +824,10 @@
         <div id="coachFollowupBox" class="hidden mt-4 pt-4 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 mr-1">💬 이어서 질문:</span>
-            <button type="button" data-followup-prompt="방금 답변의 핵심만 3줄로 쉽고 실전적으로 다시 요약해줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">🎯 핵심 3줄로 쉽게 요약</button>
-            <button type="button" data-followup-prompt="방금 데이터를 다른 관점(페이스 전략, 심박 효율, 케이던스, 회복 부하)에서 새롭게 다시 분석해줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">🔄 다른 관점으로 다시 분석</button>
-            <button type="button" data-followup-prompt="이 분석 결과를 바탕으로 다음 주 요일별 러닝 훈련 플랜을 거리·목표 심박과 함께 구체적으로 짜줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">📅 다음 주 훈련 플랜 짜줘</button>
-            <button type="button" data-followup-prompt="현재 데이터를 기준으로 주의해야 할 부상 위험과 추천 보강·스트레칭 운동 3가지를 알려줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">🦵 부상 예방·보강 추천</button>
+            <button type="button" data-followup-prompt="방금 답변의 핵심만 3줄로 쉽고 실전적으로 다시 요약해줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">🎯 핵심 3줄로 쉽게 요약</button>
+            <button type="button" data-followup-prompt="방금 데이터를 다른 관점(페이스 전략, 심박 효율, 케이던스, 회복 부하)에서 새롭게 다시 분석해줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">🔄 다른 관점으로 다시 분석</button>
+            <button type="button" data-followup-prompt="이 분석 결과를 바탕으로 다음 주 요일별 러닝 훈련 플랜을 거리·목표 심박과 함께 구체적으로 짜줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">📅 다음 주 훈련 플랜 짜줘</button>
+            <button type="button" data-followup-prompt="현재 데이터를 기준으로 주의해야 할 부상 위험과 추천 보강·스트레칭 운동 3가지를 알려줘." class="coach-followup-chip px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">🦵 부상 예방·보강 추천</button>
           </div>
           <form id="coachFollowupForm" class="space-y-2">
             <div class="flex flex-col sm:flex-row gap-2">
@@ -839,10 +855,19 @@
                 </button>
               </div>
             </div>
-            <label class="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 cursor-pointer select-none">
-              <input id="chkFollowupIncludeLatest" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
-              <span>예전 대화를 이어갈 때 최신 러닝 기록 5회 요약도 함께 첨부</span>
-            </label>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label class="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 cursor-pointer select-none">
+                <input id="chkFollowupIncludeLatest" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500" />
+                <span>예전 대화를 이어갈 때 최신 러닝 기록 5회 요약도 함께 첨부</span>
+              </label>
+              <button
+                id="btnCloseThreadBottom"
+                type="button"
+                class="px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                ▲ 내용 닫기
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -977,6 +1002,8 @@
       var DEFAULT_ZONE2_MIN_BPM = 120;
       var DEFAULT_ZONE2_MAX_BPM = 140;
       var DEFAULT_WALK_PACE_SEC = 540;
+      var DEFAULT_CHART_LIMIT = 15;
+      var ALLOWED_CHART_LIMITS = [10, 15, 30, 50, 0];
 
       var ALL_ACTIVITY_TYPES = ['야외 달리기', '실내 달리기(추정)', '트레드밀', '야외 걷기(추정)', '실내 걷기(추정)', '걷기'];
       var RUNNING_ACTIVITY_TYPES = ['야외 달리기', '실내 달리기(추정)', '트레드밀'];
@@ -1056,6 +1083,7 @@
           zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
           walkPaceThresholdSec: DEFAULT_WALK_PACE_SEC,
           excludeWarmupWalk: false,
+          chartLimit: DEFAULT_CHART_LIMIT,
           chartTypes: ALL_ACTIVITY_TYPES.slice()
         },
         runs: [],
@@ -1069,6 +1097,7 @@
         coachThreads: [],
         activeThreadId: null,
         isHistoryCollapsed: false,
+        lastHistorySyncMs: 0,
         modalChartRafId: null,
         charts: {
           hrPace: null,
@@ -1454,6 +1483,8 @@
           notes: r.notes || r.memo || r.comment || '',
           timeseries: timeseries,
           warmupExcludedMin: 0,
+          cooldownExcludedMin: 0,
+          walkExcludedMin: 0,
           runningOnlyAvgHr: null,
           runningOnlyAvgPaceSec: null,
           runningOnlyAvgCadence: null
@@ -1505,7 +1536,7 @@
 
       function getEffectiveRunPaceSec(run) {
         if (!run) return null;
-        if (run.warmupExcludedMin > 0 && run.runningOnlyAvgPaceSec !== null) {
+        if (run.walkExcludedMin > 0 && run.runningOnlyAvgPaceSec !== null) {
           return run.runningOnlyAvgPaceSec;
         }
         return run.avgPaceSec;
@@ -1518,6 +1549,8 @@
         if (!ts.length) {
           return {
             warmupExcludedMin: 0,
+            cooldownExcludedMin: 0,
+            walkExcludedMin: 0,
             runningOnlyAvgHr: null,
             runningOnlyAvgPaceSec: null,
             runningOnlyAvgCadence: null
@@ -1531,15 +1564,29 @@
         }
 
         var MAX_WARMUP_MIN = 15;
+        var MAX_COOLDOWN_MIN = 15;
         var startIdx = 0;
         while (startIdx < ts.length && startIdx < MAX_WARMUP_MIN && isWalkingMinute(ts[startIdx])) {
           startIdx++;
         }
-        if (ts.length - startIdx < 3) {
-          startIdx = 0;
+
+        var endIdx = ts.length;
+        while (endIdx > startIdx && (ts.length - endIdx) < MAX_COOLDOWN_MIN && isWalkingMinute(ts[endIdx - 1])) {
+          endIdx--;
         }
 
-        var trimmed = ts.slice(startIdx);
+        if (endIdx - startIdx < 3) {
+          if (ts.length - startIdx >= 3) {
+            endIdx = ts.length;
+          } else if (endIdx >= 3) {
+            startIdx = 0;
+          } else {
+            startIdx = 0;
+            endIdx = ts.length;
+          }
+        }
+
+        var trimmed = ts.slice(startIdx, endIdx);
         var hrVals = trimmed.map(function (pt) { return pt.hr; }).filter(function (v) { return Number.isFinite(v); });
         var runningOnlyAvgHr = hrVals.length
           ? Math.round(hrVals.reduce(function (a, b) { return a + b; }, 0) / hrVals.length)
@@ -1570,8 +1617,12 @@
           ? Math.round(runCadenceVals.reduce(function (a, b) { return a + b; }, 0) / runCadenceVals.length)
           : null;
 
+        var warmupExcludedMin = startIdx;
+        var cooldownExcludedMin = ts.length - endIdx;
         return {
-          warmupExcludedMin: startIdx,
+          warmupExcludedMin: warmupExcludedMin,
+          cooldownExcludedMin: cooldownExcludedMin,
+          walkExcludedMin: warmupExcludedMin + cooldownExcludedMin,
           runningOnlyAvgHr: runningOnlyAvgHr,
           runningOnlyAvgPaceSec: runningOnlyAvgPaceSec,
           runningOnlyAvgCadence: runningOnlyAvgCadence
@@ -1591,6 +1642,8 @@
           run.runType = classifyRun(run, walkThreshold);
           var segStats = computeRunningSegmentStats(run, walkThreshold);
           run.warmupExcludedMin = segStats.warmupExcludedMin;
+          run.cooldownExcludedMin = segStats.cooldownExcludedMin;
+          run.walkExcludedMin = segStats.walkExcludedMin;
           run.runningOnlyAvgHr = segStats.runningOnlyAvgHr;
           run.runningOnlyAvgPaceSec = segStats.runningOnlyAvgPaceSec;
           run.runningOnlyAvgCadence = segStats.runningOnlyAvgCadence;
@@ -1698,23 +1751,31 @@
           var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - t.daysAgo, t.pace >= 540 ? 20 : 7, 30, 0);
           var isRunSession = t.exerciseType !== 'walking' && t.pace < 540;
           var warmupWalkMins = isRunSession ? (6 + (idx % 3)) : 0;
+          var cooldownWalkMins = isRunSession ? (3 + (idx % 3)) : 0;
           var runMins = Math.max(12, Math.round((t.dist * t.pace) / 60));
-          var totalMins = warmupWalkMins + runMins;
+          var totalMins = warmupWalkMins + runMins + cooldownWalkMins;
           var ts = [];
           for (var min = 1; min <= totalMins; min++) {
             var isWarmupWalk = min <= warmupWalkMins;
+            var isCooldownWalk = cooldownWalkMins > 0 && min > (warmupWalkMins + runMins);
+            var isWalkSegment = isWarmupWalk || isCooldownWalk;
             var runIdx = min - warmupWalkMins - 1;
-            var progress = runMins > 1 ? Math.max(0, runIdx) / (runMins - 1) : 0;
+            var coolIdx = min - warmupWalkMins - runMins;
+            var progress = runMins > 1 ? Math.min(1, Math.max(0, runIdx) / (runMins - 1)) : 0;
             var wave = Math.round(Math.sin(min * 0.7 + idx) * 2);
             var hrVal = isWarmupWalk
               ? Math.round(104 + min * 1.6 + wave)
-              : Math.round(t.hr - (t.drift * 0.45) + (t.drift * progress) + wave);
+              : (isCooldownWalk
+                ? Math.round(Math.max(106, (t.hr + t.drift * 0.5) - coolIdx * 5 + wave))
+                : Math.round(t.hr - (t.drift * 0.45) + (t.drift * progress) + wave));
             var paceWave = Math.round(Math.cos(min * 0.55 + idx) * 5);
-            var paceShift = (!isWarmupWalk && runIdx < 2) ? 10 : (progress > 0.75 ? -5 : 0);
+            var paceShift = (!isWalkSegment && runIdx < 2) ? 10 : (progress > 0.75 ? -5 : 0);
             var paceVal = isWarmupWalk
               ? Math.round(670 - min * 8 + paceWave)
-              : Math.max(230, t.pace + paceShift + paceWave);
-            var cadVal = isWarmupWalk
+              : (isCooldownWalk
+                ? Math.round(640 + coolIdx * 10 + paceWave)
+                : Math.max(230, t.pace + paceShift + paceWave));
+            var cadVal = isWalkSegment
               ? 114 + Math.round(Math.sin(min) * 4)
               : t.cad + Math.round(Math.sin(min) * 2);
             var distPerMin = Math.round((1000 / paceVal) * 60);
@@ -1818,6 +1879,10 @@
             }
 
             state.config.excludeWarmupWalk = Boolean(parsed.excludeWarmupWalk);
+            var parsedLimit = parseInt(parsed.chartLimit, 10);
+            state.config.chartLimit = ALLOWED_CHART_LIMITS.indexOf(parsedLimit) !== -1
+              ? parsedLimit
+              : DEFAULT_CHART_LIMIT;
 
             if (Array.isArray(parsed.chartTypes)) {
               var legacyMap = {
@@ -1981,7 +2046,7 @@
         $('refreshIcon').classList.add('animate-spin');
         hideNotice();
 
-        var endpoint = state.config.supabaseUrl + '/rest/v1/running_logs?select=*&order=run_date.desc&limit=100';
+        var endpoint = state.config.supabaseUrl + '/rest/v1/running_logs?select=*&order=run_date.desc&limit=200';
 
         try {
           var res = await fetch(endpoint, {
@@ -2178,7 +2243,7 @@
           : escapeHtml(formatPace(thisPace));
         if (thisWeekRuns.length > 0) {
           $('statAvgPaceSub').textContent = isRunOnly
-            ? '이번 주 ' + thisWeekRuns.length + '회 · ' + (applyWarmupExclusion ? '초기 걷기 제외' : '전체 구간 기준')
+            ? '이번 주 ' + thisWeekRuns.length + '회 · ' + (applyWarmupExclusion ? '초기·마무리 걷기 제외' : '전체 구간 기준')
             : '이번 주 ' + thisWeekRuns.length + '회 평균';
         } else {
           $('statAvgPaceSub').textContent = '이번 주 기록 없음';
@@ -2316,6 +2381,13 @@
           lblWarmup.classList.toggle('dark:text-indigo-300', isActiveWarmup);
           lblWarmup.classList.toggle('opacity-60', !isRunOnly);
         }
+        var selLimit = $('selectChartLimit');
+        if (selLimit) {
+          var resolvedLimit = ALLOWED_CHART_LIMITS.indexOf(state.config.chartLimit) !== -1
+            ? state.config.chartLimit
+            : DEFAULT_CHART_LIMIT;
+          selLimit.value = String(resolvedLimit);
+        }
       }
 
       function renderTrendCharts() {
@@ -2323,13 +2395,25 @@
         var filteredForChart = state.runs.filter(function (r) {
           return selectedTypes.indexOf(r.runType) !== -1;
         });
-        var recent15 = filteredForChart.slice(0, 15).slice().reverse();
+        var chartLimit = ALLOWED_CHART_LIMITS.indexOf(state.config.chartLimit) !== -1
+          ? state.config.chartLimit
+          : DEFAULT_CHART_LIMIT;
+        var slicedRuns = chartLimit > 0 ? filteredForChart.slice(0, chartLimit) : filteredForChart;
+        var recentRuns = slicedRuns.slice().reverse();
         var colors = getChartColors();
+
+        var scopePrefix = chartLimit > 0 ? '최근 ' + chartLimit + '회' : '전체';
+        if ($('chartHrPaceTitle')) {
+          $('chartHrPaceTitle').textContent = scopePrefix + ' 평균 심박수 대비 페이스 추이';
+        }
+        if ($('chartZone2Title')) {
+          $('chartZone2Title').textContent = scopePrefix + ' Zone 2 비율 변화';
+        }
 
         var activeZ2 = getActiveZone2Range();
         var applyWarmupExclusion = Boolean(state.config.excludeWarmupWalk) && isRunningOnlyChartSelection();
-        $('chartHrPaceSub').textContent = recent15.length
-          ? '선택 유형 최근 ' + recent15.length + '회 표시' + (applyWarmupExclusion ? ' · 초기 걷기 구간 제외' : ' · 페이스는 위쪽일수록 빠릅니다')
+        $('chartHrPaceSub').textContent = recentRuns.length
+          ? '선택 유형 ' + (chartLimit > 0 ? '최근 ' + recentRuns.length + '회' : '전체 ' + recentRuns.length + '회') + ' 표시' + (applyWarmupExclusion ? ' · 초기·마무리 걷기 제외' : ' · 페이스는 위쪽일수록 빠릅니다')
           : '페이스는 위쪽일수록 빠릅니다 (유산소 효율 확인)';
         $('chartZone2Sub').textContent = '저강도 유산소 영역 유지율 (%)' +
           (activeZ2 ? ' · ' + activeZ2.minBpm + '~' + activeZ2.maxBpm + ' bpm' : '');
@@ -2337,7 +2421,7 @@
         destroyChart('hrPace');
         destroyChart('zone2');
 
-        if (!recent15.length) {
+        if (!recentRuns.length) {
           $('chartHrPaceEmpty').classList.remove('hidden');
           $('chartZone2Empty').classList.remove('hidden');
           return;
@@ -2345,21 +2429,22 @@
         $('chartHrPaceEmpty').classList.add('hidden');
         $('chartZone2Empty').classList.add('hidden');
 
-        var labels = recent15.map(function (r) { return formatDateShort(r.runDate); });
-        var hrData = recent15.map(function (r) {
-          return (applyWarmupExclusion && r.warmupExcludedMin > 0 && r.runningOnlyAvgHr !== null)
+        var labels = recentRuns.map(function (r) { return formatDateShort(r.runDate); });
+        var hrData = recentRuns.map(function (r) {
+          return (applyWarmupExclusion && r.walkExcludedMin > 0 && r.runningOnlyAvgHr !== null)
             ? r.runningOnlyAvgHr
             : r.avgHr;
         });
-        var paceData = recent15.map(function (r) {
-          return (applyWarmupExclusion && r.warmupExcludedMin > 0 && r.runningOnlyAvgPaceSec !== null)
+        var paceData = recentRuns.map(function (r) {
+          return (applyWarmupExclusion && r.walkExcludedMin > 0 && r.runningOnlyAvgPaceSec !== null)
             ? r.runningOnlyAvgPaceSec
             : r.avgPaceSec;
         });
-        var z2Data = recent15.map(function (r) { return r.zone2Pct !== null ? Number(r.zone2Pct.toFixed(1)) : null; });
-        var pointColors = recent15.map(function (r) { return getActivityMeta(r.runType).color; });
+        var z2Data = recentRuns.map(function (r) { return r.zone2Pct !== null ? Number(r.zone2Pct.toFixed(1)) : null; });
+        var pointColors = recentRuns.map(function (r) { return getActivityMeta(r.runType).color; });
         var isCompact = window.innerWidth < 480;
         var axisFontSize = isCompact ? 10 : 11;
+        var ptRadius = recentRuns.length > 30 ? (isCompact ? 2 : 2.5) : (isCompact ? 3 : 4);
 
         var minPaceIdx = -1;
         var maxPaceIdx = -1;
@@ -2424,7 +2509,7 @@
                 pointBackgroundColor: pointColors,
                 pointBorderColor: '#f43f5e',
                 borderWidth: 2.5,
-                pointRadius: isCompact ? 3 : 4,
+                pointRadius: ptRadius,
                 pointHoverRadius: 6.5,
                 tension: 0.3,
                 spanGaps: true
@@ -2438,7 +2523,7 @@
                 pointBackgroundColor: pointColors,
                 pointBorderColor: '#0ea5e9',
                 borderWidth: 2.5,
-                pointRadius: isCompact ? 3 : 4,
+                pointRadius: ptRadius,
                 pointHoverRadius: 6.5,
                 tension: 0.3,
                 spanGaps: true
@@ -2456,7 +2541,7 @@
             },
             onClick: function (evt, elements) {
               if (elements && elements.length > 0) {
-                var run = recent15[elements[0].index];
+                var run = recentRuns[elements[0].index];
                 if (run) {
                   setTimeout(function () { openRunModal(run); }, 0);
                 }
@@ -2476,7 +2561,7 @@
                 callbacks: {
                   title: function (items) {
                     var idx = items[0] ? items[0].dataIndex : 0;
-                    var run = recent15[idx];
+                    var run = recentRuns[idx];
                     if (!run) return '';
                     var meta = getActivityMeta(run.runType);
                     var gpsTag = run.hasGps === true ? ' · GPS' : (run.hasGps === false ? ' · GPS없음' : '');
@@ -2487,20 +2572,23 @@
                       return ' 평균 심박수: ' + (ctx.parsed.y !== null ? ctx.parsed.y + ' bpm' : '-');
                     }
                     var idx = ctx.dataIndex;
-                    var run = recent15[idx];
+                    var run = recentRuns[idx];
                     var baseStr = ' 평균 페이스: ' + formatPaceWithSpeed(ctx.parsed.y);
-                    if (applyWarmupExclusion && run && run.warmupExcludedMin > 0 && run.avgPaceSec !== null) {
+                    if (applyWarmupExclusion && run && run.walkExcludedMin > 0 && run.avgPaceSec !== null) {
                       baseStr += ' (전체 ' + formatPaceShort(run.avgPaceSec) + ')';
                     }
                     return baseStr;
                   },
                   afterBody: function (items) {
                     var idx = items && items[0] ? items[0].dataIndex : -1;
-                    var run = idx >= 0 ? recent15[idx] : null;
+                    var run = idx >= 0 ? recentRuns[idx] : null;
                     if (!run) return [];
                     var extra = [];
-                    if (applyWarmupExclusion && run.warmupExcludedMin > 0) {
-                      extra.push(' 초기 걷기 ' + run.warmupExcludedMin + '분 제외 반영');
+                    if (applyWarmupExclusion && run.walkExcludedMin > 0) {
+                      var trimParts = [];
+                      if (run.warmupExcludedMin > 0) trimParts.push('초기 ' + run.warmupExcludedMin + '분');
+                      if (run.cooldownExcludedMin > 0) trimParts.push('마무리 ' + run.cooldownExcludedMin + '분');
+                      extra.push(' ' + trimParts.join(' · ') + ' 걷기 제외 반영');
                     }
                     if (run.avgCadence !== null) {
                       var cadStr = ' 케이던스: ' + run.avgCadence + ' spm';
@@ -2568,7 +2656,7 @@
                 backgroundColor: gradient,
                 fill: true,
                 borderWidth: 2.5,
-                pointRadius: isCompact ? 3 : 4,
+                pointRadius: ptRadius,
                 pointHoverRadius: 6.5,
                 pointBackgroundColor: pointColors,
                 pointBorderColor: '#10b981',
@@ -2588,7 +2676,7 @@
             },
             onClick: function (evt, elements) {
               if (elements && elements.length > 0) {
-                var run = recent15[elements[0].index];
+                var run = recentRuns[elements[0].index];
                 if (run) {
                   setTimeout(function () { openRunModal(run); }, 0);
                 }
@@ -2608,7 +2696,7 @@
                 callbacks: {
                   title: function (items) {
                     var idx = items[0] ? items[0].dataIndex : 0;
-                    var run = recent15[idx];
+                    var run = recentRuns[idx];
                     if (!run) return '';
                     var meta = getActivityMeta(run.runType);
                     return formatDateKr(run.runDate) + ' · ' + meta.icon + ' ' + meta.label;
@@ -3376,7 +3464,7 @@
         };
       }
 
-      function normalizeCoachThread(raw) {
+      function normalizeCoachThread(raw, isRemote) {
         if (!raw || !raw.id) return null;
         var msgs = Array.isArray(raw.messages)
           ? raw.messages.map(normalizeThreadMessage).filter(Boolean)
@@ -3389,6 +3477,7 @@
           run_id: raw.run_id ? String(raw.run_id) : null,
           model: raw.model ? String(raw.model) : null,
           messages: msgs,
+          pendingSync: isRemote ? false : Boolean(raw.pendingSync),
           created_at: raw.created_at || nowIso,
           updated_at: raw.updated_at || raw.created_at || nowIso
         };
@@ -3415,7 +3504,9 @@
             state.coachThreads = [];
             return;
           }
-          state.coachThreads = sortAndTrimThreads(parsed.map(normalizeCoachThread).filter(Boolean));
+          state.coachThreads = sortAndTrimThreads(parsed.map(function (item) {
+            return normalizeCoachThread(item, false);
+          }).filter(Boolean));
         } catch (e) {
           console.warn('코칭 기록 로컬 로드 실패:', e);
           state.coachThreads = [];
@@ -3453,13 +3544,19 @@
       async function fetchCoachThreadsFromSupabase() {
         if (!canSyncCoachThreadsToSupabase()) {
           setHistorySyncBadge('local');
-          return;
+          return false;
         }
         setHistorySyncBadge('syncing');
         var endpoint = state.config.supabaseUrl + '/rest/v1/coach_threads?select=*&order=updated_at.desc&limit=' + MAX_STORED_THREADS;
         try {
+          var pendingToPush = state.coachThreads.filter(function (t) { return t.pendingSync === true; });
+          for (var pi = 0; pi < pendingToPush.length; pi++) {
+            await upsertCoachThreadToSupabase(pendingToPush[pi]);
+          }
+
           var res = await fetch(endpoint, {
             method: 'GET',
+            cache: 'no-store',
             headers: {
               'apikey': state.config.supabaseKey,
               'Authorization': 'Bearer ' + state.config.supabaseKey,
@@ -3474,32 +3571,43 @@
             throw new Error('Invalid coach_threads payload');
           }
 
-          var mergedMap = {};
-          state.coachThreads.forEach(function (t) {
-            mergedMap[t.id] = t;
-          });
-          rows.map(normalizeCoachThread).filter(Boolean).forEach(function (remote) {
-            var local = mergedMap[remote.id];
-            if (!local || String(remote.updated_at || '') >= String(local.updated_at || '')) {
-              mergedMap[remote.id] = remote;
-            }
+          var remoteThreads = rows.map(function (r) {
+            return normalizeCoachThread(r, true);
+          }).filter(Boolean);
+          var remoteIdSet = {};
+          remoteThreads.forEach(function (t) {
+            remoteIdSet[t.id] = true;
           });
 
-          state.coachThreads = sortAndTrimThreads(Object.keys(mergedMap).map(function (k) { return mergedMap[k]; }));
+          var stillPending = state.coachThreads.filter(function (t) {
+            return t.pendingSync === true && !remoteIdSet[t.id];
+          });
+
+          state.coachThreads = sortAndTrimThreads(remoteThreads.concat(stillPending));
           saveCoachThreadsToLocal();
-          renderCoachHistoryList();
-          if (state.activeThreadId) {
-            renderActiveCoachThread();
+          state.lastHistorySyncMs = Date.now();
+
+          if (state.activeThreadId && !state.coachThreads.some(function (t) { return t.id === state.activeThreadId; })) {
+            startFreshCoachView();
+          } else {
+            renderCoachHistoryList();
+            if (state.activeThreadId) {
+              renderActiveCoachThread();
+            }
           }
           setHistorySyncBadge('synced');
+          return true;
         } catch (err) {
           console.warn('coach_threads 조회 실패(로컬 기록 사용):', err);
           setHistorySyncBadge('local');
+          return false;
         }
       }
 
       async function upsertCoachThreadToSupabase(thread) {
-        if (!canSyncCoachThreadsToSupabase() || !thread) return;
+        if (!canSyncCoachThreadsToSupabase() || !thread) return false;
+        thread.pendingSync = true;
+        saveCoachThreadsToLocal();
         setHistorySyncBadge('syncing');
         var endpoint = state.config.supabaseUrl + '/rest/v1/coach_threads?on_conflict=id';
         try {
@@ -3523,26 +3631,44 @@
             })
           });
           if (!res.ok) throw new Error('HTTP ' + res.status);
+          thread.pendingSync = false;
+          saveCoachThreadsToLocal();
+          state.lastHistorySyncMs = Date.now();
           setHistorySyncBadge('synced');
+          return true;
         } catch (err) {
           console.warn('coach_threads 저장 실패(로컬에만 저장됨):', err);
+          thread.pendingSync = true;
+          saveCoachThreadsToLocal();
           setHistorySyncBadge('local');
+          return false;
         }
       }
 
       async function deleteCoachThreadFromSupabase(threadId) {
-        if (!canSyncCoachThreadsToSupabase() || !threadId) return;
+        if (!canSyncCoachThreadsToSupabase() || !threadId) return true;
+        setHistorySyncBadge('syncing');
         var endpoint = state.config.supabaseUrl + '/rest/v1/coach_threads?id=eq.' + encodeURIComponent(threadId);
         try {
-          await fetch(endpoint, {
+          var res = await fetch(endpoint, {
             method: 'DELETE',
             headers: {
               'apikey': state.config.supabaseKey,
-              'Authorization': 'Bearer ' + state.config.supabaseKey
+              'Authorization': 'Bearer ' + state.config.supabaseKey,
+              'Prefer': 'return=minimal'
             }
           });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          state.lastHistorySyncMs = Date.now();
+          setHistorySyncBadge('synced');
+          return true;
         } catch (err) {
           console.warn('coach_threads 삭제 동기화 실패:', err);
+          setHistorySyncBadge('local');
+          $('coachError').innerHTML = '⚠️ Supabase에서 기록 삭제에 실패했습니다 (' + escapeHtml(err && err.message ? err.message : '오류') + '). 네트워크 연결을 확인한 뒤 다시 시도해 주세요.';
+          $('coachError').classList.remove('hidden');
+          fetchCoachThreadsFromSupabase();
+          return false;
         }
       }
 
@@ -3557,15 +3683,20 @@
         upsertCoachThreadToSupabase(thread);
       }
 
-      function deleteCoachThread(threadId) {
+      async function deleteCoachThread(threadId) {
+        var confirmMsg = canSyncCoachThreadsToSupabase()
+          ? '이 코칭 기록을 삭제할까요? 연결된 모든 기기(Supabase)에서 함께 삭제됩니다.'
+          : '이 코칭 기록을 삭제할까요?';
+        if (!window.confirm(confirmMsg)) return;
+
         state.coachThreads = state.coachThreads.filter(function (t) { return t.id !== threadId; });
         saveCoachThreadsToLocal();
-        deleteCoachThreadFromSupabase(threadId);
         if (state.activeThreadId === threadId) {
           startFreshCoachView();
         } else {
           renderCoachHistoryList();
         }
+        await deleteCoachThreadFromSupabase(threadId);
       }
 
       function getActiveThread() {
@@ -3648,6 +3779,7 @@
               '<div class="flex flex-wrap items-center gap-1.5">' +
                 '<span class="text-xs shrink-0">' + icon + '</span>' +
                 '<span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">' + escapeHtml(t.title) + '</span>' +
+                (isActive ? '<span class="px-1.5 py-0.5 text-[11px] font-semibold rounded-md bg-indigo-600 text-white shrink-0">열림</span>' : '') +
                 '<span class="px-1.5 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0">대화 ' + turns + '턴</span>' +
                 (timeStr ? '<span class="text-[11px] text-slate-400 dark:text-slate-500 shrink-0">' + escapeHtml(timeStr) + '</span>' : '') +
               '</div>' +
@@ -3715,11 +3847,60 @@
         var hasModelReply = Boolean(lastModelText);
         followupBox.classList.toggle('hidden', !hasModelReply);
         $('btnCopyThreadWeb').classList.remove('hidden');
-        $('btnCopyCoach').classList.toggle('hidden', !hasModelText);
+        $('btnCopyCoach').classList.toggle('hidden', !hasModelReply);
         $('btnClearCoach').classList.remove('hidden');
 
         var turns = thread.messages.filter(function (m) { return m.role === 'model'; }).length;
         $('coachStatusLabel').textContent = '💬 ' + thread.title + ' · ' + turns + '회 답변' + (thread.model ? ' (' + thread.model + ')' : '');
+      }
+
+      function setCoachBusyState(isBusy, activeBtn) {
+        var askBtn = $('btnAskCoach');
+        var followupBtn = $('btnAskFollowup');
+        var quickBtns = document.querySelectorAll('.coach-quick-btn');
+        var followupChips = document.querySelectorAll('.coach-followup-chip');
+
+        quickBtns.forEach(function (btn) {
+          btn.disabled = isBusy;
+          var isTarget = isBusy && activeBtn === btn;
+          btn.classList.toggle('ring-2', isTarget);
+          btn.classList.toggle('ring-indigo-500', isTarget);
+          btn.classList.toggle('border-indigo-500', isTarget);
+          btn.classList.toggle('bg-indigo-50', isTarget);
+          btn.classList.toggle('dark:bg-indigo-950/60', isTarget);
+          var spinner = btn.querySelector('.coach-btn-spinner');
+          if (spinner) spinner.classList.toggle('hidden', !isTarget);
+        });
+
+        followupChips.forEach(function (chip) {
+          chip.disabled = isBusy;
+          var isTarget = isBusy && activeBtn === chip;
+          chip.classList.toggle('ring-2', isTarget);
+          chip.classList.toggle('ring-indigo-500', isTarget);
+          chip.classList.toggle('border-indigo-500', isTarget);
+          chip.classList.toggle('bg-indigo-50', isTarget);
+          chip.classList.toggle('dark:bg-indigo-950/60', isTarget);
+        });
+
+        if (askBtn) {
+          askBtn.disabled = isBusy;
+          askBtn.textContent = isBusy ? '⏳ 분석 중…' : '코칭 받기';
+          askBtn.classList.toggle('bg-indigo-600', !isBusy);
+          askBtn.classList.toggle('hover:bg-indigo-500', !isBusy);
+          askBtn.classList.toggle('bg-slate-400', isBusy);
+          askBtn.classList.toggle('dark:bg-slate-600', isBusy);
+          askBtn.classList.toggle('cursor-wait', isBusy);
+        }
+
+        if (followupBtn) {
+          followupBtn.disabled = isBusy;
+          followupBtn.textContent = isBusy ? '⏳ 답변 중…' : '이어서 질문';
+          followupBtn.classList.toggle('bg-indigo-600', !isBusy);
+          followupBtn.classList.toggle('hover:bg-indigo-500', !isBusy);
+          followupBtn.classList.toggle('bg-slate-400', isBusy);
+          followupBtn.classList.toggle('dark:bg-slate-600', isBusy);
+          followupBtn.classList.toggle('cursor-wait', isBusy);
+        }
       }
 
       function openCoachThread(threadId) {
@@ -3775,10 +3956,10 @@
         return runGeminiThreadTurn(thread, {
           displayText: opts.displayText || opts.title || opts.apiText,
           apiText: opts.apiText
-        }, true, opts.sourceInputId || null);
+        }, true, opts.sourceInputId || null, opts.triggerBtn || null);
       }
 
-      async function sendFollowupToActiveThread(followupText, includeLatestRuns) {
+      async function sendFollowupToActiveThread(followupText, includeLatestRuns, triggerBtn) {
         var thread = getActiveThread();
         var cleanQuestion = (followupText || '').trim();
         if (!thread || !cleanQuestion) return false;
@@ -3793,10 +3974,10 @@
         return runGeminiThreadTurn(thread, {
           displayText: cleanQuestion,
           apiText: apiText
-        }, false, 'inputFollowupQuestion');
+        }, false, 'inputFollowupQuestion', triggerBtn || $('btnAskFollowup'));
       }
 
-      async function runGeminiThreadTurn(thread, userTurn, isNewThread, clearInputId) {
+      async function runGeminiThreadTurn(thread, userTurn, isNewThread, clearInputId, triggerBtn) {
         if (state.isAskingCoach) return false;
         if (!userTurn || !userTurn.apiText) {
           $('coachError').innerHTML = '⚠️ 질문 내용을 입력해주세요.';
@@ -3826,10 +4007,10 @@
         var candidateModels = getFallbackModels(primaryModel);
 
         state.isAskingCoach = true;
-        $('btnAskCoach').disabled = true;
-        if ($('btnAskFollowup')) $('btnAskFollowup').disabled = true;
+        setCoachBusyState(true, triggerBtn || null);
         $('coachError').classList.add('hidden');
         $('coachLoading').classList.remove('hidden');
+        $('coachResultWrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         var payload = {
           system_instruction: {
@@ -3953,8 +4134,7 @@
           return false;
         } finally {
           state.isAskingCoach = false;
-          $('btnAskCoach').disabled = false;
-          if ($('btnAskFollowup')) $('btnAskFollowup').disabled = false;
+          setCoachBusyState(false, null);
           $('coachLoading').classList.add('hidden');
         }
       }
@@ -3967,7 +4147,8 @@
           runId: opts.runId || null,
           displayText: opts.displayText || titleLabel || promptText,
           apiText: promptText,
-          sourceInputId: opts.sourceInputId || null
+          sourceInputId: opts.sourceInputId || null,
+          triggerBtn: opts.triggerBtn || null
         });
       }
 
@@ -4086,6 +4267,7 @@
             zone2MaxBpm: DEFAULT_ZONE2_MAX_BPM,
             walkPaceThresholdSec: DEFAULT_WALK_PACE_SEC,
             excludeWarmupWalk: false,
+            chartLimit: DEFAULT_CHART_LIMIT,
             chartTypes: ALL_ACTIVITY_TYPES.slice()
           };
           state.runs = [];
@@ -4216,6 +4398,16 @@
           renderTrendCharts();
         });
 
+        if ($('selectChartLimit')) {
+          $('selectChartLimit').addEventListener('change', function (e) {
+            var val = parseInt(e.target.value, 10);
+            state.config.chartLimit = ALLOWED_CHART_LIMITS.indexOf(val) !== -1 ? val : DEFAULT_CHART_LIMIT;
+            persistConfigState();
+            renderChartTypeFilterUI();
+            renderTrendCharts();
+          });
+        }
+
         // Table filter tabs
         document.querySelectorAll('.filter-tab').forEach(function (tab) {
           tab.addEventListener('click', function () {
@@ -4339,7 +4531,8 @@
             category: 'single',
             runId: run.id,
             displayText: title + ' 정밀 분석 요청',
-            apiText: prompt
+            apiText: prompt,
+            triggerBtn: this
           });
         });
 
@@ -4349,7 +4542,8 @@
             title: '최근 2주 훈련 추세 진단',
             category: 'twoweeks',
             displayText: '최근 2주 훈련 추세 및 피로도 진단 요청',
-            apiText: prompt
+            apiText: prompt,
+            triggerBtn: this
           });
         });
 
@@ -4360,7 +4554,8 @@
             title: memo ? '컨디션 추천 (' + memo.slice(0, 22) + (memo.length > 22 ? '…' : '') + ')' : '오늘 컨디션 기반 훈련 추천',
             category: 'condition',
             displayText: memo ? '오늘 컨디션("' + memo + '") 기반 훈련 추천 요청' : '오늘 컨디션 기반 훈련 추천 요청',
-            apiText: prompt
+            apiText: prompt,
+            triggerBtn: this
           });
         });
 
@@ -4378,7 +4573,8 @@
             category: 'free',
             displayText: q,
             apiText: prompt,
-            sourceInputId: 'inputCoachQuestion'
+            sourceInputId: 'inputCoachQuestion',
+            triggerBtn: $('btnAskCoach')
           });
         });
 
@@ -4391,14 +4587,14 @@
             return;
           }
           var includeLatest = Boolean($('chkFollowupIncludeLatest') && $('chkFollowupIncludeLatest').checked);
-          sendFollowupToActiveThread(q, includeLatest);
+          sendFollowupToActiveThread(q, includeLatest, $('btnAskFollowup'));
         });
 
         document.querySelectorAll('.coach-followup-chip').forEach(function (chip) {
           chip.addEventListener('click', function () {
             var followupPrompt = chip.getAttribute('data-followup-prompt');
             var includeLatest = Boolean($('chkFollowupIncludeLatest') && $('chkFollowupIncludeLatest').checked);
-            sendFollowupToActiveThread(followupPrompt, includeLatest);
+            sendFollowupToActiveThread(followupPrompt, includeLatest, this);
           });
         });
 
@@ -4418,6 +4614,14 @@
         });
 
         // Coach history panel controls
+        if ($('btnSyncCoachHistory')) {
+          $('btnSyncCoachHistory').addEventListener('click', async function () {
+            var btn = this;
+            var ok = await fetchCoachThreadsFromSupabase();
+            if (ok) flashButtonLabel(btn, '동기화됨 ✓');
+          });
+        }
+
         $('btnNewCoachThread').addEventListener('click', function () {
           startFreshCoachView();
           $('inputCoachQuestion').focus();
@@ -4426,6 +4630,15 @@
         $('btnToggleHistory').addEventListener('click', function () {
           state.isHistoryCollapsed = !state.isHistoryCollapsed;
           renderCoachHistoryList();
+        });
+
+        document.addEventListener('visibilitychange', function () {
+          if (!document.hidden &&
+              canSyncCoachThreadsToSupabase() &&
+              !state.isAskingCoach &&
+              (Date.now() - state.lastHistorySyncMs > 10000)) {
+            fetchCoachThreadsFromSupabase();
+          }
         });
 
         $('coachHistoryList').addEventListener('click', function (e) {
@@ -4438,7 +4651,12 @@
           }
           var item = e.target.closest('[data-thread-id]');
           if (!item) return;
-          openCoachThread(item.getAttribute('data-thread-id'));
+          var targetId = item.getAttribute('data-thread-id');
+          if (state.activeThreadId === targetId) {
+            startFreshCoachView();
+          } else {
+            openCoachThread(targetId);
+          }
         });
 
         // Individual message copy inside conversation
@@ -4453,7 +4671,7 @@
           if (copied) flashButtonLabel(btn, '복사됨 ✓');
         });
 
-        // Copy & clear active coach output
+        // Copy & close active coach output
         $('btnCopyCoach').addEventListener('click', async function () {
           if (!state.lastCoachMarkdown) return;
           var copied = await copyTextWithFallback(state.lastCoachMarkdown);
@@ -4463,6 +4681,12 @@
         $('btnClearCoach').addEventListener('click', function () {
           startFreshCoachView();
         });
+
+        if ($('btnCloseThreadBottom')) {
+          $('btnCloseThreadBottom').addEventListener('click', function () {
+            startFreshCoachView();
+          });
+        }
       }
 
       // Initialize App
